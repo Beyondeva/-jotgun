@@ -76,10 +76,15 @@ export function SettingsPage() {
         <Row label="สำรองและส่งออก" value={`${txCount} รายการ`} onClick={() => setOpen('data')} />
       </Paper>
 
-      <div className="list-cap">อื่นๆ</div>
-      <Paper className="list">
-        <Row label="Design preview" onClick={() => navigate('/design-preview')} />
-      </Paper>
+      {/* design preview is a development tool; hidden in the deployed app */}
+      {import.meta.env.DEV && (
+        <>
+          <div className="list-cap">อื่นๆ</div>
+          <Paper className="list">
+            <Row label="Design preview" onClick={() => navigate('/design-preview')} />
+          </Paper>
+        </>
+      )}
 
       <Sheet open={open === 'categories'} onClose={() => setOpen(null)} title="หมวดหมู่">
         <CategoryList onEdit={setEditing} onCreate={() => setEditing('new')} />
