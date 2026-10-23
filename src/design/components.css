@@ -190,7 +190,7 @@
 
 /* ---------- Bottom sheet ---------- */
 .sheet-root { position: fixed; inset: 0; z-index: 60; }
-.sheet-backdrop { position: absolute; inset: 0; background: var(--overlay); }
+.sheet-backdrop { position: absolute; inset: 0; background: var(--overlay); touch-action: none; }
 .sheet {
   position: absolute;
   left: 0;
@@ -212,6 +212,7 @@
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+  touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
   padding: 0 var(--s-4) calc(var(--s-5) + var(--safe-bottom));
 }

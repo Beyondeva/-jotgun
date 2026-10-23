@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, useDragControls, type PanInfo } from 'framer-motion';
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useScrollLock } from '../../lib/scrollLock';
 
 interface Props {
   open: boolean;
@@ -14,6 +15,7 @@ interface Props {
 /** Bottom sheet: drag the handle down or tap the backdrop to close. Content scrolls freely. */
 export function Sheet({ open, onClose, title, footer, children }: Props) {
   const drag = useDragControls();
+  useScrollLock(open);
 
   useEffect(() => {
     if (!open) return;
