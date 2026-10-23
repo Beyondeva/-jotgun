@@ -102,7 +102,8 @@
 .cat-grid__cell--new { border-style: dashed; border-color: var(--rule-strong); color: var(--ink-2); background: transparent; }
 
 .slip { position: relative; }
-.slip__discard { position: absolute; top: 4px; right: 4px; color: var(--ink-3); }
+/* above .slip__info, which is positioned too and runs to the right edge */
+.slip__discard { position: absolute; top: 4px; right: 4px; z-index: 1; color: var(--ink-3); }
 button.slip__info { position: relative; text-align: left; padding: 0; padding-right: 36px; }
 .slip__edit { position: absolute; right: 40px; bottom: 2px; color: var(--ink-3); }
 .slip__missing { font-family: var(--font-figure); font-size: 28px; font-weight: 600; color: var(--ink-3); }
