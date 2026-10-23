@@ -1,5 +1,5 @@
-import { AnimatePresence, motion, useDragControls, type PanInfo } from 'framer-motion';
-import { useEffect } from 'react';
+import { animate, AnimatePresence, motion, useDragControls, useMotionValue, type PanInfo } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useScrollLock } from '../../lib/scrollLock';
 
@@ -12,10 +12,18 @@ interface Props {
   children: React.ReactNode;
 }
 
+const SPRING = { type: 'spring', stiffness: 420, damping: 40 } as const;
+
 /** Bottom sheet: drag the handle down or tap the backdrop to close. Content scrolls freely. */
 export function Sheet({ open, onClose, title, footer, children }: Props) {
   const drag = useDragControls();
+  const y = useMotionValue(0);
   useScrollLock(open);
+
+  // Callers usually render `{open && <Form />}` inside; keep showing the last content
+  // while the sheet slides away, instead of an empty sheet collapsing mid-exit.
+  const shown = useRef({ title, footer, children });
+  if (open) shown.current = { title, footer, children };
 
   useEffect(() => {
     if (!open) return;
@@ -25,7 +33,10 @@ export function Sheet({ open, onClose, title, footer, children }: Props) {
   }, [open, onClose]);
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
+    // far or fast enough: let the exit animation carry on from where the finger left it;
+    // otherwise spring back up. (No bottom drag constraint, so nothing else snaps it back.)
     if (info.offset.y > 120 || info.velocity.y > 600) onClose();
+    else animate(y, 0, SPRING);
   };
 
   return createPortal(
@@ -37,24 +48,26 @@ export function Sheet({ open, onClose, title, footer, children }: Props) {
             className="sheet"
             role="dialog"
             aria-modal="true"
-            aria-label={title}
+            aria-label={shown.current.title}
+            style={{ y }}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
-            transition={{ type: 'spring', stiffness: 420, damping: 40 }}
+            transition={SPRING}
             drag="y"
             dragControls={drag}
             dragListener={false}
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{ top: 0, bottom: 0.6 }}
+            dragConstraints={{ top: 0 }}
+            dragElastic={{ top: 0, bottom: 1 }}
+            dragMomentum={false}
             onDragEnd={onDragEnd}
           >
             <div className="sheet__grip" onPointerDown={(e) => drag.start(e)}>
               <div className="sheet__handle" />
-              {title && <h3 className="sheet__title">{title}</h3>}
+              {shown.current.title && <h3 className="sheet__title">{shown.current.title}</h3>}
             </div>
-            <div className="sheet__body">{children}</div>
-            {footer && <div className="sheet__footer">{footer}</div>}
+            <div className="sheet__body">{shown.current.children}</div>
+            {shown.current.footer && <div className="sheet__footer">{shown.current.footer}</div>}
           </motion.div>
         </div>
       )}

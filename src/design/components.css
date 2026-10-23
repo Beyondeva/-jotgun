@@ -202,7 +202,14 @@
 
 /* ---------- Bottom sheet ---------- */
 .sheet-root { position: fixed; inset: 0; z-index: 60; }
-.sheet-backdrop { position: absolute; inset: 0; background: var(--overlay); touch-action: none; }
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+  touch-action: none;
+  /* promoted from its first frame, so the fade never switches layers mid-way */
+  will-change: opacity;
+}
 .sheet {
   position: absolute;
   left: 0;

@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 
 /**
- * Keep the page behind an open sheet still, without touching its layout.
+ * Keep the page behind an open sheet still — without changing any page style.
  *
- * Pinning <body> with position: fixed makes iOS re-lay-out the whole page and it
- * visibly flickers, so instead:
- *  - overflow: hidden on <html> stops scrolling (honoured by iOS Safari 16+);
- *  - touchmove outside a sheet's scrollable body is cancelled, so a drag on the
- *    backdrop or on a sheet whose content fits can't chain to the page.
+ * Both `position: fixed` on <body> and `overflow: hidden` on <html> make iOS
+ * repaint the whole page (and the fixed tab bar) when a sheet opens and again
+ * when it closes, which shows as a flicker. So the page is left untouched and
+ * only touch drags are filtered: a drag that isn't inside a sheet body that can
+ * scroll is cancelled. `overscroll-behavior: contain` on .sheet__body stops the
+ * remaining case (scrolling past the end of the sheet list) from chaining.
  * Counted, so stacked sheets (a sheet opened from a sheet) don't unlock early.
  */
 let locks = 0;
@@ -23,13 +24,11 @@ function onTouchMove(e: TouchEvent) {
 
 function lock() {
   if (locks++ > 0) return;
-  document.documentElement.style.overflow = 'hidden';
   document.addEventListener('touchmove', onTouchMove, { passive: false });
 }
 
 function unlock() {
   if (--locks > 0) return;
-  document.documentElement.style.overflow = '';
   document.removeEventListener('touchmove', onTouchMove);
 }
 
