@@ -16,55 +16,51 @@ const GOLD = '#ffd166';
 const line = { fill: 'none', stroke: INK, strokeWidth: 4.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
 
 /**
- * ข้าวตัง lying on its tummy, looking up. Same head, ears, whiskers, scarf, riso
- * colour layer and tail technique as src/mascot/KhaoTang.tsx (its 200-unit grid),
- * with the body stretched out to the right.
+ * ข้าวตัง lying on its tummy, looking up: a long loaf body, the head at the front,
+ * the tail curled high. Head, ears, tabby cap and scarf follow src/mascot/KhaoTang.tsx
+ * (its 200-unit grid); body and tail are drawn the same way, ink line over a paper fill.
  */
 function LyingKhaoTang() {
-  const body = 'M112 118 C 150 102 250 104 276 128 C 292 146 284 178 256 182 L 112 182 C 96 170 98 132 112 118 Z';
+  const body = 'M118 128 C 150 106 292 102 320 128 C 340 146 334 184 302 188 L 122 188 C 104 178 102 142 118 128 Z';
+  const head = 'M52 96 C52 62 74 46 100 46 C126 46 148 62 148 96 C148 124 128 140 100 140 C72 140 52 124 52 96 Z';
+  const tail = 'M316 150 C 352 140 358 92 346 62 C 340 46 326 40 316 50';
   return (
     <g>
-      {/* tail: thick ink under a paper stroke, as in KhaoTang */}
-      <path d="M272 152 C 300 146 312 118 300 100 C 294 92 284 96 288 106" {...line} strokeWidth={15} />
-      <path d="M272 152 C 300 146 312 118 300 100 C 294 92 284 96 288 106" {...line} stroke={PAPER} strokeWidth={7} />
+      {/* tail: thick ink under a paper stroke, as in KhaoTang, with tabby bands */}
+      <path d={tail} {...line} strokeWidth={16} />
+      <path d={tail} {...line} stroke={PAPER} strokeWidth={8} />
+      <path d="M342 118 L 356 112 M348 92 L 362 90 M342 64 L 354 58" stroke={TABBY} strokeWidth={5} strokeLinecap="round" />
 
-      {/* body and head silhouettes so nothing is see-through */}
+      <path d={body} fill={PAPER} />
+      <path d="M186 126 Q 226 110 262 120" stroke={TABBY} strokeWidth={9} strokeLinecap="round" fill="none" />
+      <path d={body} {...line} />
+      {/* paws: one under the chin, one under the tummy */}
+      <ellipse cx={92} cy={188} rx={19} ry={9} {...line} fill={PAPER} strokeWidth={4} />
+      <ellipse cx={214} cy={190} rx={19} ry={9} {...line} fill={PAPER} strokeWidth={4} />
+
+      {/* head */}
       <g fill={PAPER}>
-        <path d={body} />
         <path d="M60 74 L57 30 L90 50 Z" />
         <path d="M140 74 L143 30 L110 50 Z" />
-        <path d="M52 96 C52 62 74 46 100 46 C126 46 148 62 148 96 C148 124 128 140 100 140 C72 140 52 124 52 96 Z" />
+        <path d={head} />
       </g>
-
-      {/* riso colour, slightly off-register */}
-      <g transform="translate(4 3)">
-        <path d="M170 110 C 200 104 236 108 252 120 C 226 126 196 124 170 110 Z" fill={TABBY} opacity={0.8} />
-        <path d="M70 58 C82 48 118 48 130 58 C122 70 78 70 70 58 Z" fill={TABBY} opacity={0.85} />
-        <path d="M62 68 L60 38 L82 52 Z" fill={TABBY} opacity={0.55} />
-        <path d="M138 68 L140 38 L118 52 Z" fill={TABBY} opacity={0.55} />
-        <path d="M64 134 Q100 152 136 134 L138 146 Q100 166 62 146 Z" fill={SCARF} opacity={0.9} />
-        <ellipse cx={70} cy={114} rx={8} ry={5} fill={SCARF} opacity={0.35} />
-        <ellipse cx={130} cy={114} rx={8} ry={5} fill={SCARF} opacity={0.35} />
-      </g>
-
-      <path d={body} {...line} />
-      <path d="M200 112 L 202 124 M 220 110 L 220 122" {...line} strokeWidth={3.5} />
-      {/* front paws tucked under the chin */}
-      <ellipse cx={82} cy={176} rx={17} ry={10} {...line} fill={PAPER} strokeWidth={4} />
-      <ellipse cx={124} cy={178} rx={17} ry={10} {...line} fill={PAPER} strokeWidth={4} />
-
-      {/* head line work (KhaoTang), eyes turned up to the sky */}
+      <path d="M70 58 C82 48 118 48 130 58 C122 70 78 70 70 58 Z" fill={TABBY} opacity={0.9} />
+      <path d="M62 68 L60 38 L82 52 Z" fill={TABBY} opacity={0.55} />
+      <path d="M138 68 L140 38 L118 52 Z" fill={TABBY} opacity={0.55} />
+      <ellipse cx={70} cy={112} rx={9} ry={6} fill={SCARF} opacity={0.35} />
+      <ellipse cx={130} cy={112} rx={9} ry={6} fill={SCARF} opacity={0.35} />
       <path d="M62 72 L57 30 L88 50" {...line} />
       <path d="M138 72 L143 30 L112 50" {...line} />
-      <path d="M52 96 C52 62 74 46 100 46 C126 46 148 62 148 96 C148 124 128 140 100 140 C72 140 52 124 52 96 Z" {...line} />
-      <path d="M94 54 L95 62 M106 54 L105 62" {...line} strokeWidth={3.5} />
-      <path d="M38 100 L60 104 M40 112 L60 112 M162 100 L140 104 M160 112 L140 112" {...line} strokeWidth={3} />
-      <circle cx={80} cy={86} r={5.5} fill={INK} />
-      <circle cx={120} cy={86} r={5.5} fill={INK} />
-      <circle cx={82} cy={84} r={1.8} fill={PAPER} />
-      <circle cx={122} cy={84} r={1.8} fill={PAPER} />
-      <path d="M95 104 L105 104 L100 110 Z" fill={INK} stroke={INK} strokeWidth={2.5} strokeLinejoin="round" />
-      <path d="M90 116 Q95 122 100 116 Q105 122 110 116" {...line} strokeWidth={3.5} />
+      <path d={head} {...line} />
+      {/* scarf under the chin */}
+      <path d="M58 132 Q 100 152 142 132 L 144 146 Q 100 168 56 146 Z" fill={SCARF} />
+
+      {/* eyes turned up, with a highlight */}
+      <circle cx={80} cy={88} r={7} fill={INK} />
+      <circle cx={120} cy={88} r={7} fill={INK} />
+      <circle cx={82.5} cy={85.5} r={2.4} fill={PAPER} />
+      <circle cx={122.5} cy={85.5} r={2.4} fill={PAPER} />
+      <path d="M96 106 L104 106 L100 111 Z" fill={INK} stroke={INK} strokeWidth={2} strokeLinejoin="round" />
     </g>
   );
 }
@@ -135,7 +131,7 @@ function Scene() {
         <path d="M284 106 L 400 88" stroke="#4b3d73" strokeWidth="5" strokeLinecap="round" />
         <rect x="226" y="120" width="180" height="50" fill="url(#stars-roof-fade)" />
 
-        <g transform="translate(274 50) rotate(-8) scale(0.35)">
+        <g transform="translate(240 48) rotate(-8) scale(0.38)">
           <LyingKhaoTang />
         </g>
       </svg>
