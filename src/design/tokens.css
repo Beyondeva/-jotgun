@@ -1,0 +1,153 @@
+/*
+ * Design tokens — จดกัน
+ * Concept: a paper ledger / thermal receipt. Warm paper, near-black ink,
+ * one brick accent for things you can press, highlighter yellow for "check this".
+ * Light is the default; dark applies from the OS unless <html data-theme> forces one.
+ */
+:root {
+  color-scheme: light;
+
+  /* paper */
+  --paper: #f4efe6;
+  --paper-2: #ebe4d6;
+  --sheet: #fffcf6;
+  --rule: #ddd3c1;
+  --rule-strong: #c4b8a3;
+  --overlay: rgba(30, 26, 22, 0.36);
+
+  /* ink */
+  --ink: #1f1b17;
+  --ink-2: #6b6157;
+  --ink-3: #a1968a;
+  --on-ink: #fffcf6;
+
+  /* the one accent: brick */
+  --accent: #c2471f;
+  --accent-press: #a83b18;
+  --on-accent: #fffcf6;
+
+  /* meaning */
+  --income: #2e7a4c;
+  --over: #c2471f;
+  --mark: #f6df6b; /* highlighter */
+  --mark-ink: #6d5a00;
+
+  /* category inks (coloured pencils) */
+  --cat-brick: #b5462b;
+  --cat-clay: #c7703f;
+  --cat-ochre: #b8861b;
+  --cat-olive: #7a7f2a;
+  --cat-moss: #4c7a45;
+  --cat-teal: #2d7672;
+  --cat-sky: #3f78a6;
+  --cat-indigo: #4f55a0;
+  --cat-plum: #844e86;
+  --cat-rose: #b4526e;
+  --cat-sand: #9c7a4c;
+  --cat-slate: #5d6870;
+
+  /* mascot: same white cat in both themes, so these are never overridden for dark */
+  --mascot-ink: #1f1b17;
+  --mascot-paper: #fffcf6;
+  --mascot-tabby: #b8861b;
+  --mascot-accent: #c2471f;
+  --mascot-sky: #3f78a6;
+
+  /* shape: radius by role, not one size for everything */
+  --r-sheet: 6px;
+  --r-control: 10px;
+  --r-tag: 6px;
+  --r-panel: 16px;
+
+  /* spacing scale 4/8/12/16/24/32 */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+
+  /* type */
+  --font-body: 'IBM Plex Sans Thai Looped', system-ui, -apple-system, sans-serif;
+  --font-figure: 'IBM Plex Sans Condensed', 'IBM Plex Sans Thai Looped', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* layout */
+  --tabbar-h: 60px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  /* motion: quick, no overshoot */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur: 180ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --paper: #191612;
+    --paper-2: #221e19;
+    --sheet: #26211c;
+    --rule: #3a332b;
+    --rule-strong: #52493e;
+    --overlay: rgba(0, 0, 0, 0.55);
+    --ink: #efe7da;
+    --ink-2: #ab9f90;
+    --ink-3: #75695c;
+    --on-ink: #191612;
+    --accent: #e8693f;
+    --accent-press: #f07d55;
+    --on-accent: #1a0e08;
+    --income: #73c48f;
+    --over: #f07d55;
+    --mark: #7a6a1c;
+    --mark-ink: #fbe98e;
+    --cat-brick: #e07a5c;
+    --cat-clay: #e39565;
+    --cat-ochre: #d9ae4e;
+    --cat-olive: #a9ae55;
+    --cat-moss: #7db06f;
+    --cat-teal: #5db3ad;
+    --cat-sky: #73a7d6;
+    --cat-indigo: #8a90d6;
+    --cat-plum: #b987bb;
+    --cat-rose: #de869e;
+    --cat-sand: #c9a777;
+    --cat-slate: #98a4ac;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #191612;
+  --paper-2: #221e19;
+  --sheet: #26211c;
+  --rule: #3a332b;
+  --rule-strong: #52493e;
+  --overlay: rgba(0, 0, 0, 0.55);
+  --ink: #efe7da;
+  --ink-2: #ab9f90;
+  --ink-3: #75695c;
+  --on-ink: #191612;
+  --accent: #e8693f;
+  --accent-press: #f07d55;
+  --on-accent: #1a0e08;
+  --income: #73c48f;
+  --over: #f07d55;
+  --mark: #7a6a1c;
+  --mark-ink: #fbe98e;
+  --cat-brick: #e07a5c;
+  --cat-clay: #e39565;
+  --cat-ochre: #d9ae4e;
+  --cat-olive: #a9ae55;
+  --cat-moss: #7db06f;
+  --cat-teal: #5db3ad;
+  --cat-sky: #73a7d6;
+  --cat-indigo: #8a90d6;
+  --cat-plum: #b987bb;
+  --cat-rose: #de869e;
+  --cat-sand: #c9a777;
+  --cat-slate: #98a4ac;
+}

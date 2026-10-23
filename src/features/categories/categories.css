@@ -1,0 +1,117 @@
+.cat-form { display: flex; flex-direction: column; gap: var(--s-5); padding-top: var(--s-1); }
+.cat-form__error { color: var(--over); }
+.cat-form__actions { display: flex; flex-direction: column; gap: var(--s-1); }
+
+.cat-preview { display: flex; flex-direction: column; gap: var(--s-2); }
+.cat-preview__cap { font-size: 12px; font-weight: 600; color: var(--ink-3); letter-spacing: 0.02em; }
+.cat-preview__paper .tx { padding-top: var(--s-3); padding-bottom: var(--s-3); }
+.cat-preview__placeholder { color: var(--ink-3); }
+.cat-preview__rules { font-size: 12.5px; color: var(--ink-2); }
+
+.swatches { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: var(--s-2); }
+.swatches:has(> :nth-child(9)) { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+.swatch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-width: 30px;
+  border-radius: 6px;
+  color: var(--sheet);
+}
+/* invisible padding keeps the hit area ≥ 44px */
+.swatch::after { content: ''; position: absolute; inset: -6px; }
+.swatch.is-active { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ring); }
+
+.icon-picker { display: flex; flex-direction: column; gap: var(--s-4); }
+.icon-picker__jump {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding-top: var(--s-1);
+  padding-bottom: var(--s-2);
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.icon-picker__jump-chip {
+  flex: none;
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.icon-picker__jump-chip:active { color: var(--ink); }
+.icon-picker__group { scroll-margin-top: 52px; display: flex; flex-direction: column; gap: var(--s-2); }
+.icon-picker__label { font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.icon-picker__grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.icon-picker__cell {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--sheet);
+  color: var(--ink-2);
+}
+
+.kw-input { display: flex; gap: var(--s-2); }
+.kw-input .input { flex: 1; min-width: 0; }
+.kw-input .btn { flex: none; min-height: 48px; }
+.kw-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.kw {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 34px;
+  padding: 0 2px 0 10px;
+  border-radius: var(--r-tag);
+  border: 1px solid;
+  background: var(--sheet);
+  font-size: 13px;
+  font-weight: 500;
+}
+.kw__move { font-size: 11px; color: var(--ink-3); }
+.kw__x { display: grid; place-items: center; width: 30px; height: 30px; color: var(--ink-2); }
+
+/* ---------- Category list (settings) ---------- */
+.cat-list { display: flex; flex-direction: column; }
+.cat-list__group { font-size: 12px; font-weight: 600; color: var(--ink-3); padding: var(--s-4) 0 var(--s-1); }
+.cat-list__row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  align-items: center;
+  column-gap: var(--s-3);
+  width: 100%;
+  min-height: 52px;
+  text-align: left;
+  border-bottom: 1px solid var(--rule);
+}
+.cat-list__name { font-weight: 500; }
+.cat-list__meta { font-size: 12.5px; color: var(--ink-3); }
+
+/* ---------- Budgets ---------- */
+.budget-total { padding-bottom: var(--s-2); }
+.budget-row { grid-template-columns: 28px 1fr auto; cursor: text; }
+.budget-row__input { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-3); }
+.budget-row__input input {
+  width: 96px;
+  min-height: 40px;
+  padding: 0 8px;
+  border: 0;
+  border-bottom: 1px dashed var(--rule-strong);
+  background: transparent;
+  color: var(--ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+.budget-row__input input:focus { border-bottom: 1px solid var(--ink); }
+
+/* ---------- Data sheet ---------- */
+.data-sheet { display: flex; flex-direction: column; gap: var(--s-5); }
+.data-sheet__group { display: flex; flex-direction: column; gap: var(--s-2); }
+.data-sheet__error { color: var(--over); }
+.data-sheet__confirm { display: flex; flex-direction: column; gap: var(--s-3); padding: var(--s-3); border: 1px dashed var(--over); border-radius: var(--r-sheet); font-size: 14px; }

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- ข้าวตัง's face on a transparent background, for iOS launch screens -->
+  <path d="M150 176 L142 70 L226 120 Z" fill="#FFFCF6"/>
+  <path d="M362 176 L370 70 L286 120 Z" fill="#FFFCF6"/>
+  <path d="M116 230 C116 148 176 106 256 106 C336 106 396 148 396 230 C396 300 336 338 256 338 C176 338 116 300 116 230 Z" fill="#FFFCF6"/>
+  <g transform="translate(10 8)">
+    <path d="M178 142 C210 116 302 116 334 142 C312 172 200 172 178 142 Z" fill="#B8861B" opacity=".85"/>
+    <path d="M158 164 L152 92 L208 128 Z" fill="#B8861B" opacity=".55"/>
+    <path d="M354 164 L360 92 L304 128 Z" fill="#B8861B" opacity=".55"/>
+    <ellipse cx="170" cy="272" rx="22" ry="13" fill="#C2471F" opacity=".35"/>
+    <ellipse cx="342" cy="272" rx="22" ry="13" fill="#C2471F" opacity=".35"/>
+  </g>
+  <g fill="none" stroke="#1F1B17" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M154 172 L142 70 L222 118"/>
+    <path d="M358 172 L370 70 L290 118"/>
+    <path d="M116 230 C116 148 176 106 256 106 C336 106 396 148 396 230 C396 300 336 338 256 338 C176 338 116 300 116 230 Z"/>
+    <path d="M232 284 Q244 298 256 284 Q268 298 280 284" stroke-width="10"/>
+  </g>
+  <circle cx="200" cy="224" r="13" fill="#1F1B17"/>
+  <circle cx="312" cy="224" r="13" fill="#1F1B17"/>
+  <path d="M242 254 L270 254 L256 270 Z" fill="#1F1B17" stroke="#1F1B17" stroke-width="6" stroke-linejoin="round"/>
+</svg>

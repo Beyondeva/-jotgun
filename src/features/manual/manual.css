@@ -1,0 +1,85 @@
+.manual { display: flex; flex-direction: column; gap: var(--s-3); }
+
+/* amount stays visible while the category grid scrolls */
+.manual__amount {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-3) 0;
+  background: var(--paper);
+  border-bottom: 1px solid var(--ink);
+}
+.manual__cat { display: flex; align-items: center; gap: var(--s-2); min-width: 0; }
+.manual__cat-empty { width: 36px; height: 36px; border-radius: 8px; border: 1px dashed var(--rule-strong); }
+.manual__cat-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.manual__figure {
+  font-family: var(--font-figure);
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.manual__figure.is-empty { color: var(--ink-3); }
+.manual__figure.is-income { color: var(--income); }
+.manual__cur { font-size: 0.5em; margin-right: 0.1em; vertical-align: 0.6em; font-weight: 500; }
+
+.manual__meta { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); }
+.manual__date {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--r-control);
+  border: 1px solid var(--rule-strong);
+  font-size: 14px;
+  font-weight: 500;
+}
+/* the native picker sits invisibly on top so iOS opens its own wheel */
+.manual__date input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; }
+.manual__methods { display: flex; border: 1px solid var(--rule-strong); border-radius: var(--r-control); overflow: hidden; }
+.manual__method { display: grid; place-items: center; width: 44px; height: 40px; color: var(--ink-3); }
+.manual__method + .manual__method { border-left: 1px solid var(--rule); }
+.manual__method.is-active { background: var(--ink); color: var(--on-ink); }
+
+.manual__note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-bottom: 1px dashed var(--rule-strong);
+  color: var(--ink-3);
+}
+.manual__note input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; color: var(--ink); }
+.manual__note input::placeholder { color: var(--ink-3); }
+
+/* keypad + save stay pinned to the bottom of the sheet */
+.manual__dock {
+  position: sticky;
+  bottom: calc(-1 * (var(--s-5) + var(--safe-bottom)));
+  z-index: 3;
+  margin: 0 calc(var(--s-4) * -1) calc(-1 * (var(--s-5) + var(--safe-bottom)));
+  padding: var(--s-2) var(--s-4) calc(var(--s-3) + var(--safe-bottom));
+  background: var(--paper);
+  border-top: 1px solid var(--rule);
+}
+.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: var(--r-control); overflow: hidden; }
+.numpad__key {
+  height: 52px;
+  background: var(--sheet);
+  font-family: var(--font-figure);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.numpad__key:active { background: var(--paper-2); }
+.numpad__key--back { color: var(--ink-2); }
+.manual__actions { display: flex; gap: var(--s-2); margin-top: var(--s-2); }
+.manual__delete { flex: none; width: 52px; height: 52px; color: var(--over); box-shadow: inset 0 0 0 1px var(--rule-strong); }
