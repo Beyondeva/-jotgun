@@ -1,5 +1,4 @@
 import { faChartColumn, faGear, faHouse, faInbox, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { motion } from 'framer-motion';
 import { Icon, type IconDefinition } from '../Icon';
 
 export type TabKey = 'home' | 'inbox' | 'summary' | 'settings';
@@ -34,7 +33,7 @@ export function TabBar({ active, onChange, onAdd, inboxCount = 0 }: Props) {
           <Icon icon={t.icon} size={20} />
           {t.key === 'inbox' && inboxCount > 0 && <span className="tab__badge num">{inboxCount > 99 ? '99+' : inboxCount}</span>}
         </span>
-        {isActive && <motion.span layoutId="tab-dot" className="tab__dot" transition={{ duration: 0.18, ease: [0.2, 0, 0, 1] }} />}
+        {isActive && <span className="tab__dot" />}
       </button>
     );
   };
@@ -42,9 +41,9 @@ export function TabBar({ active, onChange, onAdd, inboxCount = 0 }: Props) {
   return (
     <nav className="tabbar" aria-label="เมนูหลัก">
       {TABS.slice(0, 2).map(renderTab)}
-      <motion.button whileTap={{ scale: 0.95 }} transition={{ duration: 0.12 }} className="tabbar__add" onClick={onAdd} aria-label="จดรายการใหม่">
+      <button type="button" className="tabbar__add" onClick={onAdd} aria-label="จดรายการใหม่">
         <Icon icon={faPlus} size={20} />
-      </motion.button>
+      </button>
       {TABS.slice(2).map(renderTab)}
     </nav>
   );

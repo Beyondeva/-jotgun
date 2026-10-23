@@ -1,3 +1,13 @@
+/* ---------- Press feedback ----------
+ * Everything tappable tints its background while pressed. No transforms or
+ * opacity animation: those push the element onto a GPU layer on iOS and the
+ * text flickers as it moves on and off it. :where() keeps this at zero
+ * specificity so component rules (solid buttons) can set their own pressed colour.
+ */
+:where(button, [role='button'], label.cat-list__row):active:not(:disabled) {
+  background-color: var(--press);
+}
+
 /* ---------- Money ---------- */
 .money {
   display: inline-flex;
@@ -48,6 +58,7 @@
 .btn--block { width: 100%; }
 .btn--primary { background: var(--accent); color: var(--on-accent); }
 .btn--primary:active { background: var(--accent-press); }
+.btn--ink:active { background: color-mix(in srgb, var(--ink) 82%, var(--paper)); }
 .btn--ink { background: var(--ink); color: var(--on-ink); }
 .btn--quiet { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--rule-strong); }
 .btn--ghost { color: var(--ink-2); padding: 0 var(--s-2); }
@@ -175,6 +186,7 @@
   text-align: center;
   box-shadow: 0 0 0 2px var(--paper);
 }
+.tabbar__add:active { background: var(--accent-press); }
 .tabbar__add {
   justify-self: center;
   display: inline-grid;
@@ -203,6 +215,9 @@
   flex-direction: column;
   border-radius: var(--r-panel) var(--r-panel) 0 0;
   background: var(--paper);
+  /* stay on one GPU layer for the whole life of the sheet, so the text doesn't
+     flicker when the slide-in ends and the transform is dropped */
+  will-change: transform;
 }
 .sheet__grip { flex: none; padding: var(--s-2) var(--s-4) var(--s-3); touch-action: none; cursor: grab; }
 .sheet__handle { width: 36px; height: 4px; margin: 0 auto var(--s-3); border-radius: 2px; background: var(--rule-strong); }

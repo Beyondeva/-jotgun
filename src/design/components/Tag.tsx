@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { Icon } from '../Icon';
 import { CATEGORY_ICONS, type CategoryIconKey } from '../icons';
 import { catColor, type CatColor } from '../palette';
@@ -15,10 +14,8 @@ interface Props {
 export function Tag({ label, icon, color = 'slate', selected, onClick }: Props) {
   const c = catColor(color);
   return (
-    <motion.button
+    <button
       type="button"
-      whileTap={{ scale: 0.96 }}
-      transition={{ duration: 0.12 }}
       onClick={onClick}
       aria-pressed={selected}
       className={`tag ${selected ? 'is-selected' : ''}`}
@@ -26,6 +23,6 @@ export function Tag({ label, icon, color = 'slate', selected, onClick }: Props) 
     >
       {icon && <Icon icon={CATEGORY_ICONS[icon]} size={12} style={{ color: c.ink }} />}
       <span>{label}</span>
-    </motion.button>
+    </button>
   );
 }

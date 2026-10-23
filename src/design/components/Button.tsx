@@ -1,29 +1,25 @@
-import { motion, type HTMLMotionProps } from 'framer-motion';
 import { Icon, type IconDefinition } from '../Icon';
 
-interface Props extends Omit<HTMLMotionProps<'button'>, 'children'> {
+/*
+ * Press feedback is a background tint in CSS (see components.css "Press feedback"),
+ * not a scale animation: transforming on tap makes iOS Safari move the element onto
+ * its own GPU layer and back, which shows up as a flicker of the text.
+ */
+
+interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** primary: the one action per view · ink: strong but not the main CTA · quiet: outlined · ghost: text only */
   variant?: 'primary' | 'ink' | 'quiet' | 'ghost' | 'danger';
   size?: 'md' | 'lg' | 'sm';
   icon?: IconDefinition;
   block?: boolean;
-  children?: React.ReactNode;
 }
 
-const press = { scale: 0.98 };
-const tween = { duration: 0.12 };
-
-export function Button({ variant = 'primary', size = 'md', icon, block, className, children, ...rest }: Props) {
+export function Button({ variant = 'primary', size = 'md', icon, block, className, children, type = 'button', ...rest }: Props) {
   return (
-    <motion.button
-      whileTap={press}
-      transition={tween}
-      className={`btn btn--${variant} btn--${size} ${block ? 'btn--block' : ''} ${className ?? ''}`}
-      {...rest}
-    >
+    <button type={type} className={`btn btn--${variant} btn--${size} ${block ? 'btn--block' : ''} ${className ?? ''}`} {...rest}>
       {icon && <Icon icon={icon} size={size === 'sm' ? 13 : 15} />}
       {children}
-    </motion.button>
+    </button>
   );
 }
 
@@ -31,11 +27,12 @@ export function IconButton({
   icon,
   label,
   className,
+  type = 'button',
   ...rest
-}: Omit<HTMLMotionProps<'button'>, 'children'> & { icon: IconDefinition; label: string }) {
+}: Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> & { icon: IconDefinition; label: string }) {
   return (
-    <motion.button whileTap={{ scale: 0.94 }} transition={tween} aria-label={label} className={`icon-btn ${className ?? ''}`} {...rest}>
+    <button type={type} aria-label={label} className={`icon-btn ${className ?? ''}`} {...rest}>
       <Icon icon={icon} size={16} />
-    </motion.button>
+    </button>
   );
 }

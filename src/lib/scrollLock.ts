@@ -1,31 +1,36 @@
 import { useEffect } from 'react';
 
 /**
- * Freeze the page behind an open sheet. iOS Safari ignores `overflow: hidden`
- * on <body> for touch scrolling, so the body is pinned with position: fixed at
- * its current offset and put back when the last sheet closes. Counted, so
- * stacked sheets (a sheet opened from a sheet) don't unlock early.
+ * Keep the page behind an open sheet still, without touching its layout.
+ *
+ * Pinning <body> with position: fixed makes iOS re-lay-out the whole page and it
+ * visibly flickers, so instead:
+ *  - overflow: hidden on <html> stops scrolling (honoured by iOS Safari 16+);
+ *  - touchmove outside a sheet's scrollable body is cancelled, so a drag on the
+ *    backdrop or on a sheet whose content fits can't chain to the page.
+ * Counted, so stacked sheets (a sheet opened from a sheet) don't unlock early.
  */
 let locks = 0;
-let savedY = 0;
+
+function canScroll(el: Element | null): boolean {
+  const body = el?.closest('.sheet__body');
+  return !!body && body.scrollHeight > body.clientHeight;
+}
+
+function onTouchMove(e: TouchEvent) {
+  if (!canScroll(e.target as Element)) e.preventDefault();
+}
 
 function lock() {
   if (locks++ > 0) return;
-  savedY = window.scrollY;
-  const s = document.body.style;
-  s.position = 'fixed';
-  s.top = `-${savedY}px`;
-  s.left = '0';
-  s.right = '0';
-  s.width = '100%';
-  s.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+  document.addEventListener('touchmove', onTouchMove, { passive: false });
 }
 
 function unlock() {
   if (--locks > 0) return;
-  const s = document.body.style;
-  s.position = s.top = s.left = s.right = s.width = s.overflow = '';
-  window.scrollTo(0, savedY);
+  document.documentElement.style.overflow = '';
+  document.removeEventListener('touchmove', onTouchMove);
 }
 
 export function useScrollLock(active: boolean) {

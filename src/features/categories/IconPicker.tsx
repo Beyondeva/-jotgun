@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { Icon } from '../../design/Icon';
 import { CATEGORY_ICON_GROUPS, type CategoryIconKey } from '../../design/icons';
@@ -30,20 +29,18 @@ export function IconPicker({ value, color, onChange }: Props) {
           <div className="icon-picker__label">{g.label}</div>
           <div className="icon-picker__grid" role="radiogroup" aria-label={g.label}>
             {(Object.entries(g.icons) as [CategoryIconKey, (typeof g.icons)[keyof typeof g.icons]][]).map(([k, def]) => (
-              <motion.button
+              <button
                 key={k}
                 type="button"
                 role="radio"
                 aria-checked={k === value}
                 aria-label={k}
-                whileTap={{ scale: 0.94 }}
-                transition={{ duration: 0.12 }}
                 className={`icon-picker__cell ${k === value ? 'is-active' : ''}`}
                 style={k === value ? { background: c.wash, color: c.ink, borderColor: c.ink } : undefined}
                 onClick={() => onChange(k)}
               >
                 <Icon icon={def} size={19} />
-              </motion.button>
+              </button>
             ))}
           </div>
         </div>
