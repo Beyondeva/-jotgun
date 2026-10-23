@@ -302,3 +302,52 @@
   --bar-ink-2: #9fb1b7;
   --bar-active: #2f3f47;
 }
+
+/* ข้าวตังนอนดูดาว — ฟ้าดาว; art in src/design/decor/stars. --scene-cloud = the milky way over the sky top */
+:root[data-theme='stars'] {
+  color-scheme: dark;
+  --paper: #121331;
+  --paper-2: #161739;
+  --sheet: #1b1c42;
+  --rule: #2a2b5a;
+  --rule-strong: #3d3e75;
+  --overlay: rgba(0, 0, 0, 0.55);
+  --ink: #f0eefa;
+  --ink-2: #a6a3c8;
+  --ink-3: #918eba;
+  --on-ink: #121331;
+  --accent: #ffd166;
+  --accent-press: #ffdc85;
+  --on-accent: #121331;
+  --income: #6fe0b8;
+  --over: #ff8a8a;
+  --mark: #6b5c17;
+  --mark-ink: #fff1a6;
+  --mark-text: var(--mark-ink);
+  --press: rgba(240, 238, 250, 0.08);
+  --toast-action: #7f6833;
+  --cat-brick: #e07a5c;
+  --cat-clay: #e39565;
+  --cat-ochre: #d9ae4e;
+  --cat-olive: #a9ae55;
+  --cat-moss: #7db06f;
+  --cat-teal: #5db3ad;
+  --cat-sky: #8cb7dd;
+  --cat-indigo: #9fa4dd;
+  --cat-plum: #b987bb;
+  --cat-rose: #de869e;
+  --cat-sand: #c9a777;
+  --cat-slate: #abb4bb;
+  /* decorated: header scene (text sits on --scene-sky*), content pattern, tab bar */
+  --scene-sky-top: #232458;
+  --scene-sky: var(--paper);
+  --scene-cloud: #33346f;
+  --scene-ink-2: #c9c6e4;
+  --scene-mark: #1f2050;
+  --scene-mark-2: #23245a;
+  --bar: #1b1c42;
+  --bar-rule: #2a2b5a;
+  --bar-ink: #f0eefa;
+  --bar-ink-2: #a6a3c8;
+  --bar-active: #2a2b5a;
+}

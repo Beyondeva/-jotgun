@@ -39,7 +39,7 @@ Vite 8, React 19, TS 7, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB) + dexie-r
 - Picked in Settings (`ThemePicker`, one radio group). Saved in localStorage `jotgun:theme`. Legacy values light→paper, dark→rain.
 - Theme ids:
   - plain: `system` (paper/rain by device), `paper` "สว่าง", `rain` "มืด", `navy` "กรมท่า", `plum` "พลัม"
-  - decorated (group ข้าวตัง, never follow the system): `beach` "ทะเลยามค่ำ", `monsoon` "หน้าฝน"
+  - decorated (group ข้าวตัง, never follow the system): `beach` "ทะเลยามค่ำ", `monsoon` "หน้าฝน", `stars` "นอนดูดาว"
 - Colours exist only as `[data-theme]` blocks in `tokens.css`. Never hard-code colours in components. Every theme defines every variable.
 - An inline `<head>` script, generated from `themes.ts` by the Vite plugin in `vite.config.ts`, applies the theme before first paint and sets `theme-color`.
 - `src/design/__tests__/contrast.test.ts` enforces WCAG AA for every theme, checks that the swatches match `tokens.css`, and tests the boot script. Keep it green when changing colours.

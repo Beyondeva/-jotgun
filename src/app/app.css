@@ -67,6 +67,11 @@
   pointer-events: none;
 }
 .decor-pattern svg { display: block; width: 100%; height: 100%; }
+
+/* slow twinkle for a few scene stars; still for people who ask for less motion */
+.decor-twinkle { animation: decor-twinkle 3.6s ease-in-out infinite alternate; }
+@keyframes decor-twinkle { from { opacity: 1; } to { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) { .decor-twinkle { animation: none; } }
 .hero--decor { padding: var(--s-3) 0 var(--s-4); }
 .hero--decor:empty { display: none; }
 /* under a scene the ledger's top rule reads as a scratch on the sand: drop it */

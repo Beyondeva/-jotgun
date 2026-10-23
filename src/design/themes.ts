@@ -13,7 +13,7 @@
 export type ThemeGroup = 'plain' | 'khaotang';
 
 /** A theme that maps to one [data-theme] block. */
-export type ConcreteThemeId = 'paper' | 'rain' | 'navy' | 'plum' | 'beach' | 'monsoon';
+export type ConcreteThemeId = 'paper' | 'rain' | 'navy' | 'plum' | 'beach' | 'monsoon' | 'stars';
 /** What the user can pick; "system" follows the device: paper by day, rain at night. */
 export type ThemeId = 'system' | ConcreteThemeId;
 
@@ -106,6 +106,23 @@ export const THEMES: ConcreteTheme[] = [
       accent: '#ffb347',
       income: '#5fd4b0',
       scene: { sky: '#18242b', band: '#33454e', ground: '#2a3a40', spot: '#ffb347' },
+    },
+  },
+  {
+    id: 'stars',
+    name: 'นอนดูดาว',
+    group: 'khaotang',
+    scheme: 'dark',
+    themeColor: '#232458',
+    decor: 'stars',
+    swatch: {
+      paper: '#121331',
+      sheet: '#1b1c42',
+      ink: '#f0eefa',
+      ink2: '#a6a3c8',
+      accent: '#ffd166',
+      income: '#6fe0b8',
+      scene: { sky: '#232458', band: '#33346f', ground: '#3a2f5c', spot: '#ffd166' },
     },
   },
 ];
