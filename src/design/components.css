@@ -236,6 +236,8 @@
   overscroll-behavior: contain;
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
+  /* the scroller gets its own layer up front instead of when the slide-in ends */
+  transform: translate3d(0, 0, 0);
   padding: 0 var(--s-4) calc(var(--s-5) + var(--safe-bottom));
 }
 .sheet__footer {

@@ -12,7 +12,18 @@ interface Props {
   children: React.ReactNode;
 }
 
-const SPRING = { type: 'spring', stiffness: 420, damping: 40 } as const;
+/**
+ * Ease-out tween rather than a spring: a spring overshoots by fractions of a pixel
+ * before settling, and on iOS the text visibly shimmers as it does.
+ */
+const SLIDE = { duration: 0.28, ease: [0.2, 0, 0, 1] } as const;
+
+/**
+ * Always emit a 3D translate, even at rest. By default the transform becomes "none"
+ * when the sheet reaches the top, so iOS drops it off its GPU layer (flicker as it
+ * opens) and has to promote it again when it starts closing (flicker as it closes).
+ */
+const keepLayer = ({ y }: { y?: unknown }) => `translate3d(0, ${typeof y === 'number' ? `${y}px` : (y ?? 0)}, 0)`;
 
 /** Bottom sheet: drag the handle down or tap the backdrop to close. Content scrolls freely. */
 export function Sheet({ open, onClose, title, footer, children }: Props) {
@@ -36,14 +47,14 @@ export function Sheet({ open, onClose, title, footer, children }: Props) {
     // far or fast enough: let the exit animation carry on from where the finger left it;
     // otherwise spring back up. (No bottom drag constraint, so nothing else snaps it back.)
     if (info.offset.y > 120 || info.velocity.y > 600) onClose();
-    else animate(y, 0, SPRING);
+    else animate(y, 0, SLIDE);
   };
 
   return createPortal(
     <AnimatePresence>
       {open && (
         <div className="sheet-root">
-          <motion.div className="sheet-backdrop" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+          <motion.div className="sheet-backdrop" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }} />
           <motion.div
             className="sheet"
             role="dialog"
@@ -53,7 +64,8 @@ export function Sheet({ open, onClose, title, footer, children }: Props) {
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
-            transition={SPRING}
+            transition={SLIDE}
+            transformTemplate={keepLayer}
             drag="y"
             dragControls={drag}
             dragListener={false}
