@@ -38,6 +38,10 @@ function LyingKhaoTang() {
       <ellipse cx={92} cy={188} rx={19} ry={9} {...line} fill={PAPER} strokeWidth={4} />
       <ellipse cx={214} cy={190} rx={19} ry={9} {...line} fill={PAPER} strokeWidth={4} />
 
+      {/* scarf round the neck: drawn before the head so the chin covers its top edge,
+          only as wide as the neck, and outlined so it sits on the cat instead of floating */}
+      <path d="M72 124 Q 104 144 140 120 L 146 136 Q 106 162 68 140 Z" fill={SCARF} {...{ stroke: INK, strokeWidth: 3.5, strokeLinejoin: 'round' as const }} />
+
       {/* head */}
       <g fill={PAPER}>
         <path d="M60 74 L57 30 L90 50 Z" />
@@ -52,8 +56,6 @@ function LyingKhaoTang() {
       <path d="M62 72 L57 30 L88 50" {...line} />
       <path d="M138 72 L143 30 L112 50" {...line} />
       <path d={head} {...line} />
-      {/* scarf under the chin */}
-      <path d="M58 132 Q 100 152 142 132 L 144 146 Q 100 168 56 146 Z" fill={SCARF} />
 
       {/* eyes turned up, with a highlight */}
       <circle cx={80} cy={88} r={7} fill={INK} />
