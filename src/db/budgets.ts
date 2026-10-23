@@ -1,4 +1,4 @@
-import { useLiveQuery } from 'dexie-react-hooks';
+import { useCachedLiveQuery } from '../lib/useCachedLiveQuery';
 import { db } from './db';
 import type { Budget } from './types';
 
@@ -9,5 +9,5 @@ export async function setBudget(categoryId: string, monthlyLimit: number) {
 }
 
 export function useBudgets(): Budget[] | undefined {
-  return useLiveQuery(() => db.budgets.toArray(), []);
+  return useCachedLiveQuery('budgets', () => db.budgets.toArray(), []);
 }

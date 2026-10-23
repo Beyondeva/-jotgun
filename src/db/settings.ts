@@ -1,4 +1,4 @@
-import { useLiveQuery } from 'dexie-react-hooks';
+import { useCachedLiveQuery } from '../lib/useCachedLiveQuery';
 import { db } from './db';
 
 const OWNER_NAMES = 'ownerNames';
@@ -11,5 +11,5 @@ export const setOwnerNames = (names: string[]) => db.settings.put({ key: OWNER_N
 
 /** Names on the owner's own accounts; a slip paid to one of these is income. */
 export function useOwnerNames(): string[] | undefined {
-  return useLiveQuery(getOwnerNames, []);
+  return useCachedLiveQuery('settings:owners', getOwnerNames, []);
 }

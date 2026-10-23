@@ -1,5 +1,4 @@
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Paper } from '../../design/components/Paper';
@@ -11,6 +10,7 @@ import { useBudgets } from '../../db/budgets';
 import { useOwnerNames } from '../../db/settings';
 import type { Category } from '../../db/types';
 import { useThemePref, type ThemePref } from '../../lib/theme';
+import { useCachedLiveQuery } from '../../lib/useCachedLiveQuery';
 import { CategoryEditorSheet } from '../categories/CategoryEditor';
 import { CategoryList } from '../categories/CategoryList';
 import { useCategories } from '../categories/store';
@@ -26,9 +26,9 @@ export function SettingsPage() {
   const [theme, setTheme] = useThemePref();
   const { categories, rules } = useCategories();
   const owners = useOwnerNames();
-  const remembered = useLiveQuery(() => db.payeeMemory.count(), [], 0);
+  const remembered = useCachedLiveQuery('payees:count', () => db.payeeMemory.count(), []) ?? 0;
   const budgets = useBudgets() ?? [];
-  const txCount = useLiveQuery(() => db.transactions.count(), [], 0);
+  const txCount = useCachedLiveQuery('tx:count', () => db.transactions.count(), []) ?? 0;
   const [open, setOpen] = useState<Open>(null);
   const [editing, setEditing] = useState<Category | 'new' | null>(null);
 

@@ -67,7 +67,7 @@ export function HomePage() {
       <section className="hero">
         {current && <div className="hero__hello">{greeting()}</div>}
         <div className="hero__label">{current ? 'ใช้ไปเดือนนี้' : 'ใช้ไปทั้งเดือน'}</div>
-        <Money value={sum.expense} size="hero" countUp />
+        <Money value={sum.expense} size="hero" countUp="home-hero" />
         {current && perDay > 0 && (
           <p className="hero__pace">
             ใช้ได้อีกวันละ <b className="num">฿{Math.floor(perDay / 100).toLocaleString('en-US')}</b> · {days} วัน

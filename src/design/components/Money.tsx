@@ -14,28 +14,45 @@ interface Props {
   sign?: 'none' | 'plus' | 'minus' | 'auto';
   /** hide the ฿ sign, e.g. inside a ledger column that already says บาท */
   bare?: boolean;
-  countUp?: boolean;
+  /**
+   * Animate the number. A string names the spot (e.g. "home-hero"): the last value
+   * shown there is remembered, so coming back to a page doesn't re-count from 0.
+   */
+  countUp?: boolean | string;
   className?: string;
 }
 
-export function useCountUp(target: number, enabled: boolean) {
+/** Last value displayed per count-up spot, for the whole session. */
+const lastShown = new Map<string, number>();
+
+export function useCountUp(target: number, enabled: boolean | string) {
   const reduce = useReducedMotion();
-  const [shown, setShown] = useState(enabled && !reduce ? 0 : target);
-  const from = useRef(enabled && !reduce ? 0 : target);
+  const key = typeof enabled === 'string' ? enabled : undefined;
+  const animate_ = !!enabled && !reduce;
+  const start = animate_ ? (key !== undefined ? (lastShown.get(key) ?? 0) : 0) : target;
+  const [shown, setShown] = useState(start);
+  const from = useRef(start);
 
   useEffect(() => {
-    if (!enabled || reduce) {
+    const done = (v: number) => key !== undefined && lastShown.set(key, v);
+    if (!animate_ || from.current === target) {
       setShown(target);
+      from.current = target;
+      done(target);
       return;
     }
     const controls = animate(from.current, target, {
       duration: 0.7,
       ease: [0.2, 0, 0, 1],
       onUpdate: (v) => setShown(Math.round(v)),
+      onComplete: () => done(target),
     });
     from.current = target;
-    return () => controls.stop();
-  }, [target, enabled, reduce]);
+    return () => {
+      controls.stop();
+      done(target);
+    };
+  }, [target, animate_, key]);
 
   return shown;
 }

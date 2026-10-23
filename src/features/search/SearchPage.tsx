@@ -1,5 +1,4 @@
 import { faBuildingColumns, faChevronLeft, faCreditCard, faMagnifyingGlass, faMoneyBill, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useShell } from '../../app/shell';
@@ -12,6 +11,7 @@ import { Icon, type IconDefinition } from '../../design/Icon';
 import { db } from '../../db/db';
 import type { PayMethod, TxType } from '../../db/types';
 import { totals } from '../../lib/aggregate';
+import { useCachedLiveQuery } from '../../lib/useCachedLiveQuery';
 import { periodOf, shiftPeriod } from '../../lib/period';
 import { EMPTY_FILTER, filterTransactions, isFiltered, type TxFilter } from '../../lib/search';
 import { useCategories, useCategoryOf } from '../categories/store';
@@ -38,7 +38,7 @@ export function SearchPage() {
   const { openManual, removeTx } = useShell();
   const { categories } = useCategories();
   const categoryOf = useCategoryOf();
-  const all = useLiveQuery(() => db.transactions.orderBy('occurredAt').reverse().toArray(), []);
+  const all = useCachedLiveQuery('tx:all', () => db.transactions.orderBy('occurredAt').reverse().toArray(), []);
   const [filter, setFilter] = useState<TxFilter>(EMPTY_FILTER);
   const [range, setRange] = useState('all');
 

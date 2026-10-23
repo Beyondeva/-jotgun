@@ -1,6 +1,5 @@
 import { faCamera, faPen, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useOutlet } from 'react-router';
 import { PageLoader } from '../design/components/PageLoader';
 import { Sheet } from '../design/components/Sheet';
@@ -25,21 +24,18 @@ export function AppLayout() {
   const { readFiles } = useReader();
   const fileInput = useRef<HTMLInputElement>(null);
 
+  // tabs switch instantly like a native tab bar; just start each page at the top
+  // braces matter: newer browsers return a Promise from scrollTo, which React would treat as a cleanup
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [location.pathname]);
+
   return (
     <>
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.main
-          key={location.pathname}
-          className="page"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, transition: { duration: 0.16 } }}
-          exit={{ opacity: 0, transition: { duration: 0.08 } }}
-          onAnimationStart={() => window.scrollTo({ top: 0 })}
-        >
-          {/* lazy pages (summary, search) load here; the tab bar stays put */}
-          <Suspense fallback={<PageLoader />}>{outlet}</Suspense>
-        </motion.main>
-      </AnimatePresence>
+      <main className="page">
+        {/* lazy pages (summary, search) load here; the tab bar stays put */}
+        <Suspense fallback={<PageLoader />}>{outlet}</Suspense>
+      </main>
 
       <TabBar active={tabOf(location.pathname)} onChange={(t) => navigate(TAB_PATH[t])} onAdd={() => setAddOpen(true)} inboxCount={pending} />
 
