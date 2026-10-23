@@ -66,8 +66,9 @@
 .decor-bubble__income { margin-top: 2px; }
 .hero--decor { padding: var(--s-3) 0 var(--s-4); }
 .hero--decor:empty { display: none; }
-/* nothing between the scene and the ledger: give its top rule room so it doesn't read as a scratch on the sand */
-.hero--decor:empty + .ledger { margin-top: var(--s-5); }
+/* under a scene the ledger's top rule reads as a scratch on the sand: drop it */
+.decor-hero ~ .ledger { border-top: 0; }
+.hero--decor:empty + .ledger { margin-top: var(--s-2); }
 
 /* three ledger columns separated by hairlines */
 .ledger { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
