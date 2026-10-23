@@ -8,7 +8,7 @@ import { PageLoader } from '../../design/components/PageLoader';
 import { Paper } from '../../design/components/Paper';
 import { KhaoTang } from '../../mascot/KhaoTang';
 import { DoneStamp } from '../../design/components/Stamp';
-import { canConfirm, confirmAll, confirmSlip, counterpartyOf, discardSlip, fieldsToCheck, restoreSlip } from '../../db/slips';
+import { canConfirm, confirmAll, confirmSlip, counterpartyOf, discardSlip, fieldsToCheck, pickCategory, restoreSlip } from '../../db/slips';
 import type { Slip } from '../../db/types';
 import { BANK_NAME } from '../../lib/banks';
 import { useObjectUrl } from '../../lib/useObjectUrl';
@@ -44,9 +44,13 @@ export function InboxPage() {
     return () => clearTimeout(t);
   }, [done]);
 
-  const pick = async (slip: Slip, categoryId: string) => {
+  // tapping a category only selects it, so a wrong tap can be changed before recording
+  const pick = (slip: Slip, categoryId: string) => void pickCategory(slip.id, categoryId);
+
+  const confirm = async (slip: Slip) => {
     if (!canConfirm(slip)) return setEditing(slip);
-    await confirmSlip(slip.id, categoryId);
+    if (!slip.suggestedCategoryId) return;
+    await confirmSlip(slip.id, slip.suggestedCategoryId);
     setCleared(true);
   };
 
@@ -113,10 +117,12 @@ export function InboxPage() {
                 refNo={s.parsed.ref}
                 categories={forType(categories, s.suggestedType)}
                 suggestedCategoryId={s.suggestedCategoryId}
+                pickedCategoryId={s.categoryPicked ? s.suggestedCategoryId : undefined}
                 lowConfidence={fieldsToCheck(s)}
                 duplicate={!!s.duplicateOf}
                 canPick={canConfirm(s)}
-                onPick={(id) => void pick(s, id)}
+                onPick={(id) => pick(s, id)}
+                onConfirm={() => void confirm(s)}
                 onCreate={() => setCreatingFor(s)}
                 onEdit={() => setEditing(s)}
                 onDiscard={() => void discard(s)}
@@ -151,7 +157,7 @@ export function InboxPage() {
         open={!!creatingFor}
         onClose={() => setCreatingFor(null)}
         draft={creatingFor ? { kind: creatingFor.suggestedType, keywords: counterpartyOf(creatingFor) ? [counterpartyOf(creatingFor)!] : [] } : undefined}
-        onSaved={(c) => creatingFor && void pick(creatingFor, c.id)}
+        onSaved={(c) => creatingFor && pick(creatingFor, c.id)}
       />
     </>
   );

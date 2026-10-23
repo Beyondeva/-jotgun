@@ -6,7 +6,7 @@ import { setBudget } from '../budgets';
 import { db } from '../db';
 import { deleteCategory, saveCategory, saveTransaction } from '../repo';
 import { setOwnerNames } from '../settings';
-import { confirmAll, confirmSlip, ingestSlip } from '../slips';
+import { confirmAll, confirmSlip, ingestSlip, pickCategory, updateSlip } from '../slips';
 
 const img = () => new Blob(['img'], { type: 'image/png' });
 const at = (d: number, h = 12) => new Date(2026, 9, d, h).getTime();
@@ -67,6 +67,22 @@ describe('slip flow', () => {
     expect(await confirmAll()).toBe(1);
     expect(await db.transactions.count()).toBe(1);
     expect((await db.slips.get(empty.id))?.status).toBe('pending');
+  });
+});
+
+describe('pick before confirm', () => {
+  it('picking a category records nothing until confirmed, and survives later edits', async () => {
+    const slip = await ingestSlip({ image: img(), thumb: img(), parsed: { amount: 6500, receiver: 'ร้านใหม่', occurredAt: at(23) } });
+    await pickCategory(slip.id, 'cafe');
+    expect(await db.transactions.count()).toBe(0);
+    expect(await db.slips.get(slip.id)).toMatchObject({ suggestedCategoryId: 'cafe', categoryPicked: true, status: 'pending' });
+
+    // editing the receiver would normally re-guess, but a hand-picked category stays
+    await updateSlip(slip.id, { amount: 6500, receiver: 'LINE MAN', occurredAt: at(23) }, 'expense');
+    expect((await db.slips.get(slip.id))?.suggestedCategoryId).toBe('cafe');
+
+    expect(await confirmAll()).toBe(1);
+    expect((await db.transactions.toArray())[0].categoryId).toBe('cafe');
   });
 });
 

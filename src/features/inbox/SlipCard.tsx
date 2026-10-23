@@ -1,6 +1,6 @@
-import { faCircleExclamation, faClone, faHashtag, faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCircleExclamation, faClone, faHashtag, faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
-import { IconButton } from '../../design/components/Button';
+import { Button, IconButton } from '../../design/components/Button';
 import { Money } from '../../design/components/Money';
 import { Icon } from '../../design/Icon';
 import type { Category, SlipFields, TxType } from '../../db/types';
@@ -18,11 +18,16 @@ interface Props {
   refNo?: string;
   categories: Category[];
   suggestedCategoryId?: string;
+  /** a category the user has tapped; shown selected, recorded only on confirm */
+  pickedCategoryId?: string;
   lowConfidence?: (keyof SlipFields)[];
   duplicate?: boolean;
   /** false while required fields are missing; the grid is then disabled */
   canPick?: boolean;
+  /** tap on a category (with onConfirm: selects it; without: records right away) */
   onPick: (categoryId: string) => void;
+  /** record the slip in the picked (or guessed) category */
+  onConfirm?: () => void;
   onCreate?: () => void;
   onEdit?: () => void;
   onDiscard?: () => void;
@@ -39,15 +44,18 @@ export function SlipCard({
   refNo,
   categories,
   suggestedCategoryId,
+  pickedCategoryId,
   lowConfidence = [],
   duplicate,
   canPick = true,
   onPick,
+  onConfirm,
   onCreate,
   onEdit,
   onDiscard,
 }: Props) {
   const who: keyof SlipFields = type === 'income' ? 'sender' : 'receiver';
+  const chosen = categories.find((c) => c.id === (pickedCategoryId ?? suggestedCategoryId));
   const mark = (f: keyof SlipFields, node: React.ReactNode) => (lowConfidence.includes(f) ? <span className="mark">{node}</span> : node);
 
   return (
@@ -96,8 +104,20 @@ export function SlipCard({
 
       <div className="slip__divider" />
       <fieldset className="slip__pick" disabled={!canPick}>
-        <CategoryGrid categories={categories} suggestedId={suggestedCategoryId} onPick={onPick} onCreate={onCreate} />
+        <CategoryGrid
+          categories={categories}
+          suggestedId={pickedCategoryId ? undefined : suggestedCategoryId}
+          selectedId={pickedCategoryId}
+          onPick={onPick}
+          onCreate={onCreate}
+        />
       </fieldset>
+
+      {onConfirm && (
+        <Button variant="ink" size="lg" block icon={faCheck} disabled={!canPick || !chosen} onClick={onConfirm}>
+          {!canPick ? 'ใส่ยอดและวันที่ก่อน' : chosen ? `จดเข้า ${chosen.name}` : 'เลือกหมวดก่อน'}
+        </Button>
+      )}
     </motion.article>
   );
 }

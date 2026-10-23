@@ -47,6 +47,8 @@ export interface Slip {
   confidence: Partial<Record<keyof SlipFields, number>>;
   suggestedType: TxType;
   suggestedCategoryId?: string;
+  /** the user chose suggestedCategoryId themselves; edits to the slip won't re-guess it */
+  categoryPicked?: boolean;
   dedupeKey?: string;
   /** id of an earlier slip or transaction with the same reference */
   duplicateOf?: string;

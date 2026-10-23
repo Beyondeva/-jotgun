@@ -91,12 +91,16 @@ export async function updateSlip(id: string, parsed: SlipFields, type: TxType): 
   for (const k of Object.keys(parsed) as (keyof SlipFields)[]) if (parsed[k] !== slip.parsed[k]) confidence[k] = 1;
   const whoChanged = type !== slip.suggestedType || parsed.receiver !== slip.parsed.receiver || parsed.sender !== slip.parsed.sender;
   let suggestedCategoryId = slip.suggestedCategoryId;
-  if (whoChanged) {
+  // a category the user picked by hand stays; only a guess is re-guessed
+  if (whoChanged && !slip.categoryPicked) {
     const [categories, rules, memory] = await Promise.all([db.categories.toArray(), db.rules.toArray(), db.payeeMemory.toArray()]);
     suggestedCategoryId = suggestCategory(type === 'income' ? parsed.sender : parsed.receiver, type, { categories, rules, memory }).categoryId;
   }
   await db.slips.update(id, { parsed, confidence, suggestedType: type, suggestedCategoryId });
 }
+
+/** Choose a category for a slip without recording it yet. */
+export const pickCategory = (id: string, categoryId: string) => db.slips.update(id, { suggestedCategoryId: categoryId, categoryPicked: true });
 
 /** Remember which category the user chose for this payee, so next time it's picked automatically. */
 async function learn(counterparty: string | undefined, categoryId: string) {
