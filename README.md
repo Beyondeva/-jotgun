@@ -8,6 +8,10 @@ PWA จดรายรับรายจ่ายส่วนตัว อ่า
 - OCR: tesseract.js (tha+eng) ใน Web Worker, QR: jsQR
 - กราฟ: Recharts, ไอคอน: Font Awesome, อนิเมชัน: framer-motion
 
+## Deploy
+
+เชื่อม repo นี้กับ Vercel แล้วทุก push เข้า `main` จะ deploy ให้อัตโนมัติ (ค่าตั้งใน `vercel.json`) · ต้องเป็น HTTPS เพื่อให้ PWA ทำงานเต็มที่
+
 ## พัฒนา
 
 ```bash
