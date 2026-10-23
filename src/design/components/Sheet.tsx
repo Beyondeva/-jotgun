@@ -54,13 +54,22 @@ export function Sheet({ open, onClose, title, footer, children }: Props) {
     <AnimatePresence>
       {open && (
         <div className="sheet-root">
-          <motion.div className="sheet-backdrop" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }} />
+          {/* will-change set explicitly so the animation library never toggles it at the end of a fade */}
+          <motion.div
+            className="sheet-backdrop"
+            style={{ willChange: 'opacity' }}
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+          />
           <motion.div
             className="sheet"
             role="dialog"
             aria-modal="true"
             aria-label={shown.current.title}
-            style={{ y }}
+            style={{ y, willChange: 'transform' }}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}

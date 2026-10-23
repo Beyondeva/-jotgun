@@ -82,18 +82,25 @@
   border-radius: var(--r-sheet);
   box-shadow: 0 0 0 1px var(--rule);
 }
-/* torn receipt edge: a zigzag mask along the bottom */
+/* torn receipt edge: zigzag teeth drawn by a pseudo-element hanging below the sheet.
+   (A CSS mask did the same, but iOS re-rasterises masked content whenever a layer
+   such as a sheet backdrop appears above it, which flickers the page.) */
 .paper--torn {
   --tooth: 10px;
+  position: relative;
   border-radius: var(--r-sheet) var(--r-sheet) 0 0;
   box-shadow: none;
-  padding-bottom: calc(var(--tooth) / 2);
-  -webkit-mask:
-    linear-gradient(#000 0 0) top / 100% calc(100% - var(--tooth) / 2) no-repeat,
-    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--tooth) calc(var(--tooth) / 2) repeat-x;
-  mask:
-    linear-gradient(#000 0 0) top / 100% calc(100% - var(--tooth) / 2) no-repeat,
-    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--tooth) calc(var(--tooth) / 2) repeat-x;
+  margin-bottom: calc(var(--tooth) / 2);
+}
+.paper--torn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: calc(var(--tooth) / 2);
+  background: conic-gradient(from -45deg at bottom, var(--sheet) 90deg, transparent 0) 0 0 / var(--tooth) 100% repeat-x;
+  pointer-events: none;
 }
 .paper--pressable { cursor: pointer; }
 
@@ -349,8 +356,8 @@
   :root:not([data-theme='light']) .mark { color: var(--mark-ink); }
 }
 
-/* riso colour layer on the mascot (the cat is white in both themes, so multiply always works) */
-.riso { mix-blend-mode: multiply; }
+/* riso colour layer on the mascot: plain translucent fills, no mix-blend-mode
+   (blend modes make iOS repaint everything around them when a layer appears above) */
 
 /* ---------- Charts ---------- */
 .stack { display: flex; flex-direction: column; gap: var(--s-3); }
