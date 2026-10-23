@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { parseThemeId, resolveTheme, THEME_STORAGE_KEY, themeById, type ThemeId } from '../design/themes';
+import { useEffect, useState, useSyncExternalStore } from 'react';
+import { parseThemeId, resolveTheme, THEME_STORAGE_KEY, themeById, type ConcreteThemeId, type ThemeId } from '../design/themes';
 
 export type { ThemeId };
 
@@ -18,6 +18,19 @@ function paint(pref: ThemeId) {
   const id = resolveTheme(pref, !!systemQuery()?.matches);
   document.documentElement.setAttribute('data-theme', id);
   document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute('content', themeById(id).themeColor);
+  window.dispatchEvent(new Event(PAINTED));
+}
+
+const PAINTED = 'jotgun:theme-painted';
+
+/** The theme on screen right now ("system" already resolved). */
+export const activeTheme = () => (document.documentElement.getAttribute('data-theme') ?? 'paper') as ConcreteThemeId;
+
+export function useActiveTheme(): ConcreteThemeId {
+  return useSyncExternalStore((cb) => {
+    window.addEventListener(PAINTED, cb);
+    return () => window.removeEventListener(PAINTED, cb);
+  }, activeTheme);
 }
 
 export function applyTheme(pref: ThemeId) {

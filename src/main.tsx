@@ -4,6 +4,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { App } from './app/App';
 import { watchSystemTheme } from './lib/theme';
+import { preloadDecor } from './design/decor';
 import './design/tokens.css';
 import './design/base.css';
 import './design/components.css';
@@ -14,6 +15,7 @@ import './features/inbox/inbox.css';
 config.autoAddCss = false;
 // the theme itself is already applied by the inline script in index.html
 watchSystemTheme();
+preloadDecor(); // a decorated theme's art starts downloading alongside the app
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -9,6 +9,7 @@ import { Money } from '../../design/components/Money';
 import { PageLoader } from '../../design/components/PageLoader';
 import { Paper } from '../../design/components/Paper';
 import { Sheet } from '../../design/components/Sheet';
+import { useDecor } from '../../design/decor';
 import { Icon } from '../../design/Icon';
 import { useBudgets } from '../../db/budgets';
 import { expenseByCategory, totals } from '../../lib/aggregate';
@@ -35,6 +36,7 @@ export function HomePage() {
   const txs = useTransactions(period);
   const pending = usePendingSlips();
   const budgets = useBudgets() ?? [];
+  const decor = useDecor();
 
   const sum = useMemo(() => totals(txs ?? []), [txs]);
   const byCat = useMemo(() => expenseByCategory(txs ?? []), [txs]);
@@ -53,21 +55,44 @@ export function HomePage() {
   const worst = current ? worstBudget(budgetStates(byCat, budgets, periodProgress(period))) : undefined;
 
   // first read from IndexedDB (or a month switch): show the cat instead of ฿0
-  if (txs === undefined) return <PageLoader />;
+  // (a decorated theme's art is still downloading: wait rather than jump from plain to scene)
+  if (txs === undefined || decor === 'loading') return <PageLoader />;
+
+  const topbar = (
+    <header className="topbar">
+      <button className="month-btn" onClick={() => setMonthsOpen(true)}>
+        {periodLabel(period)} <Icon icon={faChevronDown} size={11} />
+      </button>
+      <IconButton icon={faMagnifyingGlass} label="ค้นหา" onClick={() => navigate('/search')} />
+    </header>
+  );
+  const spentLabel = current ? 'ใช้ไปเดือนนี้' : 'ใช้ไปทั้งเดือน';
 
   return (
     <>
-      <header className="topbar">
-        <button className="month-btn" onClick={() => setMonthsOpen(true)}>
-          {periodLabel(period)} <Icon icon={faChevronDown} size={11} />
-        </button>
-        <IconButton icon={faMagnifyingGlass} label="ค้นหา" onClick={() => navigate('/search')} />
-      </header>
+      {decor ? (
+        // decorated: the scene fills the header; the amount sits in a see-through bubble
+        <section className="decor-hero">
+          <decor.Scene />
+          {topbar}
+          <div className="decor-bubble">
+            <span className="decor-bubble__label">{spentLabel}</span>
+            <Money value={sum.expense} size="lg" countUp="home-hero" />
+            {sum.income > 0 && <Money value={sum.income} size="sm" flow="in" className="decor-bubble__income" />}
+          </div>
+        </section>
+      ) : (
+        topbar
+      )}
 
-      <section className="hero">
-        {current && <div className="hero__hello">{greeting()}</div>}
-        <div className="hero__label">{current ? 'ใช้ไปเดือนนี้' : 'ใช้ไปทั้งเดือน'}</div>
-        <Money value={sum.expense} size="hero" countUp="home-hero" />
+      <section className={`hero ${decor ? 'hero--decor' : ''}`}>
+        {!decor && (
+          <>
+            {current && <div className="hero__hello">{greeting()}</div>}
+            <div className="hero__label">{spentLabel}</div>
+            <Money value={sum.expense} size="hero" countUp="home-hero" />
+          </>
+        )}
         {current && perDay > 0 && (
           <p className="hero__pace">
             ใช้ได้อีกวันละ <b className="num">฿{Math.floor(perDay / 100).toLocaleString('en-US')}</b> · {days} วัน

@@ -54,7 +54,11 @@ describe.each(THEMES.map((t) => t.id))('theme %s', (id) => {
 
   it('defines every colour (no leaking from the default theme)', () => {
     if (id === 'paper') COLOR_VARS.forEach((k) => expect(root, k).toHaveProperty(k));
-    else expect(Object.keys(block(`:root[data-theme='${id}']`)).sort()).toEqual([...COLOR_VARS].sort());
+    else {
+      // decorated themes may add their own --bar* / --scene-* tokens on top
+      const own = Object.keys(block(`:root[data-theme='${id}']`)).filter((k) => !/^--(bar|scene)/.test(k));
+      expect(own.sort()).toEqual([...COLOR_VARS].sort());
+    }
   });
 
   it.each(TEXT.flatMap((t) => SURFACES.map((s) => [t, s])))('%s on %s ≥ 4.5', (t, s) => {
@@ -67,6 +71,11 @@ describe.each(THEMES.map((t) => t.id))('theme %s', (id) => {
     expect(c('--mark-text', '--mark')).toBeGreaterThanOrEqual(4.5);
     expect(c('--mark-ink', '--mark')).toBeGreaterThanOrEqual(4.5);
     expect(c('--toast-action', '--ink')).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it.runIf(id !== 'paper' && '--bar' in block(`:root[data-theme='${id}']`))('decorated tab bar labels ≥ 4.5', () => {
+    expect(c('--bar-ink', '--bar')).toBeGreaterThanOrEqual(4.5);
+    expect(c('--bar-ink', '--bar-active')).toBeGreaterThanOrEqual(3);
   });
 
   it.each(CATS)('%s icon on sheet ≥ 3', (k) => {

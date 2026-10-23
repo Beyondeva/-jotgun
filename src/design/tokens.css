@@ -206,3 +206,47 @@
   --cat-sand: #c9a777;
   --cat-slate: #98a4ac;
 }
+
+/* ข้าวตังเที่ยวทะเลยามค่ำ — กรมท่า colours; scene and tab icons in src/design/decor/beach */
+:root[data-theme='beach'] {
+  color-scheme: dark;
+  --paper: #0f141c;
+  --paper-2: #151c27;
+  --sheet: #182131;
+  --rule: #26303f;
+  --rule-strong: #364357;
+  --overlay: rgba(0, 0, 0, 0.55);
+  --ink: #eef1f5;
+  --ink-2: #8e9bb0;
+  --ink-3: #7f8b9e;
+  --on-ink: #0f141c;
+  --accent: #ff7a59;
+  --accent-press: #ff9473;
+  --on-accent: #1a0d07;
+  --income: #4fd1a0;
+  --over: #ff8a70;
+  --mark: #6b5c17;
+  --mark-ink: #fff1a6;
+  --mark-text: var(--mark-ink);
+  --press: rgba(238, 241, 245, 0.08);
+  --toast-action: #ab523c;
+  --cat-brick: #e07a5c;
+  --cat-clay: #e39565;
+  --cat-ochre: #d9ae4e;
+  --cat-olive: #a9ae55;
+  --cat-moss: #7db06f;
+  --cat-teal: #5db3ad;
+  --cat-sky: #8cb7dd; /* blue-on-navy sank: lifted */
+  --cat-indigo: #9fa4dd;
+  --cat-plum: #b987bb;
+  --cat-rose: #de869e;
+  --cat-sand: #c9a777;
+  --cat-slate: #abb4bb;
+  /* decorated: sand tab bar and the see-through bubble over the scene */
+  --bar: #8a6a46;
+  --bar-rule: #6e5134;
+  --bar-ink: #fff6e6;
+  --bar-active: #a07c52;
+  --scene-bubble: rgba(15, 20, 28, 0.72);
+  --scene-bubble-rule: rgba(238, 241, 245, 0.28);
+}

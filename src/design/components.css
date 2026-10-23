@@ -164,8 +164,9 @@
   align-items: center;
   height: calc(var(--tabbar-h) + var(--safe-bottom));
   padding: 0 calc(var(--s-2) + var(--safe-right)) var(--safe-bottom) calc(var(--s-2) + var(--safe-left));
-  background: var(--paper);
-  border-top: 1px solid var(--rule);
+  /* --bar*: decorated themes paint the bar (plain themes don't define them) */
+  background: var(--bar, var(--paper));
+  border-top: 1px solid var(--bar-rule, var(--rule));
 }
 .tab {
   position: relative;
@@ -193,7 +194,7 @@
   font-weight: 600;
   line-height: 17px;
   text-align: center;
-  box-shadow: 0 0 0 2px var(--paper);
+  box-shadow: 0 0 0 2px var(--bar, var(--paper));
 }
 .tabbar__add:active { background: var(--accent-press); }
 .tabbar__add {
@@ -208,6 +209,18 @@
   font-weight: 600;
   font-size: 14px;
 }
+
+/* decorated theme: drawn icons with labels; the active one sits on a lighter patch of sand */
+.tabbar--drawn { border-top-width: 2px; }
+.tabbar--drawn .tab { flex-direction: column; gap: 1px; color: var(--bar-ink); }
+.tabbar--drawn .tab__icon { display: grid; place-items: center; width: 44px; height: 32px; border-radius: 10px; }
+.tabbar--drawn .tab.is-active .tab__icon { background: var(--bar-active); }
+.tabbar--drawn .tab__badge { top: -3px; left: 28px; box-shadow: 0 0 0 2px var(--bar); }
+.tab__label { font-size: 10.5px; line-height: 1.2; }
+.tab.is-active .tab__label { font-weight: 700; }
+/* the beach ball floats half above the bar; still a 50px tap target */
+.tabbar__add--drawn { width: 56px; height: 56px; margin-top: -22px; border-radius: 50%; background: none; }
+.tabbar__add--drawn:active { background: none; }
 
 /* ---------- Bottom sheet ---------- */
 .sheet-root { position: fixed; inset: 0; z-index: 60; }

@@ -61,3 +61,4 @@
 .theme-mini__line { display: block; height: 4px; border-radius: 2px; }
 .theme-mini__income { font-size: 10px; font-weight: 700; line-height: 1; margin-top: auto; }
 .theme-mini__accent { position: absolute; right: 12px; bottom: 14px; width: 10px; height: 10px; border-radius: 3px; }
+.theme-mini__scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }

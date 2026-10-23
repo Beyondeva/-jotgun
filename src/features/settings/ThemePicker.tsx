@@ -67,6 +67,7 @@ export function ThemePicker() {
 
 /** A thumbnail of the app in a theme: page, a receipt with two lines, an income figure and the accent. */
 function Mini({ s }: { s: ThemeSwatch }) {
+  if (s.scene) return <SceneMini s={s} />;
   return (
     <span className="theme-mini" style={{ background: s.paper }}>
       <span className="theme-mini__sheet" style={{ background: s.sheet }}>
@@ -77,6 +78,24 @@ function Mini({ s }: { s: ThemeSwatch }) {
         </span>
       </span>
       <span className="theme-mini__accent" style={{ background: s.accent }} />
+    </span>
+  );
+}
+
+/** Decorated themes: sky, moon, sea and sand bands, with the page colour below. */
+function SceneMini({ s }: { s: ThemeSwatch }) {
+  const c = s.scene!;
+  return (
+    <span className="theme-mini" style={{ background: s.paper }}>
+      <svg viewBox="0 0 100 64" preserveAspectRatio="none" className="theme-mini__scene">
+        <rect width="100" height="40" fill={c.sky} />
+        <circle cx="76" cy="12" r="5" fill={c.moon} />
+        <path d="M0 26 Q 12 23 25 26 T 50 26 T 75 26 T 100 26 V 40 H 0 Z" fill={c.sea} />
+        <path d="M0 34 Q 40 29 100 33 V 40 H 0 Z" fill={c.sand} />
+        <circle cx="26" cy="20" r="9" fill={s.paper} opacity="0.72" />
+        <rect x="8" y="48" width="56" height="4" rx="2" fill={s.ink} />
+        <rect x="8" y="56" width="34" height="4" rx="2" fill={s.ink2} />
+      </svg>
     </span>
   );
 }

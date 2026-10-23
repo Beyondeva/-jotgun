@@ -6,13 +6,14 @@
  * the picker cards (a test checks the swatches match tokens.css).
  *
  * Adding a plain theme: add a block to tokens.css and an entry here.
- * Decorated (ข้าวตัง) themes arrive in phase 2 and will add an optional `decor`.
+ * Adding a decorated (ข้าวตัง) theme: the same, plus a folder in src/design/decor/
+ * named by `decor` (header scene + optional tab icons, loaded only when picked).
  */
 
 export type ThemeGroup = 'plain' | 'khaotang';
 
 /** A theme that maps to one [data-theme] block. */
-export type ConcreteThemeId = 'paper' | 'rain' | 'navy' | 'plum';
+export type ConcreteThemeId = 'paper' | 'rain' | 'navy' | 'plum' | 'beach';
 /** What the user can pick; "system" follows the device: paper by day, rain at night. */
 export type ThemeId = 'system' | ConcreteThemeId;
 
@@ -23,6 +24,8 @@ export interface ThemeSwatch {
   ink2: string;
   accent: string;
   income: string;
+  /** decorated themes: a tiny version of the header scene for the picker card */
+  scene?: { sky: string; sea: string; sand: string; moon: string };
 }
 
 export interface ConcreteTheme {
@@ -33,12 +36,14 @@ export interface ConcreteTheme {
   /** <meta name="theme-color">: the PWA status bar / Safari toolbar */
   themeColor: string;
   swatch: ThemeSwatch;
+  /** folder in src/design/decor/ holding this theme's scene and tab icons */
+  decor?: string;
 }
 
 export const THEMES: ConcreteTheme[] = [
   {
     id: 'paper',
-    name: 'กระดาษ',
+    name: 'สว่าง',
     group: 'plain',
     scheme: 'light',
     themeColor: '#f4efe6',
@@ -46,7 +51,7 @@ export const THEMES: ConcreteTheme[] = [
   },
   {
     id: 'rain',
-    name: 'กระดาษคืนฝน',
+    name: 'มืด',
     group: 'plain',
     scheme: 'dark',
     themeColor: '#191612',
@@ -67,6 +72,23 @@ export const THEMES: ConcreteTheme[] = [
     scheme: 'dark',
     themeColor: '#17121b',
     swatch: { paper: '#17121b', sheet: '#241c2b', ink: '#f3ecf5', ink2: '#a596ad', accent: '#f2a93b', income: '#7bd389' },
+  },
+  {
+    id: 'beach',
+    name: 'ทะเลยามค่ำ',
+    group: 'khaotang',
+    scheme: 'dark',
+    themeColor: '#0f141c',
+    decor: 'beach',
+    swatch: {
+      paper: '#0f141c',
+      sheet: '#182131',
+      ink: '#eef1f5',
+      ink2: '#8e9bb0',
+      accent: '#ff7a59',
+      income: '#4fd1a0',
+      scene: { sky: '#14213a', sea: '#245074', sand: '#a07c52', moon: '#f6df6b' },
+    },
   },
 ];
 

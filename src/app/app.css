@@ -36,6 +36,37 @@
 .hero__pace { margin-top: var(--s-3); font-size: 14px; color: var(--ink-2); line-height: 1.6; }
 .hero__pace b { color: var(--ink); font-weight: 600; }
 
+/* decorated theme header: the scene bleeds to the screen edges and under the status bar */
+.decor-hero {
+  position: relative;
+  height: calc(250px + var(--safe-top));
+  margin: calc((var(--safe-top) + var(--s-2)) * -1) calc((var(--s-4) + var(--safe-right)) * -1) 0 calc((var(--s-4) + var(--safe-left)) * -1);
+  padding: var(--safe-top) calc(var(--s-4) + var(--safe-right)) 0 calc(var(--s-4) + var(--safe-left));
+  overflow: hidden;
+  color: var(--ink);
+}
+.decor-scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.decor-hero .topbar { position: relative; padding-top: var(--s-2); }
+.decor-bubble {
+  position: absolute;
+  left: calc(var(--s-5) + var(--safe-left));
+  top: calc(var(--safe-top) + 62px);
+  width: 152px;
+  height: 152px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: var(--scene-bubble);
+  box-shadow: inset 0 0 0 1.5px var(--scene-bubble-rule);
+}
+.decor-bubble__label { font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.decor-bubble__income { margin-top: 2px; }
+.hero--decor { padding: var(--s-3) 0 var(--s-4); }
+.hero--decor:empty { display: none; }
+
 /* three ledger columns separated by hairlines */
 .ledger { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
 .ledger__col { padding: var(--s-3) 0; display: flex; flex-direction: column; gap: 2px; }
