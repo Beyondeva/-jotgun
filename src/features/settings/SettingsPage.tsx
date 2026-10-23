@@ -16,6 +16,7 @@ import { CategoryList } from '../categories/CategoryList';
 import { useCategories } from '../categories/store';
 import { BudgetsSheet } from './BudgetsSheet';
 import { DataSheet } from './DataSheet';
+import { FlickerTest } from './FlickerTest';
 import { OwnerNamesSheet } from './OwnerNamesSheet';
 import { PayeeMemorySheet } from './PayeeMemorySheet';
 
@@ -43,6 +44,9 @@ export function SettingsPage() {
   return (
     <>
       <h1 className="page-title">ตั้งค่า</h1>
+
+      {/* TEMPORARY: flicker diagnosis on iPhone — remove after */}
+      <FlickerTest />
 
       <div className="list-cap">ธีม</div>
       <Segmented<ThemePref>
