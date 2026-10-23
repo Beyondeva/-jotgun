@@ -1,14 +1,20 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { themeBootScript } from './src/design/themes';
 
 export default defineConfig({
   base: './',
   server: { host: true },
   preview: { host: true },
-  test: { environment: 'node', include: ['src/**/*.test.ts'] },
+  test: { environment: 'node', include: ['src/**/*.test.ts'], css: { include: [/tokens\.css/] } },
   plugins: [
     react(),
+    {
+      // apply the saved theme in <head> before the page paints (no flash of the default theme)
+      name: 'jotgun-theme-boot',
+      transformIndexHtml: (html) => html.replace(/<!-- theme-boot:[^>]*-->/, `<script>${themeBootScript()}</script>`),
+    },
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon-180x180.png'],

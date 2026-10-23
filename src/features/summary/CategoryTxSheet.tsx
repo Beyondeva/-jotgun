@@ -21,7 +21,7 @@ export function CategoryTxSheet({ categoryId, txs, onClose }: { categoryId: stri
       ) : (
         <>
           <div className="cat-sheet__total">
-            <Money value={sum.expense || sum.income} size="lg" tone={sum.expense ? 'default' : 'income'} />
+            <Money value={sum.expense || sum.income} size="lg" flow={sum.expense ? 'out' : 'in'} />
             <span className="num">{list.length} รายการ</span>
           </div>
           <Receipt

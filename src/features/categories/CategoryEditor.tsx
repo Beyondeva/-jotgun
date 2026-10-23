@@ -119,7 +119,7 @@ function CategoryForm({ category, draft, onDone, onSaved }: FormProps) {
               </div>
             </div>
             <div className="tx__amt">
-              <Money value={kind === 'income' ? 150000 : 12000} size="md" bare tone={kind === 'income' ? 'income' : 'default'} sign={kind === 'income' ? 'plus' : 'minus'} />
+              <Money value={kind === 'income' ? 150000 : 12000} size="md" bare flow={kind === 'income' ? 'in' : 'out'} />
             </div>
           </div>
         </div>

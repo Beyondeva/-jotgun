@@ -9,13 +9,12 @@ import { EmptyState, ProgressBar, Skeleton } from '../../design/components/Feedb
 import { Money } from '../../design/components/Money';
 import { PageLoader } from '../../design/components/PageLoader';
 import { Paper } from '../../design/components/Paper';
-import { Segmented } from '../../design/components/Segmented';
 import { DoneStamp } from '../../design/components/Stamp';
 import { Tag } from '../../design/components/Tag';
 import { Icon } from '../../design/Icon';
 import { CATEGORY_ICONS, CATEGORY_ICON_KEYS } from '../../design/icons';
 import { CAT_COLORS } from '../../design/palette';
-import { useThemePref, type ThemePref } from '../../lib/theme';
+import { ThemePicker } from '../settings/ThemePicker';
 import { KhaoTang, type Mood } from '../../mascot/KhaoTang';
 import { CategoryEditorSheet } from '../categories/CategoryEditor';
 import { CategoryGrid } from '../categories/CategoryGrid';
@@ -46,7 +45,6 @@ const MOODS: { mood: Mood; when: string }[] = [
 
 export function DesignPreview() {
   const navigate = useNavigate();
-  const [theme, setTheme] = useThemePref();
   const { categories } = useCategories();
   const [tag, setTag] = useState('food');
   const [picked, setPicked] = useState<string>();
@@ -79,15 +77,7 @@ export function DesignPreview() {
             <p className="dp-muted">Design preview · v0.2 · แนวใบเสร็จ</p>
           </div>
         </div>
-        <Segmented<ThemePref>
-          value={theme}
-          onChange={setTheme}
-          options={[
-            { value: 'system', label: 'ตามเครื่อง' },
-            { value: 'light', label: 'สว่าง' },
-            { value: 'dark', label: 'มืด' },
-          ]}
-        />
+        <ThemePicker />
         <Button size="lg" block icon={faArrowRight} onClick={() => navigate('/design-preview/app')}>
           ลองหน้าแอปตัวอย่าง
         </Button>

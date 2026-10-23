@@ -21,6 +21,8 @@
 .money--muted { color: var(--ink-2); }
 .money__cur { margin-right: 0.06em; }
 .money__sign { margin-right: 0.04em; }
+/* in-arrow pointing down-left ("into the account") before income figures */
+.money__in { margin-right: 0.22em; align-self: center; transform: rotate(45deg); }
 .money__dec { color: var(--ink-3); }
 .money--income .money__dec,
 .money--over .money__dec { color: inherit; opacity: 0.6; }
@@ -343,16 +345,12 @@
 /* highlighter: low-confidence OCR fields */
 .mark {
   background: linear-gradient(transparent 12%, var(--mark) 12% 88%, transparent 88%);
-  color: var(--ink);
+  color: var(--mark-text);
   border-radius: 2px;
   padding: 0 3px;
   margin: 0 -3px;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-}
-:root[data-theme='dark'] .mark { color: var(--mark-ink); }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .mark { color: var(--mark-ink); }
 }
 
 /* riso colour layer on the mascot: plain translucent fills, no mix-blend-mode
@@ -419,8 +417,7 @@
   font-size: 14px;
   font-weight: 500;
 }
-.toast__action { min-height: 40px; padding: 0 var(--s-3); color: var(--accent); font-weight: 700; }
-:root[data-theme='dark'] .toast__action { color: var(--accent-press); }
+.toast__action { min-height: 40px; padding: 0 var(--s-3); color: var(--toast-action); font-weight: 700; }
 
 /* ---------- Page loader ---------- */
 .page-loader {

@@ -7,11 +7,11 @@ export function Ledger({ totals }: { totals: Totals }) {
     <div className="ledger">
       <div className="ledger__col">
         <span className="ledger__label">รายรับ</span>
-        <Money value={totals.income} size="sm" tone="income" countUp="ledger-income" />
+        <Money value={totals.income} size="sm" flow="in" countUp="ledger-income" />
       </div>
       <div className="ledger__col">
         <span className="ledger__label">รายจ่าย</span>
-        <Money value={totals.expense} size="sm" countUp="ledger-expense" />
+        <Money value={totals.expense} size="sm" flow="out" countUp="ledger-expense" />
       </div>
       <div className="ledger__col">
         <span className="ledger__label">คงเหลือ</span>

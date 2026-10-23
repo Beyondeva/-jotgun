@@ -30,7 +30,7 @@ export function TxRow({ tx, category }: Props) {
         </div>
       </div>
       <div className="tx__amt">
-        <Money value={tx.amount} size="md" bare tone={tx.type === 'income' ? 'income' : 'default'} sign={tx.type === 'income' ? 'plus' : 'minus'} />
+        <Money value={tx.amount} size="md" bare flow={tx.type === 'income' ? 'in' : 'out'} />
       </div>
     </div>
   );

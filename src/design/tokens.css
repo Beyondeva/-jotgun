@@ -1,8 +1,17 @@
 /*
  * Design tokens — จดกัน
  * Concept: a paper ledger / thermal receipt. Warm paper, near-black ink,
- * one brick accent for things you can press, highlighter yellow for "check this".
- * Light is the default; dark applies from the OS unless <html data-theme> forces one.
+ * one accent for things you can press, highlighter yellow for "check this".
+ *
+ * Themes: :root is กระดาษ (paper). Every other theme is a [data-theme] block that
+ * overrides the SAME variables — components never hard-code a theme's colours.
+ * The inline script in index.html sets data-theme before first paint ("system"
+ * resolves to paper or rain there), so there is no duplicated media-query block.
+ *
+ * Every theme must define every variable in the "colour" groups below.
+ * Text colours (--ink, --ink-2, --ink-3, --accent as link text, --over, --income)
+ * must reach 4.5:1 on --paper, --paper-2 and --sheet; src/design/__tests__/contrast.test.ts
+ * checks this for every theme.
  */
 :root {
   color-scheme: light;
@@ -17,26 +26,28 @@
 
   /* ink */
   --ink: #1f1b17;
-  --ink-2: #6b6157;
-  --ink-3: #a1968a;
+  --ink-2: #595048;
+  --ink-3: #6a625a;
   --on-ink: #fffcf6;
 
   /* the one accent: brick */
-  --accent: #c2471f;
-  --accent-press: #a83b18;
+  --accent: #ae401d;
+  --accent-press: #96371a;
   --on-accent: #fffcf6;
 
   /* meaning */
-  --income: #2e7a4c;
-  --over: #c2471f;
+  --income: #2b7147;
+  --over: #ae401d;
   --mark: #f6df6b; /* highlighter */
-  --mark-ink: #6d5a00;
+  --mark-ink: #6d5a00; /* text/icons on the highlighter badge */
+  --mark-text: var(--ink); /* body text sitting on a highlighted field */
   --press: rgba(31, 27, 23, 0.07); /* tap feedback tint */
+  --toast-action: #c96a4c; /* "เลิกทำ" on the toast, which is drawn in --ink */
 
-  /* category inks (coloured pencils) */
+  /* category inks (coloured pencils); glyphs need ≥ 3:1 on the paper */
   --cat-brick: #b5462b;
-  --cat-clay: #c7703f;
-  --cat-ochre: #b8861b;
+  --cat-clay: #c56f3f;
+  --cat-ochre: #ac7d1b;
   --cat-olive: #7a7f2a;
   --cat-moss: #4c7a45;
   --cat-teal: #2d7672;
@@ -47,7 +58,7 @@
   --cat-sand: #9c7a4c;
   --cat-slate: #5d6870;
 
-  /* mascot: same white cat in both themes, so these are never overridden for dark */
+  /* mascot: the same white cat in every theme, so these are never overridden */
   --mascot-ink: #1f1b17;
   --mascot-paper: #fffcf6;
   --mascot-tabby: #b8861b;
@@ -85,43 +96,8 @@
   --dur: 180ms;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-    --paper: #191612;
-    --paper-2: #221e19;
-    --sheet: #26211c;
-    --rule: #3a332b;
-    --rule-strong: #52493e;
-    --overlay: rgba(0, 0, 0, 0.55);
-    --ink: #efe7da;
-    --ink-2: #ab9f90;
-    --ink-3: #75695c;
-    --on-ink: #191612;
-    --accent: #e8693f;
-    --accent-press: #f07d55;
-    --on-accent: #1a0e08;
-    --income: #73c48f;
-    --over: #f07d55;
-    --mark: #7a6a1c;
-    --mark-ink: #fbe98e;
-    --press: rgba(239, 231, 218, 0.09);
-    --cat-brick: #e07a5c;
-    --cat-clay: #e39565;
-    --cat-ochre: #d9ae4e;
-    --cat-olive: #a9ae55;
-    --cat-moss: #7db06f;
-    --cat-teal: #5db3ad;
-    --cat-sky: #73a7d6;
-    --cat-indigo: #8a90d6;
-    --cat-plum: #b987bb;
-    --cat-rose: #de869e;
-    --cat-sand: #c9a777;
-    --cat-slate: #98a4ac;
-  }
-}
-
-:root[data-theme='dark'] {
+/* กระดาษคืนฝน — warm espresso night paper */
+:root[data-theme='rain'] {
   color-scheme: dark;
   --paper: #191612;
   --paper-2: #221e19;
@@ -131,16 +107,18 @@
   --overlay: rgba(0, 0, 0, 0.55);
   --ink: #efe7da;
   --ink-2: #ab9f90;
-  --ink-3: #75695c;
+  --ink-3: #94897c;
   --on-ink: #191612;
   --accent: #e8693f;
   --accent-press: #f07d55;
   --on-accent: #1a0e08;
   --income: #73c48f;
   --over: #f07d55;
-  --mark: #7a6a1c;
-  --mark-ink: #fbe98e;
+  --mark: #6b5c17;
+  --mark-ink: #fff1a6;
+  --mark-text: var(--mark-ink);
   --press: rgba(239, 231, 218, 0.09);
+  --toast-action: #a74c2d;
   --cat-brick: #e07a5c;
   --cat-clay: #e39565;
   --cat-ochre: #d9ae4e;
@@ -151,6 +129,80 @@
   --cat-indigo: #8a90d6;
   --cat-plum: #b987bb;
   --cat-rose: #de869e;
+  --cat-sand: #c9a777;
+  --cat-slate: #98a4ac;
+}
+
+/* กรมท่า — navy night */
+:root[data-theme='navy'] {
+  color-scheme: dark;
+  --paper: #0f141c;
+  --paper-2: #151c27;
+  --sheet: #182131;
+  --rule: #26303f;
+  --rule-strong: #364357;
+  --overlay: rgba(0, 0, 0, 0.55);
+  --ink: #eef1f5;
+  --ink-2: #8e9bb0;
+  --ink-3: #7f8b9e;
+  --on-ink: #0f141c;
+  --accent: #ff7a59;
+  --accent-press: #ff9473;
+  --on-accent: #1a0d07;
+  --income: #4fd1a0;
+  --over: #ff8a70;
+  --mark: #6b5c17;
+  --mark-ink: #fff1a6;
+  --mark-text: var(--mark-ink);
+  --press: rgba(238, 241, 245, 0.08);
+  --toast-action: #ab523c;
+  --cat-brick: #e07a5c;
+  --cat-clay: #e39565;
+  --cat-ochre: #d9ae4e;
+  --cat-olive: #a9ae55;
+  --cat-moss: #7db06f;
+  --cat-teal: #5db3ad;
+  --cat-sky: #8cb7dd; /* blue-on-navy sank: lifted */
+  --cat-indigo: #9fa4dd;
+  --cat-plum: #b987bb;
+  --cat-rose: #de869e;
+  --cat-sand: #c9a777;
+  --cat-slate: #abb4bb;
+}
+
+/* พลัม — plum night */
+:root[data-theme='plum'] {
+  color-scheme: dark;
+  --paper: #17121b;
+  --paper-2: #1e1824;
+  --sheet: #241c2b;
+  --rule: #352a3d;
+  --rule-strong: #473a52;
+  --overlay: rgba(0, 0, 0, 0.55);
+  --ink: #f3ecf5;
+  --ink-2: #a596ad;
+  --ink-3: #918499;
+  --on-ink: #17121b;
+  --accent: #f2a93b;
+  --accent-press: #f5bb5f;
+  --on-accent: #1f1405;
+  --income: #7bd389;
+  --over: #ff8f7a;
+  --mark: #6b5c17;
+  --mark-ink: #fff1a6;
+  --mark-text: var(--mark-ink);
+  --press: rgba(243, 236, 245, 0.08);
+  --toast-action: #8c6222;
+  --cat-brick: #e07a5c;
+  --cat-clay: #e39565;
+  --cat-ochre: #d9ae4e;
+  --cat-olive: #a9ae55;
+  --cat-moss: #7db06f;
+  --cat-teal: #5db3ad;
+  --cat-sky: #73a7d6;
+  --cat-indigo: #9fa4dd; /* purple-on-plum sank: lifted */
+  --cat-plum: #c69dc7;
+  --cat-rose: #e49caf;
   --cat-sand: #c9a777;
   --cat-slate: #98a4ac;
 }

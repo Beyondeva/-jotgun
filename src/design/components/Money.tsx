@@ -1,6 +1,8 @@
 import { animate, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { splitMoney } from '../../lib/money';
+import { Icon } from '../Icon';
 
 type Size = 'hero' | 'lg' | 'md' | 'sm';
 type Tone = 'default' | 'income' | 'over' | 'muted';
@@ -12,6 +14,11 @@ interface Props {
   tone?: Tone;
   /** prefix + / − (uses the value's sign when "auto") */
   sign?: 'none' | 'plus' | 'minus' | 'auto';
+  /**
+   * Money moving in or out. "in" = + and an in-arrow (and the income colour);
+   * "out" = −. Meaning never rests on colour alone, so it reads in every theme.
+   */
+  flow?: 'in' | 'out';
   /** hide the ฿ sign, e.g. inside a ledger column that already says บาท */
   bare?: boolean;
   /**
@@ -57,14 +64,18 @@ export function useCountUp(target: number, enabled: boolean | string) {
   return shown;
 }
 
-export function Money({ value, size = 'md', tone = 'default', sign = 'none', bare, countUp = false, className }: Props) {
+export function Money({ value, size = 'md', tone = 'default', sign = 'none', flow, bare, countUp = false, className }: Props) {
   const shown = useCountUp(value, countUp);
   const { negative, int, dec } = splitMoney(shown);
   // a negative value always shows its minus; "auto" also marks positives with +
-  const prefix = sign === 'plus' ? '+' : sign === 'minus' || negative ? '−' : sign === 'auto' && value > 0 ? '+' : '';
+  const plus = flow === 'in' || sign === 'plus' || (sign === 'auto' && value > 0 && !negative);
+  const prefix = flow === 'out' || sign === 'minus' || negative ? '−' : plus ? '+' : '';
+  const shownTone = flow === 'in' && tone === 'default' ? 'income' : tone;
+  const label = `${flow === 'in' ? 'รับ ' : flow === 'out' ? 'จ่าย ' : ''}${prefix}${int}.${dec} บาท`;
 
   return (
-    <span className={`money money--${size} money--${tone} num ${className ?? ''}`} aria-label={`${prefix}${int}.${dec} บาท`}>
+    <span className={`money money--${size} money--${shownTone} num ${className ?? ''}`} aria-label={label}>
+      {flow === 'in' && <Icon icon={faArrowDown} className="money__in" style={{ fontSize: '0.62em' }} />}
       {prefix && <span className="money__sign">{prefix}</span>}
       {!bare && <span className="money__cur">฿</span>}
       <span className="money__int">{int}</span>

@@ -122,8 +122,8 @@ export function SearchPage() {
           <div className="search-sum">
             <span className="num">{results.length} รายการ</span>
             <span className="search-sum__money">
-              {sum.expense > 0 && <Money value={sum.expense} size="sm" sign="minus" />}
-              {sum.income > 0 && <Money value={sum.income} size="sm" tone="income" sign="plus" />}
+              {sum.expense > 0 && <Money value={sum.expense} size="sm" flow="out" />}
+              {sum.income > 0 && <Money value={sum.income} size="sm" flow="in" />}
             </span>
           </div>
           <Receipt txs={results.slice(0, SHOW_MAX)} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} />

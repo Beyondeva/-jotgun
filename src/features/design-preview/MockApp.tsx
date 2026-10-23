@@ -26,7 +26,7 @@ import { Icon, type IconDefinition } from '../../design/Icon';
 import type { Category } from '../../db/types';
 import { formatMonth } from '../../lib/date';
 import { greeting } from '../../lib/greeting';
-import { useThemePref, type ThemePref } from '../../lib/theme';
+import { ThemePicker } from '../settings/ThemePicker';
 import { KhaoTang } from '../../mascot/KhaoTang';
 import { CategoryEditorSheet } from '../categories/CategoryEditor';
 import { CategoryList } from '../categories/CategoryList';
@@ -377,7 +377,6 @@ function SliceLegend({ slices, onSelect }: { slices: Slice[]; onSelect: (s: Slic
 }
 
 function SettingsMock() {
-  const [theme, setTheme] = useThemePref();
   const { categories, rules } = useCategories();
   const [listOpen, setListOpen] = useState(false);
   const [editing, setEditing] = useState<Category | 'new' | null>(null);
@@ -393,16 +392,7 @@ function SettingsMock() {
     <>
       <h1 className="page-title">ตั้งค่า</h1>
 
-      <div className="list-cap">ธีม</div>
-      <Segmented<ThemePref>
-        value={theme}
-        onChange={setTheme}
-        options={[
-          { value: 'system', label: 'ตามเครื่อง' },
-          { value: 'light', label: 'สว่าง' },
-          { value: 'dark', label: 'มืด' },
-        ]}
-      />
+      <ThemePicker />
 
       <div className="list-cap">บัญชีและหมวด</div>
       <Paper className="list">

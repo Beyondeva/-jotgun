@@ -2,14 +2,12 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Paper } from '../../design/components/Paper';
-import { Segmented } from '../../design/components/Segmented';
 import { Sheet } from '../../design/components/Sheet';
 import { Icon } from '../../design/Icon';
 import { db } from '../../db/db';
 import { useBudgets } from '../../db/budgets';
 import { useOwnerNames } from '../../db/settings';
 import type { Category } from '../../db/types';
-import { useThemePref, type ThemePref } from '../../lib/theme';
 import { useCachedLiveQuery } from '../../lib/useCachedLiveQuery';
 import { CategoryEditorSheet } from '../categories/CategoryEditor';
 import { CategoryList } from '../categories/CategoryList';
@@ -18,12 +16,12 @@ import { BudgetsSheet } from './BudgetsSheet';
 import { DataSheet } from './DataSheet';
 import { OwnerNamesSheet } from './OwnerNamesSheet';
 import { PayeeMemorySheet } from './PayeeMemorySheet';
+import { ThemePicker } from './ThemePicker';
 
 type Open = 'categories' | 'owners' | 'memory' | 'budgets' | 'data' | null;
 
 export function SettingsPage() {
   const navigate = useNavigate();
-  const [theme, setTheme] = useThemePref();
   const { categories, rules } = useCategories();
   const owners = useOwnerNames();
   const remembered = useCachedLiveQuery('payees:count', () => db.payeeMemory.count(), []) ?? 0;
@@ -44,16 +42,7 @@ export function SettingsPage() {
     <>
       <h1 className="page-title">ตั้งค่า</h1>
 
-      <div className="list-cap">ธีม</div>
-      <Segmented<ThemePref>
-        value={theme}
-        onChange={setTheme}
-        options={[
-          { value: 'system', label: 'ตามเครื่อง' },
-          { value: 'light', label: 'สว่าง' },
-          { value: 'dark', label: 'มืด' },
-        ]}
-      />
+      <ThemePicker />
 
       <div className="list-cap">บัญชี</div>
       <Paper className="list">
