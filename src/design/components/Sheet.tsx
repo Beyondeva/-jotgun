@@ -10,15 +10,7 @@ interface Props {
   /** pinned to the bottom of the sheet, e.g. a save button */
   footer?: React.ReactNode;
   children: React.ReactNode;
-  /**
-   * Temporary flicker diagnosis (Settings → ทดสอบแผ่น): each variant removes one suspect.
-   * no-dim: no darkened backdrop · still-dim: backdrop without fade ·
-   * no-anim: nothing animates · no-lock: default but without the page scroll lock.
-   */
-  variant?: SheetVariant;
 }
-
-export type SheetVariant = 'default' | 'no-dim' | 'still-dim' | 'no-anim' | 'no-lock';
 
 /**
  * Ease-out tween rather than a spring: a spring overshoots by fractions of a pixel
@@ -34,12 +26,10 @@ const SLIDE = { duration: 0.28, ease: [0.2, 0, 0, 1] } as const;
 const keepLayer = ({ y }: { y?: unknown }) => `translate3d(0, ${typeof y === 'number' ? `${y}px` : (y ?? 0)}, 0)`;
 
 /** Bottom sheet: drag the handle down or tap the backdrop to close. Content scrolls freely. */
-export function Sheet({ open, onClose, title, footer, children, variant = 'default' }: Props) {
+export function Sheet({ open, onClose, title, footer, children }: Props) {
   const drag = useDragControls();
   const y = useMotionValue(0);
-  useScrollLock(open && variant !== 'no-lock');
-  const fadeDim = variant === 'default' || variant === 'no-lock';
-  const slide = variant !== 'no-anim';
+  useScrollLock(open);
 
   // Callers usually render `{open && <Form />}` inside; keep showing the last content
   // while the sheet slides away, instead of an empty sheet collapsing mid-exit.
@@ -64,30 +54,20 @@ export function Sheet({ open, onClose, title, footer, children, variant = 'defau
     <AnimatePresence>
       {open && (
         <div className="sheet-root">
-          {/* will-change set explicitly so the animation library never toggles it at the end of a fade */}
-          {fadeDim ? (
-            <motion.div
-              className="sheet-backdrop"
-              style={{ willChange: 'opacity' }}
-              onClick={onClose}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.22 }}
-            />
-          ) : (
-            <div className="sheet-backdrop" style={variant === 'no-dim' ? { background: 'transparent' } : undefined} onClick={onClose} />
-          )}
+          {/* The dim appears and disappears at once, without a fade. Fading a translucent
+              full-screen layer made iOS Safari flicker the page behind it when the fade
+              finished (confirmed on device: fade flickers, instant dim doesn't). */}
+          <div className="sheet-backdrop" onClick={onClose} />
           <motion.div
             className="sheet"
             role="dialog"
             aria-modal="true"
             aria-label={shown.current.title}
             style={{ y, willChange: 'transform' }}
-            initial={{ y: slide ? '100%' : 0 }}
+            initial={{ y: '100%' }}
             animate={{ y: 0 }}
-            exit={{ y: slide ? '100%' : 0 }}
-            transition={slide ? SLIDE : { duration: 0 }}
+            exit={{ y: '100%' }}
+            transition={SLIDE}
             transformTemplate={keepLayer}
             drag="y"
             dragControls={drag}
