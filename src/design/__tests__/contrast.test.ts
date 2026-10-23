@@ -73,10 +73,21 @@ describe.each(THEMES.map((t) => t.id))('theme %s', (id) => {
     expect(c('--toast-action', '--ink')).toBeGreaterThanOrEqual(4.5);
   });
 
-  it.runIf(id !== 'paper' && '--bar' in block(`:root[data-theme='${id}']`))('decorated tab bar labels ≥ 4.5', () => {
-    expect(c('--bar-ink', '--bar')).toBeGreaterThanOrEqual(4.5);
-    expect(c('--bar-ink', '--bar-active')).toBeGreaterThanOrEqual(3);
-  });
+  // decorated themes: the same text must also read on the scene behind it
+  const decorated = id !== 'paper' && '--scene-sky' in block(`:root[data-theme='${id}']`);
+  if (decorated) {
+    const sky = ['--scene-sky-top', '--scene-sky', ...('--scene-cloud' in v ? ['--scene-cloud'] : [])];
+    it.each(['--ink', '--scene-ink-2'].flatMap((t) => sky.map((s) => [t, s])))('header %s on %s ≥ 4.5', (t, s) => {
+      expect(c(t, s)).toBeGreaterThanOrEqual(4.5);
+    });
+    it.each(TEXT.flatMap((t) => ['--scene-mark', '--scene-mark-2'].map((s) => [t, s])))('%s over pattern %s ≥ 4.5', (t, s) => {
+      expect(c(t, s)).toBeGreaterThanOrEqual(4.5);
+    });
+    it('tab bar labels ≥ 4.5', () => {
+      expect(c('--bar-ink', '--bar')).toBeGreaterThanOrEqual(4.5);
+      if ('--bar-ink-2' in v) expect(c('--bar-ink-2', '--bar')).toBeGreaterThanOrEqual(4.5);
+    });
+  }
 
   it.each(CATS)('%s icon on sheet ≥ 3', (k) => {
     expect(c(k, '--sheet')).toBeGreaterThanOrEqual(3);
@@ -86,7 +97,8 @@ describe.each(THEMES.map((t) => t.id))('theme %s', (id) => {
     const t = THEMES.find((x) => x.id === id)!;
     const want = { paper: '--paper', sheet: '--sheet', ink: '--ink', ink2: '--ink-2', accent: '--accent', income: '--income' };
     for (const [key, name] of Object.entries(want)) expect(t.swatch[key as keyof typeof want], key).toBe(resolve(v, name));
-    expect(t.themeColor).toBe(resolve(v, '--paper'));
+    // decorated: the status bar sits over the scene's sky
+    expect(t.themeColor).toBe(resolve(v, decorated ? '--scene-sky-top' : '--paper'));
   });
 });
 

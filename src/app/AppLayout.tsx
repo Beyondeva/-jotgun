@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useOutlet } from 'react-router';
 import { PageLoader } from '../design/components/PageLoader';
 import { Sheet } from '../design/components/Sheet';
 import { TabBar, type TabKey } from '../design/components/TabBar';
+import { useDecor } from '../design/decor';
 import { Icon } from '../design/Icon';
 import { useReader } from '../features/inbox/reader';
 import { usePendingCount } from '../features/inbox/usePendingSlips';
@@ -23,6 +24,7 @@ export function AppLayout() {
   const pending = usePendingCount();
   const { readFiles } = useReader();
   const fileInput = useRef<HTMLInputElement>(null);
+  const decor = useDecor();
 
   // tabs switch instantly like a native tab bar; just start each page at the top
   // braces matter: newer browsers return a Promise from scrollTo, which React would treat as a cleanup
@@ -32,6 +34,11 @@ export function AppLayout() {
 
   return (
     <>
+      {decor && decor !== 'loading' && (
+        <div className="decor-pattern" aria-hidden>
+          <decor.Pattern />
+        </div>
+      )}
       <main className="page">
         {/* lazy pages (summary, search) load here; the tab bar stays put */}
         <Suspense fallback={<PageLoader />}>{outlet}</Suspense>

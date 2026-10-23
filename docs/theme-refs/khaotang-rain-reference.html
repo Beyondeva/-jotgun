@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ข้าวตังหน้าฝน — ภาพอ้างอิงธีม</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#e9e4da;font-family:"IBM Plex Sans Thai Looped",system-ui,sans-serif;padding:24px 0}
+  .note{max-width:320px;font-size:13px;color:#4a4036;margin:16px auto 0;line-height:1.6}
+  .num{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<!--
+  ภาพอ้างอิงธีมตกแต่ง "ข้าวตังหน้าฝน" v2 สำหรับแอปจดกัน
+
+  หลักสำคัญ: ส่วนล่างคือ "ฉากเดียวกันที่ต่อลงมา" ไม่ใช่ลายแปะบนพื้นคนละสี
+  - ชั้นพื้นถนนเปียกของหัวจอไล่สีจนเท่ากับสีพื้นของส่วนเนื้อหาพอดี ไม่มีขอบตัด
+  - ลายในส่วนเนื้อหาเป็นโทนเดียวกับพื้น (แอ่งน้ำ ระลอกน้ำ สายฝน หยดน้ำ)
+    สว่างกว่าพื้นนิดเดียว ไม่ใช้สีขาวโปร่งใส
+  - หัวจอไม่มีฟองวงกลม เลย์เอาต์ตัวอักษรเหมือนธีมเรียบ
+
+  ค่าสี "ฝนพรำ":
+    --paper #1a2428  --sheet #223038  --rule #2f3f47
+    --ink #eef3f4    --ink-2 #9fb1b7  --accent #ffb347 (เหลืองร่ม)  --on-accent #1a2428
+    --income #5fd4b0 --over #ff7a6b
+  ฉาก: ฟ้า #141e24 / #18242b, เมฆ #2a3a42 / #33454e, สายฝน #7fa3b3 (opacity .35),
+        พื้นถนนเปียกไล่สี #2a3a40 → #1a2428 (ปลายต้องเท่ากับ --paper), แอ่งน้ำ #2d4652,
+        ร่ม #ffb347 แถบ #e8902a ด้าม #4a3626
+  ลายส่วนล่าง: แอ่งน้ำ #1f2c31, ระลอก #26353c, สายฝน #24323a, หยดน้ำ #22303a
+    ไม่ขยับตามการเลื่อน และไม่รับการกด
+  ภาพข้าวตังในไฟล์นี้เป็นภาพร่าง ให้ใช้ลายเส้นมาสคอตจริงในแอปเป็นต้นแบบ
+-->
+<div>
+<div style="width:320px;background:#1a2428;border:1px solid #2f3f47;border-radius:26px;overflow:hidden;color:#eef3f4;position:relative">
+
+  <!-- หัวจอ -->
+  <div style="position:relative;height:230px">
+    <svg viewBox="0 0 320 230" width="320" height="230" style="position:absolute;inset:0;display:block" aria-hidden="true">
+      <rect width="320" height="230" fill="#18242b"/>
+      <rect width="320" height="70" fill="#141e24"/>
+      <g fill="#2a3a42"><ellipse cx="250" cy="34" rx="46" ry="18"/><ellipse cx="296" cy="44" rx="34" ry="16"/><ellipse cx="200" cy="44" rx="30" ry="13"/></g>
+      <g fill="#33454e"><ellipse cx="262" cy="46" rx="40" ry="14"/><ellipse cx="160" cy="22" rx="26" ry="10"/></g>
+      <g stroke="#7fa3b3" stroke-width="1.4" stroke-linecap="round" opacity=".35">
+        <path d="M150 60 l-6 14"/><path d="M190 70 l-6 14"/><path d="M226 66 l-6 14"/><path d="M272 72 l-6 14"/><path d="M306 66 l-6 14"/>
+        <path d="M170 104 l-6 14"/><path d="M210 112 l-6 14"/><path d="M300 110 l-6 14"/><path d="M140 140 l-6 14"/><path d="M186 150 l-6 14"/>
+        <path d="M110 92 l-6 14"/><path d="M80 150 l-6 14"/><path d="M30 170 l-6 14"/><path d="M120 176 l-6 14"/>
+      </g>
+      <defs><linearGradient id="ground" gradientUnits="userSpaceOnUse" x1="0" y1="186" x2="0" y2="230"><stop offset="0" stop-color="#2a3a40"/><stop offset="1" stop-color="#1a2428"/></linearGradient></defs>
+      <path d="M0 196 Q 80 186 160 192 T 320 188 V 230 H 0 Z" fill="url(#ground)"/>
+      <ellipse cx="240" cy="214" rx="58" ry="9" fill="#2d4652"/>
+      <g fill="none" stroke="#5d8191" stroke-width="1.2" opacity=".8"><ellipse cx="214" cy="214" rx="9" ry="2.5"/><ellipse cx="214" cy="214" rx="16" ry="4.5" opacity=".5"/><ellipse cx="270" cy="216" rx="7" ry="2"/></g>
+      <g transform="translate(250 150)">
+        <path d="M-18 60 C -20 34 -14 22 0 22 C 14 22 20 34 18 60 Z" fill="#fffcf6" stroke="#1f1b17" stroke-width="2"/>
+        <path d="M18 54 C 30 54 32 40 26 36" stroke="#1f1b17" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M-22 -2 L -18 -24 L -6 -12 Z" fill="#fffcf6" stroke="#1f1b17" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M22 -2 L 18 -24 L 6 -12 Z" fill="#fffcf6" stroke="#1f1b17" stroke-width="2" stroke-linejoin="round"/>
+        <ellipse cx="0" cy="2" rx="24" ry="20" fill="#fffcf6" stroke="#1f1b17" stroke-width="2"/>
+        <path d="M-14 -12 Q 0 -22 14 -12 Q 0 -8 -14 -12 Z" fill="#b8861b"/>
+        <circle cx="-9" cy="2" r="2.6" fill="#1f1b17"/><circle cx="9" cy="2" r="2.6" fill="#1f1b17"/>
+        <circle cx="-8" cy="1" r=".9" fill="#fffcf6"/><circle cx="10" cy="1" r=".9" fill="#fffcf6"/>
+        <ellipse cx="-15" cy="9" rx="4" ry="2.5" fill="#f2b6b6"/><ellipse cx="15" cy="9" rx="4" ry="2.5" fill="#f2b6b6"/>
+        <path d="M-2 8 L 2 8 L 0 10 Z" fill="#1f1b17"/>
+        <path d="M-17 20 Q 0 28 17 20 L 15 26 Q 0 33 -15 26 Z" fill="#c2471f"/>
+        <path d="M-10 60 h-6 a4 4 0 0 1 0 -8 h6 Z M10 60 h6 a4 4 0 0 0 0 -8 h-6 Z" fill="#ffb347" stroke="#1f1b17" stroke-width="1.4"/>
+        <path d="M-8 -54 V 34" stroke="#4a3626" stroke-width="3" stroke-linecap="round"/>
+        <path d="M-8 34 q 0 6 -6 6" stroke="#4a3626" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M-56 -26 Q -50 -70 -8 -72 Q 34 -70 40 -26 Q 32 -32 24 -26 Q 16 -32 8 -26 Q 0 -32 -8 -26 Q -16 -32 -24 -26 Q -32 -32 -40 -26 Q -48 -32 -56 -26 Z" fill="#ffb347" stroke="#1f1b17" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M-8 -72 Q -22 -50 -24 -26 M-8 -72 Q 6 -50 8 -26" stroke="#e8902a" stroke-width="2" fill="none"/>
+        <path d="M-8 -72 v -6" stroke="#1f1b17" stroke-width="2" stroke-linecap="round"/>
+        <g fill="#7fa3b3"><path d="M-46 -84 q 3 5 0 7 q -3 -2 0 -7 Z"/><path d="M26 -90 q 3 5 0 7 q -3 -2 0 -7 Z"/><path d="M-20 -96 q 3 5 0 7 q -3 -2 0 -7 Z"/></g>
+      </g>
+    </svg>
+    <div style="position:relative;padding:16px 20px 0">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:16px;font-weight:600">ตุลาคม 2569 <i class="ti ti-chevron-down" style="font-size:13px;color:#9fb1b7"></i></span>
+        <i class="ti ti-search" style="font-size:20px"></i>
+      </div>
+      <p style="font-size:13px;color:#b5c4c9;margin:18px 0 0">สวัสดีตอนบ่าย</p>
+      <p style="font-size:13px;color:#b5c4c9;margin:10px 0 0;font-weight:500">ใช้ไปเดือนนี้</p>
+      <p class="num" style="font-size:44px;font-weight:600;margin:0;letter-spacing:-1px;line-height:1.15"><span style="font-size:24px;vertical-align:14px">฿</span>4,285<span style="font-size:20px;color:#9fb1b7">.50</span></p>
+    </div>
+  </div>
+
+  <!-- ส่วนเนื้อหา -->
+  <div style="position:relative;overflow:hidden">
+    <svg width="320" height="420" viewBox="0 0 320 420" style="position:absolute;inset:0;pointer-events:none" aria-hidden="true">
+      <g fill="#1f2c31">
+        <ellipse cx="60" cy="40" rx="40" ry="7"/><ellipse cx="250" cy="120" rx="52" ry="8"/>
+        <ellipse cx="90" cy="230" rx="46" ry="7"/><ellipse cx="240" cy="330" rx="44" ry="7"/><ellipse cx="60" cy="400" rx="36" ry="6"/>
+      </g>
+      <g fill="none" stroke="#26353c" stroke-width="1.2">
+        <ellipse cx="48" cy="40" rx="8" ry="2"/><ellipse cx="48" cy="40" rx="15" ry="3.6"/>
+        <ellipse cx="262" cy="120" rx="9" ry="2.2"/><ellipse cx="262" cy="120" rx="17" ry="4"/>
+        <ellipse cx="100" cy="230" rx="8" ry="2"/><ellipse cx="228" cy="330" rx="10" ry="2.4"/>
+      </g>
+      <g stroke="#24323a" stroke-width="1.4" stroke-linecap="round">
+        <path d="M150 20 l-5 12"/><path d="M300 30 l-5 12"/><path d="M180 180 l-5 12"/><path d="M20 140 l-5 12"/><path d="M300 240 l-5 12"/><path d="M150 290 l-5 12"/><path d="M170 390 l-5 12"/>
+      </g>
+      <g fill="#22303a"><path d="M200 60 q 6 9 0 13 q -6 -4 0 -13 Z"/><path d="M40 300 q 6 9 0 13 q -6 -4 0 -13 Z"/><path d="M290 400 q 6 9 0 13 q -6 -4 0 -13 Z"/></g>
+    </svg>
+    <div style="position:relative">
+      <div style="margin:0 20px;border-top:1px solid #eef3f4;display:grid;grid-template-columns:1fr 1fr 1fr">
+        <div style="padding:10px 0"><p style="font-size:12px;color:#9fb1b7;margin:0">รายรับ</p><p class="num" style="font-size:14px;color:#5fd4b0;margin:2px 0 0">↙ +฿8,000</p></div>
+        <div style="padding:10px 0 10px 10px;border-left:1px solid #2f3f47"><p style="font-size:12px;color:#9fb1b7;margin:0">รายจ่าย</p><p class="num" style="font-size:14px;margin:2px 0 0">−฿4,285</p></div>
+        <div style="padding:10px 0 10px 10px;border-left:1px solid #2f3f47"><p style="font-size:12px;color:#9fb1b7;margin:0">คงเหลือ</p><p class="num" style="font-size:14px;margin:2px 0 0">฿3,714</p></div>
+      </div>
+      <div style="margin:0 20px;border-top:1px solid #2f3f47"></div>
+      <div style="padding:18px 20px 0">
+        <p style="font-size:15px;font-weight:600;margin:0 0 10px">ไปไหนบ้าง</p>
+        <div style="display:flex;height:10px;border-radius:3px;overflow:hidden"><span style="width:55%;background:#e3955f"></span><span style="width:30%;background:#5f9fd6"></span><span style="width:15%;background:#c47dc8"></span></div>
+        <p style="font-size:12px;color:#9fb1b7;margin:8px 0 0"><span style="color:#e3955f">■</span> อาหาร 55% &nbsp; <span style="color:#5f9fd6">■</span> เดินทาง 30% &nbsp; <span style="color:#c47dc8">■</span> ช้อปปิ้ง 15%</p>
+      </div>
+      <div style="padding:22px 20px 20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:15px;font-weight:600">รายการล่าสุด</span><i class="ti ti-arrow-right" style="font-size:20px"></i></div>
+        <div style="background:#223038;border-radius:8px;padding:12px 14px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#9fb1b7"><span>วันนี้ · ศุกร์</span><span class="num">−85.00</span></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px"><i class="ti ti-tools-kitchen-2" style="font-size:18px;color:#e3955f"></i><div style="flex:1"><p style="font-size:14px;font-weight:500;margin:0">ร้านข้าวมันไก่</p><p style="font-size:12px;color:#9fb1b7;margin:0">อาหาร · 12:41</p></div><span class="num" style="font-size:15px;font-weight:600">−65<span style="color:#9fb1b7;font-weight:400">.00</span></span></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px"><i class="ti ti-bus" style="font-size:18px;color:#5f9fd6"></i><div style="flex:1"><p style="font-size:14px;font-weight:500;margin:0">ค่ารถสองแถว</p><p style="font-size:12px;color:#9fb1b7;margin:0">เดินทาง · 09:12</p></div><span class="num" style="font-size:15px;font-weight:600">−20<span style="color:#9fb1b7;font-weight:400">.00</span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- แถบล่างตกแต่ง -->
+  <div style="background:#223038;border-top:2px solid #33454e;display:flex;justify-content:space-around;align-items:flex-end;height:66px;padding-bottom:8px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px"><svg width="30" height="26" viewBox="0 0 30 26"><path d="M4 13 L15 4 L26 13 V24 H4 Z" fill="#33454e" stroke="#eef3f4" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 24 V17 H18 V24" stroke="#eef3f4" stroke-width="1.5" fill="#ffb347"/><path d="M8 2 q2 3 0 4 q-2 -1 0 -4 Z M24 0 q2 3 0 4 q-2 -1 0 -4 Z" fill="#7fa3b3"/></svg><span style="font-size:10px;color:#eef3f4">หน้าแรก</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px"><svg width="28" height="26" viewBox="0 0 28 26"><path d="M8 3 H16 V16 L23 18 A3 3 0 0 1 23 24 H8 Z" fill="#ffb347" stroke="#4a3626" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 8 H16" stroke="#4a3626" stroke-width="1.2"/></svg><span style="font-size:10px;color:#9fb1b7">รอจด</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:-18px"><svg width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="23" fill="#ffb347" stroke="#1f1b17" stroke-width="2"/><path d="M11 26 Q 13 12 25 11 Q 37 12 39 26 Q 36 23 32 26 Q 28 23 25 26 Q 22 23 18 26 Q 14 23 11 26 Z" fill="#1a2428"/><path d="M25 26 V35 q 0 3 -3 3" stroke="#1a2428" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><span style="font-size:10px;color:#eef3f4">จด</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px"><svg width="28" height="26" viewBox="0 0 28 26"><path d="M5 24 V16 q 0 -3 2.5 -3 q 2.5 0 2.5 3 V24 Z" fill="#5f9fd6" stroke="#eef3f4" stroke-width="1.3"/><path d="M11.5 24 V10 q 0 -3 2.5 -3 q 2.5 0 2.5 3 V24 Z" fill="#7fa3b3" stroke="#eef3f4" stroke-width="1.3"/><path d="M18 24 V5 q 0 -3 2.5 -3 q 2.5 0 2.5 3 V24 Z" fill="#ffb347" stroke="#eef3f4" stroke-width="1.3"/></svg><span style="font-size:10px;color:#9fb1b7">สรุป</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px"><svg width="28" height="26" viewBox="0 0 28 26"><path d="M7 20 a6 6 0 0 1 1 -12 a7 7 0 0 1 13 1 a5.5 5.5 0 0 1 0 11 Z" fill="#33454e" stroke="#eef3f4" stroke-width="1.5" stroke-linejoin="round"/><circle cx="14" cy="14" r="2.4" fill="#ffb347"/></svg><span style="font-size:10px;color:#9fb1b7">ตั้งค่า</span></div>
+  </div>
+</div>
+<p class="note">ข้าวตังหน้าฝน: ฟ้าครึ้ม สายฝน แอ่งน้ำ ข้าวตังกางร่มเหลืองใส่รองเท้าบูท พื้นถนนเปียกต่อลงมาเป็นพื้นส่วนเนื้อหา มีแอ่งน้ำกับสายฝนโทนเดียวกัน</p>
+</div>
+</body>
+</html>

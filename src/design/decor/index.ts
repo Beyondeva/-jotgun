@@ -9,8 +9,17 @@ import { themeById } from '../themes';
  * people who pick it. Colours stay in tokens.css like every other theme.
  */
 export interface Decor {
-  /** home header art; the month switcher and amount bubble sit on top of it */
+  /**
+   * Home header art, drawn behind the usual header text. Its ground must fade
+   * into var(--paper) at the very bottom, so the page reads as the same scene
+   * carrying on, with no seam.
+   */
   Scene: ComponentType;
+  /**
+   * The scene carried on behind page content: a few motifs a shade lighter than
+   * the page (--scene-mark*). Fixed, untouchable, never under the tab bar.
+   */
+  Pattern: ComponentType;
   /** drawn tab icons; tabs without one keep the plain icon */
   tabIcons?: Partial<Record<TabKey | 'add', ComponentType<{ active: boolean }>>>;
 }

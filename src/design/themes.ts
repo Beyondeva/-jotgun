@@ -13,7 +13,7 @@
 export type ThemeGroup = 'plain' | 'khaotang';
 
 /** A theme that maps to one [data-theme] block. */
-export type ConcreteThemeId = 'paper' | 'rain' | 'navy' | 'plum' | 'beach';
+export type ConcreteThemeId = 'paper' | 'rain' | 'navy' | 'plum' | 'beach' | 'monsoon';
 /** What the user can pick; "system" follows the device: paper by day, rain at night. */
 export type ThemeId = 'system' | ConcreteThemeId;
 
@@ -24,8 +24,8 @@ export interface ThemeSwatch {
   ink2: string;
   accent: string;
   income: string;
-  /** decorated themes: a tiny version of the header scene for the picker card */
-  scene?: { sky: string; sea: string; sand: string; moon: string };
+  /** decorated themes: a tiny version of the header scene for the picker card (sky, a middle band, the ground fading into the page, one bright spot) */
+  scene?: { sky: string; band: string; ground: string; spot: string };
 }
 
 export interface ConcreteTheme {
@@ -78,16 +78,34 @@ export const THEMES: ConcreteTheme[] = [
     name: 'ทะเลยามค่ำ',
     group: 'khaotang',
     scheme: 'dark',
-    themeColor: '#0f141c',
+    // the status bar sits over the scene's sky, not the page
+    themeColor: '#101a2f',
     decor: 'beach',
     swatch: {
-      paper: '#0f141c',
-      sheet: '#182131',
-      ink: '#eef1f5',
-      ink2: '#8e9bb0',
+      paper: '#231b14',
+      sheet: '#2e241b',
+      ink: '#f6efe4',
+      ink2: '#b3a491',
       accent: '#ff7a59',
-      income: '#4fd1a0',
-      scene: { sky: '#14213a', sea: '#245074', sand: '#a07c52', moon: '#f6df6b' },
+      income: '#5fd4a0',
+      scene: { sky: '#14213a', band: '#245074', ground: '#8a6a46', spot: '#f6df6b' },
+    },
+  },
+  {
+    id: 'monsoon',
+    name: 'หน้าฝน',
+    group: 'khaotang',
+    scheme: 'dark',
+    themeColor: '#141e24',
+    decor: 'monsoon',
+    swatch: {
+      paper: '#1a2428',
+      sheet: '#223038',
+      ink: '#eef3f4',
+      ink2: '#9fb1b7',
+      accent: '#ffb347',
+      income: '#5fd4b0',
+      scene: { sky: '#18242b', band: '#33454e', ground: '#2a3a40', spot: '#ffb347' },
     },
   },
 ];

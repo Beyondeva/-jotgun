@@ -207,46 +207,98 @@
   --cat-slate: #98a4ac;
 }
 
-/* ข้าวตังเที่ยวทะเลยามค่ำ — กรมท่า colours; scene and tab icons in src/design/decor/beach */
+/* ข้าวตังเที่ยวทะเลยามค่ำ — ทรายยามค่ำ; art in src/design/decor/beach */
 :root[data-theme='beach'] {
   color-scheme: dark;
-  --paper: #0f141c;
-  --paper-2: #151c27;
-  --sheet: #182131;
-  --rule: #26303f;
-  --rule-strong: #364357;
+  --paper: #231b14;
+  --paper-2: #2a2119;
+  --sheet: #2e241b;
+  --rule: #43372a;
+  --rule-strong: #5a4b3b;
   --overlay: rgba(0, 0, 0, 0.55);
-  --ink: #eef1f5;
-  --ink-2: #8e9bb0;
-  --ink-3: #7f8b9e;
-  --on-ink: #0f141c;
+  --ink: #f6efe4;
+  --ink-2: #b3a491;
+  --ink-3: #9e8d7b;
+  --on-ink: #231b14;
   --accent: #ff7a59;
   --accent-press: #ff9473;
   --on-accent: #1a0d07;
-  --income: #4fd1a0;
-  --over: #ff8a70;
+  --income: #5fd4a0;
+  --over: #ff7a59;
   --mark: #6b5c17;
   --mark-ink: #fff1a6;
   --mark-text: var(--mark-ink);
-  --press: rgba(238, 241, 245, 0.08);
-  --toast-action: #ab523c;
+  --press: rgba(246, 239, 228, 0.08);
+  --toast-action: #a8513b;
   --cat-brick: #e07a5c;
   --cat-clay: #e39565;
   --cat-ochre: #d9ae4e;
   --cat-olive: #a9ae55;
   --cat-moss: #7db06f;
   --cat-teal: #5db3ad;
-  --cat-sky: #8cb7dd; /* blue-on-navy sank: lifted */
+  --cat-sky: #73a7d6;
+  --cat-indigo: #8a90d6;
+  --cat-plum: #b987bb;
+  --cat-rose: #de869e;
+  --cat-sand: #c9a777;
+  --cat-slate: #98a4ac;
+  /* decorated: header scene (text sits on --scene-sky*), content pattern, tab bar */
+  --scene-sky-top: #101a2f;
+  --scene-sky: #14213a;
+  --scene-ink-2: #d6c9b6;
+  --scene-mark: #2c2219;
+  --scene-mark-2: #30261c;
+  --bar: #8a6a46;
+  --bar-rule: #6e5134;
+  --bar-ink: #fff6e6;
+  --bar-active: #a07c52;
+}
+
+/* ข้าวตังหน้าฝน — ฝนพรำ; art in src/design/decor/monsoon */
+:root[data-theme='monsoon'] {
+  color-scheme: dark;
+  --paper: #1a2428;
+  --paper-2: #1e2a2f;
+  --sheet: #223038;
+  --rule: #2f3f47;
+  --rule-strong: #42555e;
+  --overlay: rgba(0, 0, 0, 0.55);
+  --ink: #eef3f4;
+  --ink-2: #9fb1b7;
+  --ink-3: #8aa0a8;
+  --on-ink: #1a2428;
+  --accent: #ffb347;
+  --accent-press: #ffc46e;
+  --on-accent: #1a2428;
+  --income: #5fd4b0;
+  --over: #ff7a6b;
+  --mark: #6b5c17;
+  --mark-ink: #fff1a6;
+  --mark-text: var(--mark-ink);
+  --press: rgba(238, 243, 244, 0.08);
+  --toast-action: #8f6428;
+  --cat-brick: #e07a5c;
+  --cat-clay: #e39565;
+  --cat-ochre: #d9ae4e;
+  --cat-olive: #a9ae55;
+  --cat-moss: #7db06f;
+  --cat-teal: #5db3ad;
+  --cat-sky: #8cb7dd;
   --cat-indigo: #9fa4dd;
   --cat-plum: #b987bb;
   --cat-rose: #de869e;
   --cat-sand: #c9a777;
   --cat-slate: #abb4bb;
-  /* decorated: sand tab bar and the see-through bubble over the scene */
-  --bar: #8a6a46;
-  --bar-rule: #6e5134;
-  --bar-ink: #fff6e6;
-  --bar-active: #a07c52;
-  --scene-bubble: rgba(15, 20, 28, 0.72);
-  --scene-bubble-rule: rgba(238, 241, 245, 0.28);
+  /* decorated: header scene (text sits on --scene-sky*), content pattern, tab bar */
+  --scene-sky-top: #141e24;
+  --scene-sky: #18242b;
+  --scene-cloud: #33454e;
+  --scene-ink-2: #b5c4c9;
+  --scene-mark: #1f2c31;
+  --scene-mark-2: #26353c;
+  --bar: #223038;
+  --bar-rule: #33454e;
+  --bar-ink: #eef3f4;
+  --bar-ink-2: #9fb1b7;
+  --bar-active: #2f3f47;
 }

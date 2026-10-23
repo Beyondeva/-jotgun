@@ -1,4 +1,5 @@
 .page {
+  position: relative; /* paints above a decorated theme's .decor-pattern */
   max-width: 560px;
   margin: 0 auto;
   padding: calc(var(--safe-top) + var(--s-2)) calc(var(--s-4) + var(--safe-right)) calc(var(--tabbar-h) + var(--safe-bottom) + var(--s-6))
@@ -36,34 +37,36 @@
 .hero__pace { margin-top: var(--s-3); font-size: 14px; color: var(--ink-2); line-height: 1.6; }
 .hero__pace b { color: var(--ink); font-weight: 600; }
 
-/* decorated theme header: the scene bleeds to the screen edges and under the status bar */
+/* decorated theme header: the scene bleeds to the screen edges and under the status bar.
+   The bottom --scene-floor px are the scene's ground; header text stays above it. */
 .decor-hero {
+  --scene-floor: 108px;
+  /* the header's quieter text is lifted for the sky behind it */
+  --ink-2: var(--scene-ink-2);
+  --ink-3: var(--scene-ink-2);
   position: relative;
-  height: calc(250px + var(--safe-top));
-  margin: calc((var(--safe-top) + var(--s-2)) * -1) calc((var(--s-4) + var(--safe-right)) * -1) 0 calc((var(--s-4) + var(--safe-left)) * -1);
-  padding: var(--safe-top) calc(var(--s-4) + var(--safe-right)) 0 calc(var(--s-4) + var(--safe-left));
+  isolation: isolate;
   overflow: hidden;
-  color: var(--ink);
+  margin: calc((var(--safe-top) + var(--s-2)) * -1) calc((var(--s-4) + var(--safe-right)) * -1) 0 calc((var(--s-4) + var(--safe-left)) * -1);
+  padding: calc(var(--safe-top) + var(--s-2)) calc(var(--s-4) + var(--safe-right)) var(--scene-floor) calc(var(--s-4) + var(--safe-left));
 }
-.decor-scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.decor-hero .topbar { position: relative; padding-top: var(--s-2); }
-.decor-bubble {
-  position: absolute;
-  left: calc(var(--s-5) + var(--safe-left));
-  top: calc(var(--safe-top) + 62px);
-  width: 152px;
-  height: 152px;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  background: var(--scene-bubble);
-  box-shadow: inset 0 0 0 1.5px var(--scene-bubble-rule);
+.decor-hero .hero { padding-bottom: 0; }
+.decor-scene__sky,
+.decor-scene__floor { position: absolute; z-index: -1; left: 0; width: 100%; display: block; pointer-events: none; }
+.decor-scene__sky { top: 0; height: 100%; }
+.decor-scene__floor { bottom: 0; height: 170px; }
+
+/* the scene carried on behind the content: fixed, untouchable, stops at the tab bar */
+.decor-pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--tabbar-h) + var(--safe-bottom));
+  overflow: hidden;
+  pointer-events: none;
 }
-.decor-bubble__label { font-size: 12px; font-weight: 600; color: var(--ink-2); }
-.decor-bubble__income { margin-top: 2px; }
+.decor-pattern svg { display: block; width: 100%; height: 100%; }
 .hero--decor { padding: var(--s-3) 0 var(--s-4); }
 .hero--decor:empty { display: none; }
 /* under a scene the ledger's top rule reads as a scratch on the sand: drop it */

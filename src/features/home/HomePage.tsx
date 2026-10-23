@@ -71,20 +71,21 @@ export function HomePage() {
   return (
     <>
       {decor ? (
-        // decorated: the scene fills the header; the amount sits in a see-through bubble
-        <section className="decor-hero">
+        // decorated: the same header, drawn over the theme's scene
+        <div className="decor-hero">
           <decor.Scene />
           {topbar}
-          <div className="decor-bubble">
-            <span className="decor-bubble__label">{spentLabel}</span>
-            <Money value={sum.expense} size="lg" countUp="home-hero" />
-            {sum.income > 0 && <Money value={sum.income} size="sm" flow="in" className="decor-bubble__income" />}
-          </div>
-        </section>
+          <section className="hero">
+            {current && <div className="hero__hello">{greeting()}</div>}
+            <div className="hero__label">{spentLabel}</div>
+            <Money value={sum.expense} size="hero" countUp="home-hero" />
+          </section>
+        </div>
       ) : (
         topbar
       )}
 
+      {/* under a scene, the pace and alert sit on the page below it, away from the art */}
       <section className={`hero ${decor ? 'hero--decor' : ''}`}>
         {!decor && (
           <>
