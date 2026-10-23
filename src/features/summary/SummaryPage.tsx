@@ -5,6 +5,7 @@ import { useShell } from '../../app/shell';
 import { IconButton } from '../../design/components/Button';
 import { DailyBars, DonutChart, type Slice } from '../../design/components/Charts';
 import { EmptyState } from '../../design/components/Feedback';
+import { PageLoader } from '../../design/components/PageLoader';
 import { Paper } from '../../design/components/Paper';
 import { Segmented } from '../../design/components/Segmented';
 import { expenseByCategory, expenseByDay, totals } from '../../lib/aggregate';
@@ -58,6 +59,8 @@ export function SummaryPage() {
   const future = period.from > now;
 
   const setKind = (kind: PeriodKind) => setPeriod(periodOf(kind, isCurrent(period) ? now : period.from));
+
+  if (txs === undefined) return <PageLoader />;
 
   return (
     <>

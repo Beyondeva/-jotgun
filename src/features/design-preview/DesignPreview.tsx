@@ -7,6 +7,7 @@ import { DailyBars, DonutChart } from '../../design/components/Charts';
 import { StackedBar } from '../../design/components/StackedBar';
 import { EmptyState, ProgressBar, Skeleton } from '../../design/components/Feedback';
 import { Money } from '../../design/components/Money';
+import { PageLoader } from '../../design/components/PageLoader';
 import { Paper } from '../../design/components/Paper';
 import { Segmented } from '../../design/components/Segmented';
 import { DoneStamp } from '../../design/components/Stamp';
@@ -233,6 +234,12 @@ export function DesignPreview() {
             </div>
           ))}
         </div>
+      </Section>
+
+      <Section title="กำลังโหลด" note="ขึ้นเมื่อหน้าหรือข้อมูลโหลดนานเกิน 0.15 วินาที">
+        <Paper>
+          <PageLoader />
+        </Paper>
       </Section>
 
       <Section title="หน้าว่างและตราประทับ">

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { HashRouter, Navigate, Route, Routes } from 'react-router';
 import { CategoryProvider } from '../features/categories/store';
+import { PageLoader } from '../design/components/PageLoader';
 import { HomePage } from '../features/home/HomePage';
 import { InboxPage } from '../features/inbox/InboxPage';
 import { ReaderProvider } from '../features/inbox/reader';
@@ -20,7 +21,7 @@ export function App() {
       <HashRouter>
         <ReaderProvider>
           <ShellProvider>
-            <Suspense fallback={null}>
+            <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route element={<AppLayout />}>
                   <Route index element={<HomePage />} />

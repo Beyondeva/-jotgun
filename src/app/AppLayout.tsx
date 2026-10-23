@@ -1,7 +1,8 @@
 import { faCamera, faPen, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import { useLocation, useNavigate, useOutlet } from 'react-router';
+import { PageLoader } from '../design/components/PageLoader';
 import { Sheet } from '../design/components/Sheet';
 import { TabBar, type TabKey } from '../design/components/TabBar';
 import { Icon } from '../design/Icon';
@@ -35,7 +36,8 @@ export function AppLayout() {
           exit={{ opacity: 0, transition: { duration: 0.08 } }}
           onAnimationStart={() => window.scrollTo({ top: 0 })}
         >
-          {outlet}
+          {/* lazy pages (summary, search) load here; the tab bar stays put */}
+          <Suspense fallback={<PageLoader />}>{outlet}</Suspense>
         </motion.main>
       </AnimatePresence>
 

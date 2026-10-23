@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useShell } from '../../app/shell';
 import { Button } from '../../design/components/Button';
 import { EmptyState, ProgressBar, Skeleton } from '../../design/components/Feedback';
+import { PageLoader } from '../../design/components/PageLoader';
 import { Paper } from '../../design/components/Paper';
 import { KhaoTang } from '../../mascot/KhaoTang';
 import { DoneStamp } from '../../design/components/Stamp';
@@ -60,6 +61,8 @@ export function InboxPage() {
     const left = (slips?.length ?? 0) - n;
     if (left > 0) toast(`ยังเหลือ ${left} ใบที่ต้องใส่ข้อมูลก่อน`);
   };
+
+  if (slips === undefined && !reader.running) return <PageLoader />;
 
   return (
     <>

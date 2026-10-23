@@ -6,6 +6,7 @@ import { Button, IconButton } from '../../design/components/Button';
 import { StackedBar, type Slice } from '../../design/components/StackedBar';
 import { EmptyState } from '../../design/components/Feedback';
 import { Money } from '../../design/components/Money';
+import { PageLoader } from '../../design/components/PageLoader';
 import { Paper } from '../../design/components/Paper';
 import { Sheet } from '../../design/components/Sheet';
 import { Icon } from '../../design/Icon';
@@ -50,6 +51,9 @@ export function HomePage() {
   const days = daysLeft(period);
   const perDay = sum.balance > 0 && days > 0 ? Math.floor(sum.balance / days) : 0;
   const worst = current ? worstBudget(budgetStates(byCat, budgets, periodProgress(period))) : undefined;
+
+  // first read from IndexedDB (or a month switch): show the cat instead of ฿0
+  if (txs === undefined) return <PageLoader />;
 
   return (
     <>

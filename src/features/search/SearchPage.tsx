@@ -6,6 +6,7 @@ import { useShell } from '../../app/shell';
 import { IconButton } from '../../design/components/Button';
 import { EmptyState } from '../../design/components/Feedback';
 import { Money } from '../../design/components/Money';
+import { PageLoader } from '../../design/components/PageLoader';
 import { Tag } from '../../design/components/Tag';
 import { Icon, type IconDefinition } from '../../design/Icon';
 import { db } from '../../db/db';
@@ -44,6 +45,8 @@ export function SearchPage() {
   const set = (patch: Partial<TxFilter>) => setFilter((f) => ({ ...f, ...patch }));
   const results = useMemo(() => filterTransactions(all ?? [], filter, (id) => categoryOf(id).name), [all, filter, categoryOf]);
   const sum = totals(results);
+
+  if (all === undefined) return <PageLoader />;
 
   return (
     <>
