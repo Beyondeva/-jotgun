@@ -2,15 +2,9 @@
  * Screen sizes. Phones are the design target and every other file is written for them;
  * this file only adds what changes elsewhere:
  *   ≤ 360px   small phones: tighter margins and figures
- *   ≥ 720px   tablets and laptops: the tab bar becomes a rail down the left
- *   ≥ 1100px  wide screens: home and summary split into overview | detail columns
+ * Everything under 1024px (iPad portrait included) is the phone layout. From 1024px the
+ * app swaps to a separate wide layout (src/wide/, wide.css) rather than restyling this one.
  */
-
-/* overview | detail: stacked on phones, laid out like direct children of .page (a flex column) */
-.two-col,
-.two-col__top,
-.two-col__main,
-.two-col__side { display: flex; flex-direction: column; min-width: 0; }
 
 /* ---------- small phones (iPhone SE, small Androids) ---------- */
 @media (max-width: 360px) {
@@ -21,121 +15,4 @@
   .ring { width: 76px; }
   .kt-bubble { max-width: 168px; font-size: 12.5px; }
   .budget-quick__steps { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* ---------- tablets, laptops: a rail on the left ---------- */
-@media (min-width: 720px) {
-  :root {
-    --rail-w: calc(96px + env(safe-area-inset-left, 0px));
-    --nav-bottom: env(safe-area-inset-bottom, 0px);
-    /* the rail already clears a landscape notch; the page doesn't need to again */
-    --safe-left: 0px;
-  }
-  body { padding-left: var(--rail-w); }
-  .page { max-width: 640px; padding-top: calc(var(--safe-top) + var(--s-4)); }
-
-  /* the rail is part of the page, not a slab of colour: page paper, a hairline, labels shown */
-  .tabbar {
-    top: 0;
-    right: auto;
-    width: var(--rail-w);
-    height: auto;
-    grid-template-columns: none;
-    grid-auto-rows: min-content;
-    align-content: start;
-    gap: var(--s-1);
-    padding: calc(var(--safe-top) + var(--s-4)) var(--s-2) calc(var(--safe-bottom) + var(--s-4)) calc(var(--s-2) + env(safe-area-inset-left, 0px));
-    overflow-y: auto;
-    background: var(--paper);
-    border-top: 0;
-    border-right: 1px solid var(--rule);
-  }
-  .tab { height: 68px; flex-direction: column; gap: 4px; border-radius: var(--r-control); }
-  .tab__label,
-  .tabbar:not(.tabbar--drawn) .tab__label { display: block; font-size: 11.5px; }
-  .tab__dot { display: none; }
-  .tabbar--drawn .tab { color: var(--ink-2); }
-  .tabbar--drawn .tab.is-active { color: var(--ink); }
-  .tabbar--drawn .tab.is-active .tab__icon { background: var(--paper-2); }
-  .tabbar--drawn .tab__badge { box-shadow: 0 0 0 2px var(--paper); }
-  /* the current page: an accent tick on the item's edge */
-  .tab.is-active::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 16px;
-    bottom: 16px;
-    width: 3px;
-    border-radius: 0 2px 2px 0;
-    background: var(--accent);
-  }
-  /* focus rings sit inside: the rail scrolls, so anything outside would be cut */
-  .tab:focus-visible,
-  .tabbar__add:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
-  /* "add" leads the rail */
-  .tabbar__add { order: -1; width: 56px; height: 48px; margin: 0 auto var(--s-4); }
-  .tabbar__add--drawn { width: 64px; height: 64px; }
-
-  /* everything fixed keeps to the right of the rail */
-  .decor-pattern { left: var(--rail-w); }
-  .sheet { left: var(--rail-w); }
-  .toast { left: calc(var(--rail-w) + var(--s-4)); }
-
-  /* the theme's header art becomes a card in the column rather than bleeding off a phone's edges */
-  .decor-hero {
-    margin: 0;
-    padding: var(--s-2) var(--s-5) var(--scene-floor);
-    border-radius: var(--r-panel);
-  }
-
-  .money--hero { font-size: 58px; }
-}
-
-/* landscape phones are wide but short: a compact rail */
-@media (min-width: 720px) and (max-height: 520px) {
-  .tab { height: 52px; }
-  .tab__label,
-  .tabbar:not(.tabbar--drawn) .tab__label { display: none; }
-  .tabbar__add { margin-bottom: var(--s-2); }
-}
-
-/* ---------- wide screens: a sidebar, and overview | detail under a full-width top bar ---------- */
-@media (min-width: 1100px) {
-  :root { --rail-w: calc(232px + env(safe-area-inset-left, 0px)); }
-
-  .tabbar { gap: 2px; padding: calc(var(--safe-top) + var(--s-5)) var(--s-3) var(--s-5) calc(var(--s-3) + env(safe-area-inset-left, 0px)); }
-  .tabbar__brand { display: block; order: -2; padding: 0 var(--s-3) var(--s-4); font-size: 22px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
-  .tabbar__add { display: flex; gap: var(--s-2); justify-content: center; width: 100%; height: 44px; margin: 0 0 var(--s-4); }
-  .tabbar__add-label { display: inline; }
-  .tabbar__add--drawn { height: 48px; border-radius: var(--r-control); background: var(--paper-2); color: var(--ink); }
-  .tabbar__add--drawn svg { width: 34px; height: 34px; }
-  .tabbar .tab { height: 44px; flex-direction: row; justify-content: flex-start; gap: var(--s-3); padding: 0 var(--s-3); }
-  .tab__label,
-  .tabbar:not(.tabbar--drawn) .tab__label { font-size: 14.5px; }
-  .tab.is-active { background: var(--paper-2); }
-  .tab.is-active .tab__label { font-weight: 700; }
-  .tabbar--drawn .tab__icon { width: 32px; height: 28px; }
-  .tabbar--drawn .tab.is-active .tab__icon { background: none; }
-  .tab.is-active::before { top: 10px; bottom: 10px; }
-
-  .page { max-width: 760px; padding-top: calc(var(--safe-top) + var(--s-5)); }
-  .page:has(> .two-col) { max-width: 1180px; }
-
-  .two-col {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: 56px;
-    align-items: start;
-  }
-  .two-col__top { grid-column: 1 / -1; margin-bottom: var(--s-3); }
-  /* both columns start on the same line */
-  .two-col__main > :first-child,
-  .two-col__side > :first-child,
-  .two-col__side > .section-head:first-child { margin-top: 0; }
-
-  /* summary: title, week/month and the period on one line */
-  .summary-top { flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-6); }
-  .summary-top .page-title { margin: 0; }
-  .summary-top .seg { border-bottom: 0; }
-  .summary-top .period { margin: 0 0 0 auto; min-width: 300px; }
 }

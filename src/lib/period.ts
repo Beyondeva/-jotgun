@@ -1,6 +1,6 @@
 import { startOfDay } from './date';
 
-export type PeriodKind = 'week' | 'month';
+export type PeriodKind = 'week' | 'month' | 'year';
 
 export interface Period {
   kind: PeriodKind;
@@ -15,6 +15,7 @@ const DAY = 86_400_000;
 /** Weeks start on Monday. */
 export function periodOf(kind: PeriodKind, at: number): Period {
   const d = new Date(startOfDay(at));
+  if (kind === 'year') return { kind, from: new Date(d.getFullYear(), 0, 1).getTime(), to: new Date(d.getFullYear() + 1, 0, 1).getTime() };
   if (kind === 'month') {
     const from = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
     const to = new Date(d.getFullYear(), d.getMonth() + 1, 1).getTime();
@@ -28,6 +29,7 @@ export function periodOf(kind: PeriodKind, at: number): Period {
 
 export function shiftPeriod(p: Period, steps: number): Period {
   const anchor = new Date(p.from);
+  if (p.kind === 'year') return periodOf('year', new Date(anchor.getFullYear() + steps, 0, 1).getTime());
   if (p.kind === 'month') return periodOf('month', new Date(anchor.getFullYear(), anchor.getMonth() + steps, 1).getTime());
   return periodOf('week', new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate() + steps * 7).getTime());
 }
@@ -60,8 +62,9 @@ const dayMonth = new Intl.DateTimeFormat('th-TH', { day: 'numeric', month: 'shor
 const dayMonthYear = new Intl.DateTimeFormat('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
 const monthYear = new Intl.DateTimeFormat('th-TH', { month: 'long', year: 'numeric' });
 
-/** "17 – 23 ต.ค. 69", "28 ต.ค. – 3 พ.ย. 69", "ตุลาคม 2569" */
+/** "17 – 23 ต.ค. 69", "28 ต.ค. – 3 พ.ย. 69", "ตุลาคม 2569", "ปี 2569" */
 export function periodLabel(p: Period): string {
+  if (p.kind === 'year') return `ปี ${new Date(p.from).getFullYear() + 543}`;
   if (p.kind === 'month') return monthYear.format(p.from);
   const last = p.to - DAY;
   const a = new Date(p.from);

@@ -22,10 +22,11 @@ Vite 8, React 19, TS 7, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB) + dexie-r
 
 ## Map
 - `src/app/`: AppLayout (tab bar, add sheet, decor pattern layer), shell context, `app.css` (page and home styles)
-- `src/app/responsive.css`: everything that depends on screen size. Phones are the default everywhere else.
-  - ≤360px tightens `--gutter` and the figures.
-  - ≥720px turns the tab bar into a 96px left rail in page paper (`--rail-w`, and `--nav-bottom` replaces the tab-bar height). A theme's header art becomes a rounded card.
-  - ≥1100px makes the rail a 232px sidebar with the wordmark and "จดรายการ". It lays out `.two-col` (home and summary) as a full-width `.two-col__top` row over overview | detail columns. Home moves its top bar there with `useMediaQuery(WIDE)`.
+- Two layouts, chosen in `App.tsx` by `useMediaQuery(WIDE)` (≥1024px). Data hooks are shared (e.g. `features/home/useOverview.ts`); only display components split.
+  - <1024px (phones, iPad portrait): `AppLayout` with the tab bar. `src/app/responsive.css` only tightens `--gutter` and the figures at ≤360px.
+  - ≥1024px (iPad landscape, computers): `src/wide/` (lazy). `WideLayout` has a 220px sidebar (`--rail-w`), a top bar (‹ › · period · สัปดาห์/เดือน/ปี · search · "จดรายการ", or a floating + under `pointer: coarse`) and content up to 1280px. Shortcuts: "/" search, "N" add.
+  - Wide-only pages: `WideOverview` (KPI row, pace | categories, recent table) and `WideTransactions` (`/transactions`: table, filters, bulk recategorise with undo). Other pages render in a centred 720px column.
+  - All wide styles are in `src/wide/wide.css` under `@media (min-width:1024px)`.
 - `src/db/`: Dexie schema (`types.ts`); slips (ingest/confirm/discard), budgets, settings
 - `src/slip/`: OCR and QR reading plus a per-bank parser. Fixtures are in `__tests__`
 - `src/features/`: home, inbox (รอจด slip cards), manual entry, summary, search, settings, categories, transactions; design-preview (DEV only)
@@ -38,7 +39,7 @@ Vite 8, React 19, TS 7, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB) + dexie-r
 - Amounts are stored in satang (integer).
 
 ## Design rules (receipt / ledger look)
-- Warm paper, ink text, one accent used only for pressable things. Torn-edge receipt paper is for grouping only. No shadows, no gradient heroes, no identical card grids. The user rejected "AI-looking" UI.
+- Warm paper, ink text, one accent used only for pressable things. Torn-edge receipt paper is for grouping only. No shadows, no gradient heroes, no identical card grids (the wide KPI row is the one allowed exception). The user rejected "AI-looking" UI.
 - Fonts: IBM Plex Sans Thai Looped (body), Plex Sans Condensed (figures), Plex Mono (reference numbers).
 - Prefer an icon alone when its meaning is obvious, and keep `aria-label`. Tap targets are at least 44px.
 - Money: `<Money flow="in">` shows ↙ + in the income colour; `flow="out"` shows −. The home hero "ใช้ไปเดือนนี้" has no sign.

@@ -12,5 +12,8 @@ export function useMediaQuery(query: string): boolean {
   );
 }
 
-/** Wide screens (responsive.css ≥ 1100px): overview | detail columns under a full-width top bar. */
-export const WIDE = '(min-width: 1100px)';
+/** iPad landscape and computers: the separate wide layout in src/wide/. Below this is the phone layout. */
+export const WIDE = '(min-width: 1024px)';
+
+/** A finger rather than a mouse (iPad): the add button floats bottom right instead of sitting in the top bar. */
+export const COARSE = '(pointer: coarse)';

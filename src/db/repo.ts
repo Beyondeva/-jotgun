@@ -25,6 +25,22 @@ export const deleteTransaction = (id: string) => db.transactions.delete(id);
 /** Put a deleted transaction back exactly as it was (undo). */
 export const restoreTransaction = (tx: Transaction) => db.transactions.put(tx);
 
+/**
+ * Move several transactions to one category in one go. Returns what each was before,
+ * for undo with restoreCategories.
+ */
+export async function moveTransactions(ids: string[], categoryId: string): Promise<{ id: string; categoryId: string }[]> {
+  const now = Date.now();
+  return db.transaction('rw', db.transactions, async () => {
+    const before = (await db.transactions.bulkGet(ids)).filter((t): t is Transaction => !!t);
+    await db.transactions.bulkUpdate(before.map((t) => ({ key: t.id, changes: { categoryId, updatedAt: now } })));
+    return before.map((t) => ({ id: t.id, categoryId: t.categoryId }));
+  });
+}
+
+export const restoreCategories = (previous: { id: string; categoryId: string }[]) =>
+  db.transactions.bulkUpdate(previous.map((p) => ({ key: p.id, changes: { categoryId: p.categoryId } })));
+
 export const transactionsBetween = (from: number, to: number) => db.transactions.where('occurredAt').between(from, to, true, false).toArray();
 
 export const normalizeKeyword = (k: string) => k.trim().replace(/\s+/g, ' ');

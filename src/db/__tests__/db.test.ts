@@ -5,7 +5,7 @@ import { buildBackup, restoreBackup } from '../backup';
 import { buildDemo, clearDemo, DEMO_PREFIX, loadDemo } from '../demo';
 import { setBudget } from '../budgets';
 import { db } from '../db';
-import { deleteCategory, saveCategory, saveTransaction } from '../repo';
+import { deleteCategory, moveTransactions, restoreCategories, saveCategory, saveTransaction } from '../repo';
 import { setOwnerNames } from '../settings';
 import { confirmAll, confirmReady, confirmSlip, ingestSlip, isReady, pickCategory, updateSlip } from '../slips';
 
@@ -68,6 +68,19 @@ describe('slip flow', () => {
     expect(await confirmAll()).toBe(1);
     expect(await db.transactions.count()).toBe(1);
     expect((await db.slips.get(empty.id))?.status).toBe('pending');
+  });
+});
+
+describe('moving many', () => {
+  it('moves the picked rows to one category, and undo puts each back', async () => {
+    const a = await saveTransaction({ type: 'expense', amount: 100, fee: 0, categoryId: 'food', occurredAt: at(1), method: 'cash', source: 'manual' });
+    const b = await saveTransaction({ type: 'expense', amount: 200, fee: 0, categoryId: 'cafe', occurredAt: at(2), method: 'cash', source: 'manual' });
+    const c = await saveTransaction({ type: 'expense', amount: 300, fee: 0, categoryId: 'travel', occurredAt: at(3), method: 'cash', source: 'manual' });
+    const before = await moveTransactions([a.id, b.id, 'missing'], 'shopping');
+    expect(before).toEqual([{ id: a.id, categoryId: 'food' }, { id: b.id, categoryId: 'cafe' }]);
+    expect((await db.transactions.bulkGet([a.id, b.id, c.id])).map((t) => t?.categoryId)).toEqual(['shopping', 'shopping', 'travel']);
+    await restoreCategories(before);
+    expect((await db.transactions.bulkGet([a.id, b.id])).map((t) => t?.categoryId)).toEqual(['food', 'cafe']);
   });
 });
 

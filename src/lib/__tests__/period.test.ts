@@ -55,3 +55,14 @@ describe('periodLabel', () => {
     expect(periodLabel(periodOf('month', at(2026, 10, 23)))).toBe('ตุลาคม 2569');
   });
 });
+
+describe('year periods', () => {
+  it('cover the calendar year, step by years and read in Buddhist era', () => {
+    const p = periodOf('year', at(2026, 10, 23));
+    expect(new Date(p.from)).toEqual(new Date(2026, 0, 1));
+    expect(daysIn(p)).toHaveLength(365);
+    expect(new Date(shiftPeriod(p, -1).from).getFullYear()).toBe(2025);
+    expect(periodLabel(p)).toBe('ปี 2569');
+    expect(daysIn(periodOf('year', at(2028, 5, 1)))).toHaveLength(366);
+  });
+});
