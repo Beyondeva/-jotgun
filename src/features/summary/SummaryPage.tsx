@@ -74,7 +74,7 @@ export function SummaryPage() {
     <>
       {/* one column on phones; from 1100px the overview sits left and the detail right (responsive.css) */}
       <div className="two-col">
-        <div className="two-col__main">
+        <div className="two-col__top summary-top">
           <h1 className="page-title">สรุป</h1>
           <Segmented<PeriodKind>
             value={period.kind}
@@ -89,7 +89,9 @@ export function SummaryPage() {
             <span className="period__label">{periodLabel(period)}</span>
             <IconButton icon={faChevronRight} label="ถัดไป" disabled={isCurrent(period) || future} onClick={() => setPeriod((p) => shiftPeriod(p, 1))} />
           </div>
+        </div>
 
+        <div className="two-col__main">
           <Ledger totals={sum} />
 
           {txs && list.length === 0 ? (

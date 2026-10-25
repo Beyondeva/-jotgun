@@ -219,6 +219,9 @@
 .tabbar--drawn .tab__badge { top: -3px; left: 28px; box-shadow: 0 0 0 2px var(--bar); }
 .tab__label { font-size: 10.5px; line-height: 1.2; }
 .tabbar:not(.tabbar--drawn) .tab__label { display: none; }
+/* only the wide-screen sidebar shows these (responsive.css) */
+.tabbar__brand,
+.tabbar__add-label { display: none; }
 .tab.is-active .tab__label { font-weight: 700; }
 /* the beach ball floats half above the bar; still a 50px tap target */
 .tabbar__add--drawn { width: 56px; height: 56px; margin-top: -22px; border-radius: 50%; background: none; }

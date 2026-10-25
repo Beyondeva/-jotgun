@@ -52,9 +52,14 @@ export function TabBar({ active, onChange, onAdd, inboxCount = 0 }: Props) {
 
   return (
     <nav className={`tabbar ${drawn ? 'tabbar--drawn' : ''}`} aria-label="เมนูหลัก">
+      {/* the wide sidebar's wordmark (hidden elsewhere) */}
+      <span className="tabbar__brand" aria-hidden>
+        จดกัน
+      </span>
       {TABS.slice(0, 2).map(renderTab)}
       <button type="button" className={`tabbar__add ${AddIcon ? 'tabbar__add--drawn' : ''}`} onClick={onAdd} aria-label="จดรายการใหม่">
         {AddIcon ? <AddIcon active={false} /> : <Icon icon={faPlus} size={20} />}
+        <span className="tabbar__add-label">จดรายการ</span>
       </button>
       {TABS.slice(2).map(renderTab)}
     </nav>

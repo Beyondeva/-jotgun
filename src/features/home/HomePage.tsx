@@ -31,6 +31,7 @@ import { BudgetRings } from './BudgetRings';
 import { HeroCat } from './HeroCat';
 import { useCatTalk } from './useCatTalk';
 import { useSwipe } from '../../lib/useSwipe';
+import { useMediaQuery, WIDE } from '../../lib/useMediaQuery';
 import { PaceChart } from './PaceChart';
 import { ReviewSlips } from './ReviewSlips';
 
@@ -52,6 +53,7 @@ export function HomePage() {
   const baht = useBahtText();
   const hidden = useAmountsHidden();
   const demo = useDemoActive();
+  const wide = useMediaQuery(WIDE);
   const txCount = useCachedLiveQuery('tx:count', () => db.transactions.count(), []);
 
   const sum = useMemo(() => totals(txs ?? []), [txs]);
@@ -129,6 +131,8 @@ export function HomePage() {
     <HeroCatProvider value={cat}>
       {/* one column on phones; from 1100px the overview sits left and the detail right (responsive.css) */}
       <div className="two-col">
+        {/* wide screens: the top bar spans both columns instead of sitting in the header art */}
+        {wide && <div className="two-col__top">{topbar}</div>}
         <div className="two-col__main">
           {/* flick the header sideways to step through months (the month sheet is the other way) */}
           <div className={`home-head ${decor ? 'home-head--decor' : ''}`} {...swipe}>
@@ -136,7 +140,7 @@ export function HomePage() {
               // decorated: the same header, drawn over the theme's scene
               <div className="decor-hero">
                 <decor.Scene />
-                {topbar}
+                {!wide && topbar}
                 <section className="hero">
                   {current && <div className="hero__hello">{greeting()}</div>}
                   <div className="hero__label">{spentLabel}</div>
@@ -144,7 +148,7 @@ export function HomePage() {
                 </section>
               </div>
             ) : (
-              topbar
+              !wide && topbar
             )}
 
             {demo && (
