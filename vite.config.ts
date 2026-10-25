@@ -38,7 +38,14 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webp,glb,ico,woff2}'],
+        // each decorated theme's 3D cat is only for people using that theme: cached on first use
+        globIgnores: ['**/scene-*.glb'],
         runtimeCaching: [
+          {
+            urlPattern: /\/assets\/scene-[^/]+\.glb$/,
+            handler: 'CacheFirst',
+            options: { cacheName: 'scene-models', expiration: { maxEntries: 6 } },
+          },
           {
             // tesseract.js worker, wasm core and language data (the language data is also cached by tesseract itself)
             urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/npm\/(tesseract\.js|tesseract\.js-core|@tesseract\.js-data)@?.*/i,

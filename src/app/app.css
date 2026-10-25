@@ -56,6 +56,8 @@
 .decor-scene__floor { position: absolute; z-index: -1; left: 0; width: 100%; display: block; pointer-events: none; }
 .decor-scene__sky { top: 0; height: 100%; }
 .decor-scene__floor { bottom: 0; height: 170px; }
+/* the live cat over its still in the floor art (positioned by SceneLiveOverlay) */
+.decor-scene__live { position: absolute; z-index: -1; left: 0; top: 0; transform-origin: 0 0; }
 
 /* the scene carried on behind the content: fixed, untouchable, stops at the tab bar */
 .decor-pattern {

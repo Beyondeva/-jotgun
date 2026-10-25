@@ -1,4 +1,7 @@
+import { useRef } from 'react';
 import cat from '../../../mascot/renders/khaotang-monsoon.webp';
+import glb from '../../../mascot/renders/scene-monsoon.glb?url';
+import { SceneLive } from '../../../mascot/SceneLive';
 import type { Decor } from '..';
 
 /**
@@ -10,6 +13,7 @@ import type { Decor } from '..';
 const RAIN = '#7fa3b3';
 
 function Scene() {
+  const still = useRef<SVGImageElement>(null);
   return (
     <>
       <svg className="decor-scene__sky" viewBox="0 0 560 300" preserveAspectRatio="xMaxYMin slice" aria-hidden>
@@ -62,8 +66,9 @@ function Scene() {
         <ellipse cx="130" cy="146" rx="26" ry="4" fill="#2d4652" opacity=".7" />
 
         {/* ข้าวตัง under a yellow umbrella, in yellow boots (rendered by tools/blender/khaotang.py) */}
-        <image href={cat} x="234" y="39" width="116" height="136" />
+        <image ref={still} href={cat} x="234" y="39" width="116" height="136" />
       </svg>
+      <SceneLive still={still} glb={glb} />
     </>
   );
 }

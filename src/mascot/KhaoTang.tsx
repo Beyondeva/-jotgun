@@ -70,7 +70,7 @@ export function KhaoTang({ mood = 'happy', size = 120, className, live = false }
 }
 
 /** If three.js or the model can't load (offline, old phone), drop the live view and keep the still. */
-class StillOnError extends Component<{ children: ReactNode }, { failed: boolean }> {
+export class StillOnError extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };

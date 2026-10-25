@@ -1,5 +1,7 @@
-import type { CSSProperties } from 'react';
+import { useRef, type CSSProperties } from 'react';
 import cat from '../../../mascot/renders/khaotang-stars.webp';
+import glb from '../../../mascot/renders/scene-stars.glb?url';
+import { SceneLive } from '../../../mascot/SceneLive';
 import type { Decor } from '..';
 
 /**
@@ -23,6 +25,7 @@ const STARS: [number, number, number][] = [
 ];
 
 function Scene() {
+  const still = useRef<SVGImageElement>(null);
   return (
     <>
       <div className="decor-scene__sky" style={{ background: 'linear-gradient(var(--scene-sky-top), var(--paper))' }} />
@@ -77,8 +80,9 @@ function Scene() {
         <rect x="226" y="120" width="180" height="50" fill="url(#stars-roof-fade)" />
 
         {/* ข้าวตัง lying on the ridge, gazing up (rendered by tools/blender/khaotang.py) */}
-        <image href={cat} x="212" y="-10" width="218" height="150" transform="rotate(-8 321 65)" />
+        <image ref={still} href={cat} x="212" y="-10" width="218" height="150" transform="rotate(-8 321 65)" />
       </svg>
+      <SceneLive still={still} glb={glb} />
     </>
   );
 }

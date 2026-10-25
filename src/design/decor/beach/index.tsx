@@ -1,4 +1,7 @@
+import { useRef } from 'react';
 import cat from '../../../mascot/renders/khaotang-beach.webp';
+import glb from '../../../mascot/renders/scene-beach.glb?url';
+import { SceneLive } from '../../../mascot/SceneLive';
 import type { Decor } from '..';
 
 /**
@@ -11,6 +14,7 @@ import type { Decor } from '..';
 const LINE = 'var(--mascot-ink)';
 
 function Scene() {
+  const still = useRef<SVGImageElement>(null);
   return (
     <>
       {/* sky: 560 wide (the page's max width); phones crop from the left, keeping the moon */}
@@ -76,8 +80,9 @@ function Scene() {
         <path transform="translate(176 148)" fill="#e8693f" d="M0 -7 L 2 -2.3 L 7 -2 L 3.1 1.6 L 4.3 6.6 L 0 3.9 L -4.3 6.6 L -3.1 1.6 L -7 -2 L -2 -2.3 Z" />
 
         {/* ข้าวตัง on the sand, ice cream in paw (rendered by tools/blender/khaotang.py) */}
-        <image href={cat} x="252" y="60" width="112" height="112" />
+        <image ref={still} href={cat} x="252" y="60" width="112" height="112" />
       </svg>
+      <SceneLive still={still} glb={glb} />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import {
   CanvasTexture,
   DirectionalLight,
+  type Euler,
   HemisphereLight,
   MathUtils,
   Mesh,
@@ -21,26 +22,35 @@ import type { Mood } from './KhaoTang';
 import glbUrl from './renders/khaotang.glb?url';
 
 /**
- * The live ข้าวตัง: the GLB from tools/blender/khaotang.py, posed and animated by hand
+ * The live ข้าวตัง: a GLB from tools/blender/khaotang.py, posed and animated by hand
  * (breathing, blinks, ear twitches, a swaying tail, looking at your finger, a hop on tap).
  * The camera and lights copy the Blender stills, so swapping a still for this lines up.
+ * A scene GLB (scene-*.glb) carries its own camera, lighting and shadow in Root's extras,
+ * and its head may rest turned: motion is added on top of the rest pose.
  */
 
 type Pose = { head: [number, number, number]; ears: number };
+/** Blender terms: degrees, Z up */
+type Cam = { az: number; el: number; dist: number; target: [number, number, number] };
 
-// tools/blender/khaotang.py CAMERA: azimuth 22°, elevation 10°, 5.8 away, aimed at z 1.25, 70mm on a 36mm-tall sensor
-const CAM = { az: 22, el: 10, dist: 5.8, targetY: 1.25, fov: MathUtils.radToDeg(2 * Math.atan(18 / 70)) };
+// tools/blender/khaotang.py CAMERA; 70mm on a 36mm-tall sensor
+const DEFAULT_CAM: Cam = { az: 22, el: 10, dist: 5.8, target: [0, 0, 1.25] };
+const FOV = MathUtils.radToDeg(2 * Math.atan(18 / 70));
 
-let model: Promise<Object3D> | undefined;
-function loadModel(): Promise<Object3D> {
-  model ??= new GLTFLoader()
-    .setMeshoptDecoder(MeshoptDecoder)
-    .loadAsync(glbUrl)
-    .then((g) => g.scene)
-    .catch((e: unknown) => {
-      model = undefined; // let a later mount try again
-      throw e;
-    });
+const models = new Map<string, Promise<Object3D>>();
+function loadModel(url: string): Promise<Object3D> {
+  let model = models.get(url);
+  if (!model) {
+    model = new GLTFLoader()
+      .setMeshoptDecoder(MeshoptDecoder)
+      .loadAsync(url)
+      .then((g) => g.scene)
+      .catch((e: unknown) => {
+        models.delete(url); // let a later mount try again
+        throw e;
+      });
+    models.set(url, model);
+  }
   return model;
 }
 
@@ -67,7 +77,7 @@ export interface Live {
  * Draws into a fresh canvas inside `host` (a lost context can't be reused, and React may
  * mount twice). Never throws: if WebGL fails, nothing is drawn and the still stays.
  */
-export function mountLive(host: HTMLElement, initial: Mood, onFirstFrame: () => void): Live {
+export function mountLive(host: HTMLElement, initial: Mood, onFirstFrame: () => void, url: string = glbUrl): Live {
   const canvas = document.createElement('canvas');
   canvas.className = 'khaotang__live';
   let renderer: WebGLRenderer;
@@ -92,15 +102,20 @@ export function mountLive(host: HTMLElement, initial: Mood, onFirstFrame: () => 
   scene.environmentIntensity = 0.45;
   pmrem.dispose();
 
-  // Blender (x, y, z) is three (x, z, -y)
-  scene.add(new HemisphereLight(0xfff6ea, 0xe9dccb, 1.1));
-  const key = new DirectionalLight(0xfff4e6, 2.1);
-  key.position.set(-3.2, 5, 4);
-  const fill = new DirectionalLight(0xe6eeff, 0.55);
-  fill.position.set(4, 1.8, 3);
-  const rim = new DirectionalLight(0xffffff, 1.6);
-  rim.position.set(1.5, 4, -4.5);
-  scene.add(key, fill, rim);
+  // Blender (x, y, z) is three (x, z, -y). Two rigs, like stage() in the Blender script.
+  const rig = (sky: number, ground: number, ambient: number, k: [number, number], f: [number, number], r: [number, number]) => {
+    const key = new DirectionalLight(k[0], k[1]);
+    key.position.set(-3.2, 5, 4);
+    const fill = new DirectionalLight(f[0], f[1]);
+    fill.position.set(4, 1.8, 3);
+    const rim = new DirectionalLight(r[0], r[1]);
+    rim.position.set(1.5, 4, -4.5);
+    return [new HemisphereLight(sky, ground, ambient), key, fill, rim];
+  };
+  const studio = rig(0xfff6ea, 0xe9dccb, 1.1, [0xfff4e6, 2.1], [0xe6eeff, 0.55], [0xffffff, 1.6]);
+  const night = rig(0x7d8cc4, 0x2a3358, 0.85, [0xc9d6ff, 1.25], [0x8fa3e8, 0.45], [0xffe3a8, 2.1]);
+  night.forEach((l) => (l.visible = false));
+  scene.add(...studio, ...night);
 
   const shadowMap = shadowTexture();
   const shadow = new Mesh(new PlaneGeometry(2.3, 1.7), new MeshBasicMaterial({ map: shadowMap, transparent: true, depthWrite: false, opacity: 0.6 }));
@@ -108,11 +123,14 @@ export function mountLive(host: HTMLElement, initial: Mood, onFirstFrame: () => 
   shadow.position.set(0.12, 0.002, 0.02);
   scene.add(shadow);
 
-  const camera = new PerspectiveCamera(CAM.fov, 1, 0.1, 50);
-  const a = MathUtils.degToRad(CAM.az);
-  const e = MathUtils.degToRad(CAM.el);
-  camera.position.set(CAM.dist * Math.sin(a) * Math.cos(e), CAM.targetY + CAM.dist * Math.sin(e), CAM.dist * Math.cos(a) * Math.cos(e));
-  camera.lookAt(0, CAM.targetY, 0);
+  const camera = new PerspectiveCamera(FOV, 1, 0.1, 50);
+  const aimCamera = ({ az, el, dist, target: [tx, ty, tz] }: Cam) => {
+    const a = MathUtils.degToRad(az);
+    const e = MathUtils.degToRad(el);
+    camera.position.set(tx + dist * Math.sin(a) * Math.cos(e), tz + dist * Math.sin(e), -ty + dist * Math.cos(a) * Math.cos(e));
+    camera.lookAt(tx, tz, -ty);
+  };
+  aimCamera(DEFAULT_CAM);
 
   const resize = () => {
     const { clientWidth: w, clientHeight: h } = canvas;
@@ -131,6 +149,7 @@ export function mountLive(host: HTMLElement, initial: Mood, onFirstFrame: () => 
   let sweat: Object3D | undefined;
   let sweatY = 0;
   let poses: Record<Mood, Pose> | undefined;
+  let rest: { head: Euler; earL: Euler; earR: Euler } | undefined;
 
   const applyMood = () => {
     root?.traverse((o) => {
@@ -141,7 +160,7 @@ export function mountLive(host: HTMLElement, initial: Mood, onFirstFrame: () => 
     });
   };
 
-  loadModel()
+  loadModel(url)
     .then((m) => {
       if (disposed) return;
       root = m.clone(true);
@@ -149,10 +168,18 @@ export function mountLive(host: HTMLElement, initial: Mood, onFirstFrame: () => 
       // GLTFLoader drops the dots from node names: Eye.L -> EyeL
       const get = (n: string) => root!.getObjectByName(n)!;
       parts = { head: get('Head'), earL: get('EarL'), earR: get('EarR'), eyeL: get('EyeL'), eyeR: get('EyeR'), tail: get('Tail') };
+      rest = { head: parts.head.rotation.clone(), earL: parts.earL.rotation.clone(), earR: parts.earR.rotation.clone() };
       sweat = root.getObjectByName('Sweat');
       sweatY = sweat?.position.y ?? 0;
-      const rootNode = root.getObjectByName('Root') ?? root;
-      poses = JSON.parse(rootNode.userData.poses as string) as Record<Mood, Pose>;
+      const extras = (root.getObjectByName('Root') ?? root).userData;
+      poses = JSON.parse(extras.poses as string) as Record<Mood, Pose>;
+      if (typeof extras.camera === 'string') aimCamera(JSON.parse(extras.camera) as Cam);
+      if (extras.lights === 'night') {
+        studio.forEach((l) => (l.visible = false));
+        night.forEach((l) => (l.visible = true));
+        scene.environmentIntensity = 0.2;
+      }
+      shadow.visible = extras.shadow !== false;
       applyMood();
       start();
     })
@@ -180,7 +207,7 @@ export function mountLive(host: HTMLElement, initial: Mood, onFirstFrame: () => 
 
   const frame = (now: number) => {
     raf = requestAnimationFrame(frame);
-    if (!root || !parts || !poses) return;
+    if (!root || !parts || !poses || !rest) return;
     const t = (now - t0) / 1000;
     const pose = poses[mood];
     const sleeping = mood === 'sleeping';
@@ -199,7 +226,8 @@ export function mountLive(host: HTMLElement, initial: Mood, onFirstFrame: () => 
     const scan = reading ? 0.1 * Math.sin(t * 1.1) : 0;
     const tremble = mood === 'worried' ? 0.012 * Math.sin(t * 23) : 0;
     const [pitch, yaw, roll] = pose.head.map(MathUtils.degToRad);
-    parts.head.rotation.set(pitch + look.y * 0.25, yaw + look.x * 0.45 + scan, -roll + sway + tremble);
+    const h = rest.head;
+    parts.head.rotation.set(h.x + pitch + look.y * 0.25, h.y + yaw + look.x * 0.45 + scan, h.z - roll + sway + tremble);
 
     // ears: the mood's droop plus the odd twitch
     if (t > nextTwitch && !sleeping) {
@@ -209,8 +237,8 @@ export function mountLive(host: HTMLElement, initial: Mood, onFirstFrame: () => 
     }
     const twitch = 0.35 * pulse(t, twitchAt, 0.28);
     const droop = MathUtils.degToRad(pose.ears);
-    parts.earL.rotation.z = -droop - (twitchLeft ? twitch : 0);
-    parts.earR.rotation.z = droop + (twitchLeft ? 0 : twitch);
+    parts.earL.rotation.z = rest.earL.z - droop - (twitchLeft ? twitch : 0);
+    parts.earR.rotation.z = rest.earR.z + droop + (twitchLeft ? 0 : twitch);
 
     // blinks, sometimes twice
     if (t > nextBlink) {

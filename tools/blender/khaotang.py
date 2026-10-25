@@ -10,6 +10,8 @@ Tasks:
   stills          transparent WebP per mood -> <out>/khaotang-<mood>.webp
   scenes          the decorated themes' poses -> <out>/khaotang-<scene>.webp
   glb             the animatable model -> <out>/khaotang.glb (compress with gltf-transform)
+  glb-scenes      the decorated-theme poses as models -> <out>/scene-<scene>.glb, with the
+                  still's camera, night lighting and shadow in Root's extras
 
 The GLB is a node tree the app animates (src/mascot/live.ts):
   Root > Body, Paw*, Foot*, Belly, Tail (pivot at its base) and Head (pivot at the neck)
@@ -625,17 +627,45 @@ if 'preview' in TASKS or 'stills' in TASKS:
         else:
             render(os.path.join(OUT, f'khaotang-{mood}.webp'), 480, 480)
 
+# The decorated themes' poses: name, pose, props, camera overrides, still size.
+SCENES = (
+    ('beach', 'sit', ('icecream',), {}, (480, 480)),
+    ('monsoon', 'sit', ('umbrella', 'boots'), dict(dist=7.4, target=(0, 0, 1.62)), (480, 560)),
+    ('stars', 'lie', (), dict(az=52, el=12, dist=6.4, target=(0, 0.35, 0.80)), (640, 440)),
+)
+LIE_HEAD = (-18, -6, 28)  # pitch, roll, yaw: gazing up at the sky, face to the camera
+
+
+def build_scene(pose, props):
+    M = fresh()
+    piv = build(M, pose, props)
+    set_mood('happy', piv)
+    if pose == 'lie':
+        # the head's rest pose: the app animates on top of whatever rotation the GLB carries
+        piv['head'].rotation_euler = tuple(math.radians(a) for a in LIE_HEAD)
+    return piv
+
+
+def export_glb(path, extras=None):
+    """Everything goes in, mood props included; Root's extras tell the app how to stage it."""
+    root = bpy.data.objects['Root']
+    for k, v in (extras or {}).items():
+        root[k] = v
+    for o in bpy.data.objects:
+        o.hide_render = False
+        o.select_set(True)
+    bpy.context.view_layer.update()
+    bpy.ops.export_scene.gltf(
+        filepath=path, export_format='GLB', use_selection=True,
+        export_apply=True, export_extras=True, export_yup=True, export_cameras=False, export_lights=False,
+        export_animations=False, export_texcoords=False,
+    )
+    print('EXPORTED', path)
+
+
 if 'scenes' in TASKS:
-    for scene_name, pose, props, mood, cam, size in (
-        ('beach', 'sit', ('icecream',), 'happy', {}, (480, 480)),
-        ('monsoon', 'sit', ('umbrella', 'boots'), 'happy', dict(dist=7.4, target=(0, 0, 1.62)), (480, 560)),
-        ('stars', 'lie', (), 'happy', dict(az=52, el=12, dist=6.4, target=(0, 0.35, 0.80)), (640, 440)),
-    ):
-        M = fresh()
-        piv = build(M, pose, props)
-        set_mood(mood, piv)
-        if pose == 'lie':
-            piv['head'].rotation_euler = (math.radians(-18), math.radians(-6), math.radians(28))  # gazing up at the sky, face to the camera
+    for scene_name, pose, props, cam, size in SCENES:
+        build_scene(pose, props)
         stage(lights='night', shadow=pose != 'lie')
         camera(**cam)
         render(os.path.join(OUT, f'khaotang-{scene_name}.webp'), *size)
@@ -643,13 +673,15 @@ if 'scenes' in TASKS:
 if 'glb' in TASKS:
     M = fresh()
     build(M)
-    for o in bpy.data.objects:
-        o.hide_render = False
-        o.select_set(True)
-    bpy.context.view_layer.update()
-    bpy.ops.export_scene.gltf(
-        filepath=os.path.join(OUT, 'khaotang.glb'), export_format='GLB', use_selection=True,
-        export_apply=True, export_extras=True, export_yup=True, export_cameras=False, export_lights=False,
-        export_animations=False, export_texcoords=False,
-    )
-    print('EXPORTED', os.path.join(OUT, 'khaotang.glb'))
+    export_glb(os.path.join(OUT, 'khaotang.glb'))
+
+if 'glb-scenes' in TASKS:
+    # camera in Blender terms (degrees, Z up), the same one the scene still was rendered with
+    for scene_name, pose, props, cam, size in SCENES:
+        build_scene(pose, props)
+        c = {**CAMERA, **cam}
+        export_glb(os.path.join(OUT, f'scene-{scene_name}.glb'), {
+            'camera': json.dumps({'az': c['az'], 'el': c['el'], 'dist': c['dist'], 'target': list(c['target'])}),
+            'lights': 'night',
+            'shadow': pose != 'lie',
+        })
