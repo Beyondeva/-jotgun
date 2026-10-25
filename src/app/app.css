@@ -10,6 +10,7 @@
 
 /* top bar: month switcher left, actions right */
 .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 48px; margin: 0 calc(var(--s-2) * -1); }
+.topbar__actions { display: flex; align-items: center; }
 .month-btn {
   display: inline-flex;
   align-items: center;

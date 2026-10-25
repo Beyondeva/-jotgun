@@ -14,6 +14,7 @@ import { daysIn, isCurrent, periodLabel, periodOf, periodProgress, shiftPeriod, 
 import { KhaoTang } from '../../mascot/KhaoTang';
 import { useBudgets } from '../../db/budgets';
 import { budgetStates, worstBudget } from '../../lib/budget';
+import { useBahtText } from '../../lib/privacy';
 import { useCategoryOf } from '../categories/store';
 import { Receipt } from '../transactions/Receipt';
 import { useTransactions } from '../transactions/useTransactions';
@@ -25,6 +26,7 @@ export function SummaryPage() {
   const [params] = useSearchParams();
   const { openManual, removeTx } = useShell();
   const categoryOf = useCategoryOf();
+  const baht = useBahtText();
   const [period, setPeriod] = useState<Period>(() => periodOf(params.get('p') === 'month' ? 'month' : 'week', Date.now()));
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const txs = useTransactions(period);
@@ -87,7 +89,7 @@ export function SummaryPage() {
         <>
           <div className="section-head">
             <h2>ใช้จ่ายรายวัน</h2>
-            <span className="section-head__note num">เฉลี่ยวันละ ฿{Math.round(sum.expense / elapsedDays / 100).toLocaleString('en-US')}</span>
+            <span className="section-head__note num">เฉลี่ยวันละ {baht(sum.expense / elapsedDays)}</span>
           </div>
           <DailyBars data={bars} />
 

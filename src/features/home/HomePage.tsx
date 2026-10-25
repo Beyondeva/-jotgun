@@ -1,4 +1,4 @@
-import { faAngleRight, faArrowRight, faCheck, faChevronDown, faCircleExclamation, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight, faArrowRight, faCheck, faChevronDown, faCircleExclamation, faEye, faEyeSlash, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useShell } from '../../app/shell';
@@ -15,6 +15,7 @@ import { useBudgets } from '../../db/budgets';
 import { expenseByCategory, totals } from '../../lib/aggregate';
 import { budgetStates, worstBudget } from '../../lib/budget';
 import { greeting } from '../../lib/greeting';
+import { setAmountsHidden, useAmountsHidden, useBahtText } from '../../lib/privacy';
 import { daysLeft, isCurrent, periodLabel, periodOf, periodProgress, shiftPeriod, type Period } from '../../lib/period';
 import { useCategoryOf } from '../categories/store';
 import { CategoryTxSheet } from '../summary/CategoryTxSheet';
@@ -37,6 +38,8 @@ export function HomePage() {
   const pending = usePendingSlips();
   const budgets = useBudgets() ?? [];
   const decor = useDecor();
+  const baht = useBahtText();
+  const hidden = useAmountsHidden();
 
   const sum = useMemo(() => totals(txs ?? []), [txs]);
   const byCat = useMemo(() => expenseByCategory(txs ?? []), [txs]);
@@ -63,7 +66,10 @@ export function HomePage() {
       <button className="month-btn" onClick={() => setMonthsOpen(true)}>
         {periodLabel(period)} <Icon icon={faChevronDown} size={11} />
       </button>
-      <IconButton icon={faMagnifyingGlass} label="ค้นหา" onClick={() => navigate('/search')} />
+      <span className="topbar__actions">
+        <IconButton icon={hidden ? faEyeSlash : faEye} label={hidden ? 'แสดงยอดเงิน' : 'ซ่อนยอดเงิน'} onClick={() => setAmountsHidden(!hidden)} />
+        <IconButton icon={faMagnifyingGlass} label="ค้นหา" onClick={() => navigate('/search')} />
+      </span>
     </header>
   );
   const spentLabel = current ? 'ใช้ไปเดือนนี้' : 'ใช้ไปทั้งเดือน';
@@ -96,7 +102,7 @@ export function HomePage() {
         )}
         {current && perDay > 0 && (
           <p className="hero__pace">
-            ใช้ได้อีกวันละ <b className="num">฿{Math.floor(perDay / 100).toLocaleString('en-US')}</b> · {days} วัน
+            ใช้ได้อีกวันละ <b className="num">{baht(Math.floor(perDay / 100) * 100)}</b> · {days} วัน
           </p>
         )}
         {worst && (
@@ -138,7 +144,7 @@ export function HomePage() {
               <div className="section-head">
                 <h2>ไปไหนบ้าง</h2>
               </div>
-              <StackedBar data={slices} onSelect={(s) => setCategoryId(s.id)} />
+              <StackedBar data={slices} onSelect={(s) => setCategoryId(s.id)} onMore={() => navigate('/summary?p=month')} />
             </>
           )}
 

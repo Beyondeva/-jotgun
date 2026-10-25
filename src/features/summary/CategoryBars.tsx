@@ -3,6 +3,7 @@ import { CategoryIcon } from '../../design/components/CategoryIcon';
 import { Money } from '../../design/components/Money';
 import { catColor } from '../../design/palette';
 import type { Category } from '../../db/types';
+import { useBahtText } from '../../lib/privacy';
 
 interface Row {
   category: Category;
@@ -21,6 +22,7 @@ interface Props {
 
 export function CategoryBars({ rows, periodProgress, onSelect }: Props) {
   const total = rows.reduce((s, r) => s + r.value, 0) || 1;
+  const baht = useBahtText();
   return (
     <div className="catbars">
       {rows.map(({ category: c, value, budget }, i) => {
@@ -50,8 +52,8 @@ export function CategoryBars({ rows, periodProgress, onSelect }: Props) {
               <div className={`catbar__foot ${over ? 'is-over' : ahead ? 'is-ahead' : ''}`}>
                 {budget
                   ? over
-                    ? `เกินงบ ฿${((value - budget) / 100).toLocaleString('en-US')}`
-                    : `ใช้ ${Math.round(ratio * 100)}% ของงบ ฿${(budget / 100).toLocaleString('en-US')}${ahead ? ' · เร็วกว่ากำหนด' : ''}`
+                    ? `เกินงบ ${baht(value - budget)}`
+                    : `ใช้ ${Math.round(ratio * 100)}% ของงบ ${baht(budget)}${ahead ? ' · เร็วกว่ากำหนด' : ''}`
                   : `${Math.round(ratio * 100)}% ของรายจ่าย`}
               </div>
             </div>

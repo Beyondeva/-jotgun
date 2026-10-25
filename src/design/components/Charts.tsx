@@ -1,6 +1,7 @@
 import { useReducedMotion } from 'framer-motion';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { catColor } from '../palette';
+import { useAmountsHidden } from '../../lib/privacy';
 import { Money } from './Money';
 import type { Slice } from './StackedBar';
 
@@ -60,6 +61,7 @@ const compact = (satang: number) => {
 
 export function DailyBars({ data, height = 176 }: BarsProps) {
   const reduce = useReducedMotion();
+  const hidden = useAmountsHidden();
   return (
     <div style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height="100%">
@@ -70,7 +72,7 @@ export function DailyBars({ data, height = 176 }: BarsProps) {
             axisLine={false}
             tickLine={false}
             tickCount={4}
-            tickFormatter={compact}
+            tickFormatter={hidden ? () => '' : compact}
             tick={{ fill: 'var(--ink-3)', fontSize: 11, fontFamily: 'var(--font-figure)' }}
           />
           <XAxis

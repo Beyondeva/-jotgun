@@ -72,7 +72,7 @@ export function SlipCard({
         <div className="slip__thumb">{thumb}</div>
         <button type="button" className="slip__info" onClick={onEdit} disabled={!onEdit} aria-label={onEdit ? 'แก้ข้อมูลสลิป' : undefined}>
           <div className="slip__amount">
-            {mark('amount', amount ? <Money value={amount} size="lg" flow={type === 'income' ? 'in' : 'out'} /> : <span className="slip__missing">฿ —</span>)}
+            {mark('amount', amount ? <Money value={amount} size="lg" flow={type === 'income' ? 'in' : 'out'} reveal /> : <span className="slip__missing">฿ —</span>)}
           </div>
           <div className="slip__receiver">{mark(who, counterparty || '—')}</div>
           <div className="slip__meta mono">

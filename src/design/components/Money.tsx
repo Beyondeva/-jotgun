@@ -2,6 +2,7 @@ import { animate, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { splitMoney } from '../../lib/money';
+import { MASK, useAmountsHidden } from '../../lib/privacy';
 import { Icon } from '../Icon';
 
 type Size = 'hero' | 'lg' | 'md' | 'sm';
@@ -26,6 +27,8 @@ interface Props {
    * shown there is remembered, so coming back to a page doesn't re-count from 0.
    */
   countUp?: boolean | string;
+  /** Show the figure even while amounts are hidden (screens where you check or type it). */
+  reveal?: boolean;
   className?: string;
 }
 
@@ -64,14 +67,26 @@ export function useCountUp(target: number, enabled: boolean | string) {
   return shown;
 }
 
-export function Money({ value, size = 'md', tone = 'default', sign = 'none', flow, bare, countUp = false, className }: Props) {
-  const shown = useCountUp(value, countUp);
+export function Money({ value, size = 'md', tone = 'default', sign = 'none', flow, bare, countUp = false, reveal, className }: Props) {
+  const hidden = useAmountsHidden() && !reveal;
+  const shown = useCountUp(value, hidden ? false : countUp);
   const { negative, int, dec } = splitMoney(shown);
   // a negative value always shows its minus; "auto" also marks positives with +
   const plus = flow === 'in' || sign === 'plus' || (sign === 'auto' && value > 0 && !negative);
   const prefix = flow === 'out' || sign === 'minus' || negative ? '−' : plus ? '+' : '';
   const shownTone = flow === 'in' && tone === 'default' ? 'income' : tone;
   const label = `${flow === 'in' ? 'รับ ' : flow === 'out' ? 'จ่าย ' : ''}${prefix}${int}.${dec} บาท`;
+
+  if (hidden) {
+    return (
+      <span className={`money money--${size} money--${shownTone} money--hidden num ${className ?? ''}`} aria-label="ซ่อนยอดเงิน">
+        {flow === 'in' && <Icon icon={faArrowDown} className="money__in" style={{ fontSize: '0.62em' }} />}
+        {/* ฿ even when bare: dots alone read as a "more" menu */}
+        <span className="money__cur">฿</span>
+        <span className="money__int">{MASK}</span>
+      </span>
+    );
+  }
 
   return (
     <span className={`money money--${size} money--${shownTone} num ${className ?? ''}`} aria-label={label}>
