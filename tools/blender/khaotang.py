@@ -538,9 +538,24 @@ def stage(lights='studio', paper=False, shadow=True):
         nt.links.new(mix.outputs[0], nt.nodes['World Output'].inputs['Surface'])
 
     if shadow:
-        me = bpy.data.meshes.new('Ground')
-        bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=6); bm.to_mesh(me); bm.free()
-        link('Ground', me).is_shadow_catcher = True
+        # a soft contact blob, like the app's live view (a shadow catcher's penumbra runs off the frame)
+        me = bpy.data.meshes.new('Shadow')
+        bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=1); bm.to_mesh(me); bm.free()
+        m = bpy.data.materials.new('shadow'); m.use_nodes = True
+        nt2 = m.node_tree; b = nt2.nodes['Principled BSDF']
+        b.inputs['Base Color'].default_value = (0, 0, 0, 1); b.inputs['Specular IOR Level'].default_value = 0
+        b.inputs['Roughness'].default_value = 1
+        tc = nt2.nodes.new('ShaderNodeTexCoord'); grad = nt2.nodes.new('ShaderNodeTexGradient'); grad.gradient_type = 'SPHERICAL'
+        ramp = nt2.nodes.new('ShaderNodeValToRGB')
+        ramp.color_ramp.elements[0].position = 0.0; ramp.color_ramp.elements[0].color = (0, 0, 0, 1)
+        ramp.color_ramp.elements[1].position = 1.0; ramp.color_ramp.elements[1].color = (0.45, 0.45, 0.45, 1)
+        e = ramp.color_ramp.elements.new(0.4); e.color = (0.14, 0.14, 0.14, 1)
+        nt2.links.new(tc.outputs['Object'], grad.inputs['Vector'])
+        nt2.links.new(grad.outputs['Fac'], ramp.inputs['Fac'])
+        nt2.links.new(ramp.outputs['Color'], b.inputs['Alpha'])
+        blob_ = link('Shadow', me, m)
+        blob_.location = (0.12, -0.02, 0.003); blob_.scale = (1.15, 0.85, 1)
+        blob_.visible_shadow = False
 
     def area(name, loc, energy, size, hex_):
         li = bpy.data.lights.new(name, 'AREA'); li.energy = energy; li.size = size; li.color = lin(hex_)[:3]
