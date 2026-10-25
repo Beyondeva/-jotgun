@@ -24,8 +24,8 @@ Vite 8, React 19, TS 7, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB) + dexie-r
 - `src/app/`: AppLayout (tab bar, add sheet, decor pattern layer), shell context, `app.css` (page and home styles)
 - `src/app/responsive.css`: everything that depends on screen size. Phones are the default everywhere else.
   - ≤360px tightens `--gutter` and the figures.
-  - ≥720px turns the tab bar into a left rail (`--rail-w`, and `--nav-bottom` replaces the tab-bar height).
-  - ≥1100px lays out `.two-col` (home and summary) as overview | detail.
+  - ≥720px turns the tab bar into a 96px left rail in page paper (`--rail-w`, and `--nav-bottom` replaces the tab-bar height). A theme's header art becomes a rounded card.
+  - ≥1100px makes the rail a 232px sidebar with the wordmark and "จดรายการ". It lays out `.two-col` (home and summary) as a full-width `.two-col__top` row over overview | detail columns. Home moves its top bar there with `useMediaQuery(WIDE)`.
 - `src/db/`: Dexie schema (`types.ts`); slips (ingest/confirm/discard), budgets, settings
 - `src/slip/`: OCR and QR reading plus a per-bank parser. Fixtures are in `__tests__`
 - `src/features/`: home, inbox (รอจด slip cards), manual entry, summary, search, settings, categories, transactions; design-preview (DEV only)
