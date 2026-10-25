@@ -6,7 +6,7 @@ import { setBudget } from '../budgets';
 import { db } from '../db';
 import { deleteCategory, saveCategory, saveTransaction } from '../repo';
 import { setOwnerNames } from '../settings';
-import { confirmAll, confirmSlip, ingestSlip, pickCategory, updateSlip } from '../slips';
+import { confirmAll, confirmReady, confirmSlip, ingestSlip, isReady, pickCategory, updateSlip } from '../slips';
 
 const img = () => new Blob(['img'], { type: 'image/png' });
 const at = (d: number, h = 12) => new Date(2026, 9, d, h).getTime();
@@ -67,6 +67,20 @@ describe('slip flow', () => {
     expect(await confirmAll()).toBe(1);
     expect(await db.transactions.count()).toBe(1);
     expect((await db.slips.get(empty.id))?.status).toBe('pending');
+  });
+});
+
+describe('ready slips', () => {
+  it('one-tap confirm skips unsure, incomplete and duplicate slips', async () => {
+    const sure = await ingestSlip({ image: img(), thumb: img(), parsed: { amount: 4700, receiver: 'BTS สยาม', occurredAt: at(23), ref: 'A1' } });
+    const unsure = await ingestSlip({ image: img(), thumb: img(), parsed: { amount: 9900, receiver: 'ร้านป้า', occurredAt: at(23), ref: 'A2' }, confidence: { amount: 0.4 } });
+    const empty = await ingestSlip({ image: img(), thumb: img(), parsed: {} });
+    const dup = await ingestSlip({ image: img(), thumb: img(), parsed: { amount: 4700, receiver: 'BTS สยาม', occurredAt: at(23), ref: 'A1' } });
+    expect([sure, unsure, empty, dup].map(isReady)).toEqual([true, false, false, false]);
+
+    expect(await confirmReady()).toBe(1);
+    expect((await db.transactions.toArray()).map((t) => t.ref)).toEqual(['A1']);
+    expect(await db.slips.where('status').equals('pending').count()).toBe(3);
   });
 });
 

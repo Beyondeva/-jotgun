@@ -83,6 +83,9 @@ export function fieldsToCheck(slip: Slip): (keyof SlipFields)[] {
 
 export const canConfirm = (slip: Slip) => !!slip.parsed.amount && !!slip.parsed.occurredAt;
 
+/** Safe to record without looking: every field read confidently, a category guessed, not a duplicate. */
+export const isReady = (slip: Slip) => canConfirm(slip) && !!slip.suggestedCategoryId && !slip.duplicateOf && fieldsToCheck(slip).length === 0;
+
 /** User corrected fields: the corrected values are now certain; re-guess the category if who/type changed. */
 export async function updateSlip(id: string, parsed: SlipFields, type: TxType): Promise<void> {
   const slip = await db.slips.get(id);
@@ -141,6 +144,14 @@ export async function confirmAll(): Promise<number> {
   const pending = await db.slips.where('status').equals('pending').toArray();
   let n = 0;
   for (const s of pending) if (s.suggestedCategoryId && (await confirmSlip(s.id, s.suggestedCategoryId))) n++;
+  return n;
+}
+
+/** Confirm only the slips that are ready (the home screen's one-tap button). Returns how many. */
+export async function confirmReady(): Promise<number> {
+  const pending = await db.slips.where('status').equals('pending').toArray();
+  let n = 0;
+  for (const s of pending) if (isReady(s) && (await confirmSlip(s.id, s.suggestedCategoryId!))) n++;
   return n;
 }
 

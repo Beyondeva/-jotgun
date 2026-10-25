@@ -1,4 +1,4 @@
-import { faAngleRight, faArrowRight, faCheck, faChevronDown, faCircleExclamation, faEye, faEyeSlash, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faCheck, faChevronDown, faCircleExclamation, faEye, faEyeSlash, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useShell } from '../../app/shell';
@@ -7,12 +7,12 @@ import { StackedBar, type Slice } from '../../design/components/StackedBar';
 import { EmptyState } from '../../design/components/Feedback';
 import { Money } from '../../design/components/Money';
 import { PageLoader } from '../../design/components/PageLoader';
-import { Paper } from '../../design/components/Paper';
 import { Sheet } from '../../design/components/Sheet';
 import { useDecor } from '../../design/decor';
 import { Icon } from '../../design/Icon';
 import { useBudgets } from '../../db/budgets';
 import { expenseByCategory, totals } from '../../lib/aggregate';
+import { paceOf } from '../../lib/pace';
 import { budgetStates, worstBudget } from '../../lib/budget';
 import { greeting } from '../../lib/greeting';
 import { setAmountsHidden, useAmountsHidden, useBahtText } from '../../lib/privacy';
@@ -22,8 +22,9 @@ import { CategoryTxSheet } from '../summary/CategoryTxSheet';
 import { Ledger } from '../summary/Ledger';
 import { Receipt } from '../transactions/Receipt';
 import { useTransactions } from '../transactions/useTransactions';
-import { InboxThumbs } from '../inbox/InboxThumbs';
 import { usePendingSlips } from '../inbox/usePendingSlips';
+import { PaceChart } from './PaceChart';
+import { ReviewSlips } from './ReviewSlips';
 
 const RECENT = 8;
 
@@ -35,6 +36,8 @@ export function HomePage() {
   const [monthsOpen, setMonthsOpen] = useState(false);
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const txs = useTransactions(period);
+  const previous = useMemo(() => shiftPeriod(period, -1), [period]);
+  const prevTxs = useTransactions(previous);
   const pending = usePendingSlips();
   const budgets = useBudgets() ?? [];
   const decor = useDecor();
@@ -52,9 +55,13 @@ export function HomePage() {
     [byCat, categoryOf],
   );
 
+  const budgetTotal = budgets.reduce((s, b) => s + b.monthlyLimit, 0);
+  const pace = useMemo(() => (txs?.length ? paceOf(txs, period, { budget: budgetTotal, previous: prevTxs }) : null), [txs, prevTxs, period, budgetTotal]);
+
   const current = isCurrent(period);
   const days = daysLeft(period);
   const perDay = sum.balance > 0 && days > 0 ? Math.floor(sum.balance / days) : 0;
+  const budgetLeft = budgetTotal - sum.expense;
   const worst = current ? worstBudget(budgetStates(byCat, budgets, periodProgress(period))) : undefined;
 
   // first read from IndexedDB (or a month switch): show the cat instead of ฿0
@@ -100,11 +107,27 @@ export function HomePage() {
             <Money value={sum.expense} size="hero" countUp="home-hero" />
           </>
         )}
-        {current && perDay > 0 && (
+        {current && budgetTotal > 0 ? (
           <p className="hero__pace">
-            ใช้ได้อีกวันละ <b className="num">{baht(Math.floor(perDay / 100) * 100)}</b> · {days} วัน
+            {budgetLeft >= 0 ? (
+              <>
+                เหลือ <b className="num">{baht(budgetLeft)}</b> จากงบ {baht(budgetTotal)} · วันละ <b className="num">{baht(Math.floor(budgetLeft / days / 100) * 100)}</b>
+              </>
+            ) : (
+              <>
+                <b className="num is-over">เกินงบ {baht(-budgetLeft)}</b> จากงบ {baht(budgetTotal)}
+              </>
+            )}
           </p>
+        ) : (
+          current &&
+          perDay > 0 && (
+            <p className="hero__pace">
+              ใช้ได้อีกวันละ <b className="num">{baht(Math.floor(perDay / 100) * 100)}</b> · {days} วัน
+            </p>
+          )
         )}
+        {pace && <PaceChart pace={pace} />}
         {worst && (
           <button className={`hero__alert ${worst.status === 'over' ? 'is-over' : ''}`} onClick={() => navigate('/summary?p=month')}>
             <Icon icon={faCircleExclamation} size={12} />
@@ -115,15 +138,7 @@ export function HomePage() {
 
       <Ledger totals={sum} />
 
-      {!!pending?.length && (
-        <Paper pressable className="inbox-strip" onClick={() => navigate('/inbox')} role="button">
-          <InboxThumbs slips={pending} />
-          <span className="inbox-strip__title">รอจด {pending.length} ใบ</span>
-          <span className="inbox-strip__go">
-            <Icon icon={faAngleRight} size={14} />
-          </span>
-        </Paper>
-      )}
+      {!!pending?.length && <ReviewSlips slips={pending} />}
 
       {txs && txs.length === 0 ? (
         <EmptyState
