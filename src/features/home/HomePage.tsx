@@ -30,6 +30,7 @@ import { HeroCatProvider } from '../../mascot/heroCat';
 import { BudgetRings } from './BudgetRings';
 import { HeroCat } from './HeroCat';
 import { useCatTalk } from './useCatTalk';
+import { useSwipe } from '../../lib/useSwipe';
 import { PaceChart } from './PaceChart';
 import { ReviewSlips } from './ReviewSlips';
 
@@ -100,6 +101,13 @@ export function HomePage() {
     txs,
   );
 
+  const swipe = useSwipe({
+    // newer months only up to this one
+    onLeft: () => setPeriod((p) => (p.from >= periodOf('month', Date.now()).from ? p : shiftPeriod(p, 1))),
+    onRight: () => setPeriod((p) => shiftPeriod(p, -1)),
+    ignore: '.pace__plot, button',
+  });
+
   // first read from IndexedDB (or a month switch): show the cat instead of ฿0
   // (a decorated theme's art is still downloading: wait rather than jump from plain to scene)
   if (txs === undefined || decor === 'loading') return <PageLoader />;
@@ -119,70 +127,73 @@ export function HomePage() {
 
   return (
     <HeroCatProvider value={cat}>
-      {decor ? (
-        // decorated: the same header, drawn over the theme's scene
-        <div className="decor-hero">
-          <decor.Scene />
-          {topbar}
-          <section className="hero">
-            {current && <div className="hero__hello">{greeting()}</div>}
-            <div className="hero__label">{spentLabel}</div>
-            <Money value={sum.expense} size="hero" countUp="home-hero" />
-          </section>
-        </div>
-      ) : (
-        topbar
-      )}
-
-      {demo && (
-        <div className="demo-bar" role="status">
-          <span>
-            <b>ข้อมูลตัวอย่าง</b> · จดจริงครั้งแรกจะล้างให้เอง
-          </span>
-          <Button variant="quiet" size="sm" onClick={() => void clearDemo()}>
-            ล้างออก
-          </Button>
-        </div>
-      )}
-
-      {/* under a scene, the pace and alert sit on the page below it, away from the art */}
-      <section className={`hero ${decor ? 'hero--decor' : ''}`}>
-        {!decor && (
-          <>
-            <HeroCat />
-            {current && <div className="hero__hello">{greeting()}</div>}
-            <div className="hero__label">{spentLabel}</div>
-            <Money value={sum.expense} size="hero" countUp="home-hero" />
-          </>
-        )}
-        {current && budgetTotal > 0 ? (
-          <p className="hero__pace">
-            {budgetLeft >= 0 ? (
-              <>
-                งบเหลือ <b className="num">{baht(budgetLeft)}</b> จาก {baht(budgetTotal)} · วันละ <b className="num">{baht(Math.floor(budgetLeft / days / 100) * 100)}</b>
-              </>
-            ) : (
-              <>
-                <b className="num is-over">เกินงบ {baht(-budgetLeft)}</b> จาก {baht(budgetTotal)}
-              </>
-            )}
-          </p>
+      {/* flick the header sideways to step through months (the month sheet is the other way) */}
+      <div className={`home-head ${decor ? 'home-head--decor' : ''}`} {...swipe}>
+        {decor ? (
+          // decorated: the same header, drawn over the theme's scene
+          <div className="decor-hero">
+            <decor.Scene />
+            {topbar}
+            <section className="hero">
+              {current && <div className="hero__hello">{greeting()}</div>}
+              <div className="hero__label">{spentLabel}</div>
+              <Money value={sum.expense} size="hero" countUp="home-hero" />
+            </section>
+          </div>
         ) : (
-          current &&
-          perDay > 0 && (
+          topbar
+        )}
+
+        {demo && (
+          <div className="demo-bar" role="status">
+            <span>
+              <b>ข้อมูลตัวอย่าง</b> · จดจริงครั้งแรกจะล้างให้เอง
+            </span>
+            <Button variant="quiet" size="sm" onClick={() => void clearDemo()}>
+              ล้างออก
+            </Button>
+          </div>
+        )}
+
+        {/* under a scene, the pace and alert sit on the page below it, away from the art */}
+        <section className={`hero ${decor ? 'hero--decor' : ''}`}>
+          {!decor && (
+            <>
+              <HeroCat />
+              {current && <div className="hero__hello">{greeting()}</div>}
+              <div className="hero__label">{spentLabel}</div>
+              <Money value={sum.expense} size="hero" countUp="home-hero" />
+            </>
+          )}
+          {current && budgetTotal > 0 ? (
             <p className="hero__pace">
-              ใช้ได้อีกวันละ <b className="num">{baht(Math.floor(perDay / 100) * 100)}</b> · {days} วัน
+              {budgetLeft >= 0 ? (
+                <>
+                  งบเหลือ <b className="num">{baht(budgetLeft)}</b> จาก {baht(budgetTotal)} · วันละ <b className="num">{baht(Math.floor(budgetLeft / days / 100) * 100)}</b>
+                </>
+              ) : (
+                <>
+                  <b className="num is-over">เกินงบ {baht(-budgetLeft)}</b> จาก {baht(budgetTotal)}
+                </>
+              )}
             </p>
-          )
-        )}
-        {pace && <PaceChart pace={pace} />}
-        {worst && (
-          <button className={`hero__alert ${worst.status === 'over' ? 'is-over' : ''}`} onClick={() => navigate('/summary?p=month')}>
-            <Icon icon={faCircleExclamation} size={12} />
-            {categoryOf(worst.categoryId).name} {worst.status === 'over' ? 'เกินงบแล้ว' : `ใช้ไป ${Math.round(worst.ratio * 100)}% ของงบ`}
-          </button>
-        )}
-      </section>
+          ) : (
+            current &&
+            perDay > 0 && (
+              <p className="hero__pace">
+                ใช้ได้อีกวันละ <b className="num">{baht(Math.floor(perDay / 100) * 100)}</b> · {days} วัน
+              </p>
+            )
+          )}
+          {pace && <PaceChart pace={pace} />}
+          {worst && (
+            <button className={`hero__alert ${worst.status === 'over' ? 'is-over' : ''}`} onClick={() => navigate('/summary?p=month')}>
+              <Icon icon={faCircleExclamation} size={12} />
+              {categoryOf(worst.categoryId).name} {worst.status === 'over' ? 'เกินงบแล้ว' : `ใช้ไป ${Math.round(worst.ratio * 100)}% ของงบ`}
+            </button>
+          )}
+        </section>
+      </div>
 
       <Ledger totals={sum} />
 

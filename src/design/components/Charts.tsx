@@ -52,6 +52,9 @@ export function DonutChart({ data, size = 176, label = 'รวม', onSelect }: 
 interface BarsProps {
   data: { label: string; value: number; highlight?: boolean }[];
   height?: number;
+  /** index of the picked day */
+  selected?: number | null;
+  onSelect?: (index: number) => void;
 }
 
 const compact = (satang: number) => {
@@ -59,16 +62,31 @@ const compact = (satang: number) => {
   return b >= 1000 ? `${(b / 1000).toFixed(b >= 10000 ? 0 : 1)}k` : `${Math.round(b)}`;
 };
 
-export function DailyBars({ data, height = 176 }: BarsProps) {
+// left edge of the plot: the y-axis width plus the (negative) left margin
+const AXIS = 36;
+const MARGIN_LEFT = -8;
+
+/**
+ * One bar per day. With onSelect, tapping anywhere in a day's column picks it (month view
+ * bars are too thin to aim at); the picked day stays inked and the others fade.
+ */
+export function DailyBars({ data, height = 176, selected = null, onSelect }: BarsProps) {
   const reduce = useReducedMotion();
   const hidden = useAmountsHidden();
+  const pick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!onSelect) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const left = AXIS + MARGIN_LEFT;
+    const i = Math.floor(((e.clientX - r.left - left) / (r.width - left)) * data.length);
+    if (i >= 0 && i < data.length) onSelect(i);
+  };
   return (
-    <div style={{ width: '100%', height }}>
+    <div style={{ width: '100%', height, cursor: onSelect ? 'pointer' : undefined }} onClick={pick}>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 8, right: 0, bottom: 0, left: -8 }} barCategoryGap="30%">
+        <BarChart data={data} margin={{ top: 8, right: 0, bottom: 0, left: MARGIN_LEFT }} barCategoryGap="30%">
           <CartesianGrid vertical={false} stroke="var(--rule)" strokeDasharray="2 4" />
           <YAxis
-            width={36}
+            width={AXIS}
             axisLine={false}
             tickLine={false}
             tickCount={4}
@@ -84,7 +102,11 @@ export function DailyBars({ data, height = 176 }: BarsProps) {
           />
           <Bar dataKey="value" radius={[3, 3, 0, 0]} isAnimationActive={!reduce} animationDuration={500} minPointSize={2}>
             {data.map((d, i) => (
-              <Cell key={i} fill={d.highlight ? 'var(--accent)' : 'var(--ink)'} fillOpacity={d.highlight ? 1 : 0.78} />
+              <Cell
+                key={i}
+                fill={d.highlight ? 'var(--accent)' : 'var(--ink)'}
+                fillOpacity={selected === null ? (d.highlight ? 1 : 0.78) : i === selected ? 1 : 0.22}
+              />
             ))}
           </Bar>
         </BarChart>

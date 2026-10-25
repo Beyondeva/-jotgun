@@ -1,4 +1,4 @@
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useShell } from '../../app/shell';
@@ -9,7 +9,8 @@ import { PageLoader } from '../../design/components/PageLoader';
 import { Paper } from '../../design/components/Paper';
 import { Segmented } from '../../design/components/Segmented';
 import { expenseByCategory, expenseByDay, totals } from '../../lib/aggregate';
-import { formatWeekdayAbbr, isSameDay } from '../../lib/date';
+import { formatDay, formatWeekdayAbbr, isSameDay } from '../../lib/date';
+import { Money } from '../../design/components/Money';
 import { daysIn, isCurrent, periodLabel, periodOf, periodProgress, shiftPeriod, type Period, type PeriodKind } from '../../lib/period';
 import { KhaoTang } from '../../mascot/KhaoTang';
 import { useBudgets } from '../../db/budgets';
@@ -29,6 +30,8 @@ export function SummaryPage() {
   const baht = useBahtText();
   const [period, setPeriod] = useState<Period>(() => periodOf(params.get('p') === 'month' ? 'month' : 'week', Date.now()));
   const [categoryId, setCategoryId] = useState<string | null>(null);
+  // the day picked on the daily chart; it belongs to the period it was picked in
+  const [pick, setPick] = useState<{ from: number; kind: PeriodKind; day: number } | null>(null);
   const txs = useTransactions(period);
   const list = txs ?? [];
 
@@ -59,6 +62,9 @@ export function SummaryPage() {
     highlight: isSameDay(d, now),
   }));
   const future = period.from > now;
+  const day = pick && pick.from === period.from && pick.kind === period.kind ? pick.day : null;
+  const dayTxs = day === null ? [] : list.filter((t) => isSameDay(t.occurredAt, days[day]));
+  const toggleDay = (i: number) => setPick(i === day ? null : { from: period.from, kind: period.kind, day: i });
 
   const setKind = (kind: PeriodKind) => setPeriod(periodOf(kind, isCurrent(period) ? now : period.from));
 
@@ -91,7 +97,23 @@ export function SummaryPage() {
             <h2>ใช้จ่ายรายวัน</h2>
             <span className="section-head__note num">เฉลี่ยวันละ {baht(sum.expense / elapsedDays)}</span>
           </div>
-          <DailyBars data={bars} />
+          <DailyBars data={bars} selected={day} onSelect={toggleDay} />
+          {day === null ? (
+            <p className="day-pick__hint">แตะแท่งเพื่อดูรายการของวันนั้น</p>
+          ) : (
+            <div className="day-pick" role="region" aria-label={`รายการวันที่ ${formatDay(days[day])}`}>
+              <div className="day-pick__head">
+                <span className="day-pick__title">{formatDay(days[day])}</span>
+                <Money value={perDay[day]} size="sm" flow="out" />
+                <IconButton icon={faXmark} label="ปิด" onClick={() => setPick(null)} />
+              </div>
+              {dayTxs.length ? (
+                <Receipt txs={dayTxs} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} />
+              ) : (
+                <p className="day-pick__empty">วันนี้ไม่มีรายการ</p>
+              )}
+            </div>
+          )}
 
           {budgetList.length > 0 ? (
             <div className="note">
