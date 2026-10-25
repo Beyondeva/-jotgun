@@ -25,7 +25,7 @@ import { Ledger } from './Ledger';
 
 export function SummaryPage() {
   const [params] = useSearchParams();
-  const { openManual, removeTx } = useShell();
+  const { openManual, removeTx, moveTx } = useShell();
   const categoryOf = useCategoryOf();
   const baht = useBahtText();
   const [period, setPeriod] = useState<Period>(() => periodOf(params.get('p') === 'month' ? 'month' : 'week', Date.now()));
@@ -108,7 +108,7 @@ export function SummaryPage() {
                 <IconButton icon={faXmark} label="ปิด" onClick={() => setPick(null)} />
               </div>
               {dayTxs.length ? (
-                <Receipt txs={dayTxs} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} />
+                <Receipt txs={dayTxs} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} onMove={moveTx} />
               ) : (
                 <p className="day-pick__empty">วันนี้ไม่มีรายการ</p>
               )}
@@ -173,7 +173,7 @@ export function SummaryPage() {
             <h2>รายการ</h2>
             <span className="section-head__note num">{list.length} รายการ</span>
           </div>
-          <Receipt txs={list} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} />
+          <Receipt txs={list} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} onMove={moveTx} />
         </>
       )}
 

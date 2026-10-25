@@ -38,7 +38,7 @@ const RECENT = 8;
 
 export function HomePage() {
   const navigate = useNavigate();
-  const { openManual, removeTx } = useShell();
+  const { openManual, removeTx, moveTx } = useShell();
   const categoryOf = useCategoryOf();
   const [period, setPeriod] = useState<Period>(() => periodOf('month', Date.now()));
   const [monthsOpen, setMonthsOpen] = useState(false);
@@ -238,7 +238,7 @@ export function HomePage() {
             <h2>รายการล่าสุด</h2>
             <IconButton icon={faArrowRight} label="ดูทั้งหมด" onClick={() => navigate('/summary?p=month')} />
           </div>
-          {txs && <Receipt txs={txs.slice(0, RECENT)} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} />}
+          {txs && <Receipt txs={txs.slice(0, RECENT)} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} onMove={moveTx} />}
         </>
       )}
 

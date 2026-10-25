@@ -35,7 +35,7 @@ const METHODS: { value: PayMethod; label: string; icon: IconDefinition }[] = [
 
 export function SearchPage() {
   const navigate = useNavigate();
-  const { openManual, removeTx } = useShell();
+  const { openManual, removeTx, moveTx } = useShell();
   const { categories } = useCategories();
   const categoryOf = useCategoryOf();
   const all = useCachedLiveQuery('tx:all', () => db.transactions.orderBy('occurredAt').reverse().toArray(), []);
@@ -126,7 +126,7 @@ export function SearchPage() {
               {sum.income > 0 && <Money value={sum.income} size="sm" flow="in" />}
             </span>
           </div>
-          <Receipt txs={results.slice(0, SHOW_MAX)} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} />
+          <Receipt txs={results.slice(0, SHOW_MAX)} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} onMove={moveTx} />
           {results.length > SHOW_MAX && <p className="search-more num">แสดง {SHOW_MAX} รายการล่าสุด · กรองเพิ่มเพื่อดูที่เหลือ</p>}
         </>
       )}

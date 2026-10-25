@@ -9,7 +9,7 @@ import { Receipt } from '../transactions/Receipt';
 
 /** Transactions of one category within the list it was opened from. */
 export function CategoryTxSheet({ categoryId, txs, onClose }: { categoryId: string | null; txs: Transaction[]; onClose: () => void }) {
-  const { openManual, removeTx } = useShell();
+  const { openManual, removeTx, moveTx } = useShell();
   const categoryOf = useCategoryOf();
   const list = categoryId ? txs.filter((t) => t.categoryId === categoryId) : [];
   const sum = totals(list);
@@ -32,6 +32,10 @@ export function CategoryTxSheet({ categoryId, txs, onClose }: { categoryId: stri
               openManual(t);
             }}
             onDelete={removeTx}
+            onMove={(t) => {
+              onClose(); // one sheet at a time
+              moveTx(t);
+            }}
           />
         </>
       )}

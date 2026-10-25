@@ -1,3 +1,4 @@
+import { faPen, faTags } from '@fortawesome/free-solid-svg-icons';
 import { useMemo } from 'react';
 import { Money } from '../../design/components/Money';
 import { Paper } from '../../design/components/Paper';
@@ -10,13 +11,16 @@ import { TxRow } from './TxRow';
 interface Props {
   txs: Transaction[];
   categoryOf: (id: string) => Category;
-  /** swipe left to delete, right to edit */
+  /** swipe left */
   onDelete?: (tx: Transaction) => void;
+  /** tap (and swipe right when there's no onMove) */
   onEdit?: (tx: Transaction) => void;
+  /** swipe right: pick another category */
+  onMove?: (tx: Transaction) => void;
 }
 
 /** Transactions grouped by day and printed like a receipt, with each day's net total. */
-export function Receipt({ txs, categoryOf, onDelete, onEdit }: Props) {
+export function Receipt({ txs, categoryOf, onDelete, onEdit, onMove }: Props) {
   const days = useMemo(() => {
     const map = new Map<number, Transaction[]>();
     for (const t of [...txs].sort((a, b) => b.occurredAt - a.occurredAt)) {
@@ -26,7 +30,7 @@ export function Receipt({ txs, categoryOf, onDelete, onEdit }: Props) {
     return [...map.entries()];
   }, [txs]);
 
-  const swipe = !!(onDelete || onEdit);
+  const swipe = !!(onDelete || onEdit || onMove);
 
   return (
     <Paper torn className="receipt">
@@ -43,7 +47,16 @@ export function Receipt({ txs, categoryOf, onDelete, onEdit }: Props) {
             </div>
             {items.map((t) =>
               swipe ? (
-                <SwipeRow key={t.id} onDelete={onDelete && (() => onDelete(t))} onEdit={onEdit && (() => onEdit(t))} onTap={onEdit && (() => onEdit(t))}>
+                <SwipeRow
+                  key={t.id}
+                  onDelete={onDelete && (() => onDelete(t))}
+                  right={
+                    onMove
+                      ? { icon: faTags, label: 'เปลี่ยนหมวด', run: () => onMove(t) }
+                      : onEdit && { icon: faPen, label: 'แก้', run: () => onEdit(t) }
+                  }
+                  onTap={onEdit && (() => onEdit(t))}
+                >
                   <TxRow tx={t} category={categoryOf(t.categoryId)} />
                 </SwipeRow>
               ) : (

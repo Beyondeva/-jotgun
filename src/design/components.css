@@ -300,7 +300,8 @@
   align-items: center;
   padding: 0 var(--s-5);
 }
-.swipe__bg--edit { background: var(--paper-2); color: var(--ink); justify-content: flex-start; }
+.swipe__bg--right { gap: var(--s-2); background: var(--paper-2); color: var(--ink); justify-content: flex-start; }
+.swipe__label { font-size: 13px; font-weight: 600; }
 .swipe__bg--delete { background: var(--over); color: var(--on-accent); justify-content: flex-end; }
 .swipe__fg { position: relative; background: var(--sheet); touch-action: pan-y; }
 
