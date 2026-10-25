@@ -2,8 +2,8 @@
   position: relative; /* paints above a decorated theme's .decor-pattern */
   max-width: 560px;
   margin: 0 auto;
-  padding: calc(var(--safe-top) + var(--s-2)) calc(var(--s-4) + var(--safe-right)) calc(var(--tabbar-h) + var(--safe-bottom) + var(--s-6))
-    calc(var(--s-4) + var(--safe-left));
+  padding: calc(var(--safe-top) + var(--s-2)) calc(var(--gutter) + var(--safe-right)) calc(var(--nav-bottom) + var(--s-6))
+    calc(var(--gutter) + var(--safe-left));
   display: flex;
   flex-direction: column;
 }
@@ -48,8 +48,8 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  margin: calc((var(--safe-top) + var(--s-2)) * -1) calc((var(--s-4) + var(--safe-right)) * -1) 0 calc((var(--s-4) + var(--safe-left)) * -1);
-  padding: calc(var(--safe-top) + var(--s-2)) calc(var(--s-4) + var(--safe-right)) var(--scene-floor) calc(var(--s-4) + var(--safe-left));
+  margin: calc((var(--safe-top) + var(--s-2)) * -1) calc((var(--gutter) + var(--safe-right)) * -1) 0 calc((var(--gutter) + var(--safe-left)) * -1);
+  padding: calc(var(--safe-top) + var(--s-2)) calc(var(--gutter) + var(--safe-right)) var(--scene-floor) calc(var(--gutter) + var(--safe-left));
 }
 .decor-hero .hero { padding-bottom: 0; }
 .decor-scene__sky,
@@ -102,7 +102,7 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: calc(var(--tabbar-h) + var(--safe-bottom));
+  bottom: var(--nav-bottom);
   overflow: hidden;
   pointer-events: none;
 }
@@ -202,7 +202,7 @@
 .slip-stack { display: flex; flex-direction: column; gap: var(--s-4); margin-top: var(--s-3); }
 .sticky-action {
   position: sticky;
-  bottom: calc(var(--tabbar-h) + var(--safe-bottom) + var(--s-3));
+  bottom: calc(var(--nav-bottom) + var(--s-3));
   z-index: 5;
   padding-top: var(--s-2);
 }
@@ -331,8 +331,8 @@
   gap: var(--s-2);
   overflow-x: auto;
   scrollbar-width: none;
-  margin: 0 calc(var(--s-4) * -1);
-  padding: 2px var(--s-4);
+  margin: 0 calc(var(--gutter) * -1);
+  padding: 2px var(--gutter);
 }
 .rings::-webkit-scrollbar { display: none; }
 .ring {

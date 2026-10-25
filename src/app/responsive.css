@@ -1,0 +1,98 @@
+/*
+ * Screen sizes. Phones are the design target and every other file is written for them;
+ * this file only adds what changes elsewhere:
+ *   ≤ 360px   small phones: tighter margins and figures
+ *   ≥ 720px   tablets and laptops: the tab bar becomes a rail down the left
+ *   ≥ 1100px  wide screens: home and summary split into overview | detail columns
+ */
+
+/* overview | detail: stacked on phones, laid out like direct children of .page (a flex column) */
+.two-col,
+.two-col__main,
+.two-col__side { display: flex; flex-direction: column; min-width: 0; }
+
+/* ---------- small phones (iPhone SE, small Androids) ---------- */
+@media (max-width: 360px) {
+  :root { --gutter: var(--s-3); }
+  .money--hero { font-size: 44px; }
+  .ledger .money--sm { font-size: 12.5px; }
+  .ledger__col + .ledger__col { padding-left: var(--s-2); }
+  .ring { width: 76px; }
+  .kt-bubble { max-width: 168px; font-size: 12.5px; }
+  .budget-quick__steps { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- tablets, laptops: a rail on the left ---------- */
+@media (min-width: 720px) {
+  :root {
+    --rail-w: calc(96px + env(safe-area-inset-left, 0px));
+    --nav-bottom: env(safe-area-inset-bottom, 0px);
+    /* the rail already clears a landscape notch; the page doesn't need to again */
+    --safe-left: 0px;
+  }
+  body { padding-left: var(--rail-w); }
+  .page { max-width: 640px; }
+
+  .tabbar {
+    top: 0;
+    right: auto;
+    width: var(--rail-w);
+    height: auto;
+    grid-template-columns: none;
+    grid-auto-rows: min-content;
+    align-content: start;
+    gap: var(--s-1);
+    padding: calc(var(--safe-top) + var(--s-4)) 0 calc(var(--safe-bottom) + var(--s-4)) env(safe-area-inset-left, 0px);
+    overflow-y: auto;
+    border-top: 0;
+    border-right: 1px solid var(--bar-rule, var(--rule));
+  }
+  .tabbar--drawn { border-right-width: 2px; }
+  .tab { height: 68px; flex-direction: column; gap: 4px; }
+  .tabbar:not(.tabbar--drawn) .tab__label { display: block; }
+  .tab__label { font-size: 11.5px; }
+  .tab__dot { display: none; }
+  /* plain themes mark the current page with an accent tick on the rail's edge */
+  .tabbar:not(.tabbar--drawn) .tab.is-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 16px;
+    bottom: 16px;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+    background: var(--accent);
+  }
+  /* "add" leads the rail */
+  .tabbar__add { order: -1; width: 56px; height: 48px; margin-bottom: var(--s-4); }
+  .tabbar__add--drawn { width: 64px; height: 64px; margin-top: 0; }
+
+  /* everything fixed keeps to the right of the rail */
+  .decor-pattern { left: var(--rail-w); }
+  .sheet { left: var(--rail-w); }
+  .toast { left: calc(var(--rail-w) + var(--s-4)); }
+
+  .money--hero { font-size: 58px; }
+}
+
+/* landscape phones are wide but short: a compact rail */
+@media (min-width: 720px) and (max-height: 520px) {
+  .tab { height: 52px; }
+  .tab__label,
+  .tabbar:not(.tabbar--drawn) .tab__label { display: none; }
+  .tabbar__add { margin-bottom: var(--s-2); }
+}
+
+/* ---------- wide screens: overview | detail ---------- */
+@media (min-width: 1100px) {
+  .page:has(> .two-col) { max-width: 1120px; }
+  .two-col {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 56px;
+    align-items: start;
+  }
+  /* the detail column starts level with the figures, under the top bar */
+  .two-col__side { padding-top: var(--s-6); }
+  .two-col__side > .section-head:first-child { margin-top: 0; }
+}

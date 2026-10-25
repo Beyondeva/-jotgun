@@ -21,6 +21,7 @@ interface Props {
 /**
  * Icon-only tabs; labels stay for screen readers. A decorated theme swaps in its
  * drawn icons and shows the labels under them (drawings alone are harder to read).
+ * From 720px wide the same bar becomes a rail down the left, labels shown (responsive.css).
  */
 export function TabBar({ active, onChange, onAdd, inboxCount = 0 }: Props) {
   const decor = useDecor();
@@ -42,7 +43,9 @@ export function TabBar({ active, onChange, onAdd, inboxCount = 0 }: Props) {
           {Drawn ? <Drawn active={isActive} /> : <Icon icon={t.icon} size={20} />}
           {t.key === 'inbox' && inboxCount > 0 && <span className="tab__badge num">{inboxCount > 99 ? '99+' : inboxCount}</span>}
         </span>
-        {drawn ? <span className="tab__label">{t.label}</span> : isActive && <span className="tab__dot" />}
+        {/* plain phone bars hide the label (CSS); drawn bars and the wide-screen rail show it */}
+        <span className="tab__label">{t.label}</span>
+        {!drawn && isActive && <span className="tab__dot" />}
       </button>
     );
   };

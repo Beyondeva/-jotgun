@@ -72,110 +72,119 @@ export function SummaryPage() {
 
   return (
     <>
-      <h1 className="page-title">สรุป</h1>
-      <Segmented<PeriodKind>
-        value={period.kind}
-        onChange={setKind}
-        options={[
-          { value: 'week', label: 'สัปดาห์' },
-          { value: 'month', label: 'เดือน' },
-        ]}
-      />
-      <div className="period">
-        <IconButton icon={faChevronLeft} label="ก่อนหน้า" onClick={() => setPeriod((p) => shiftPeriod(p, -1))} />
-        <span className="period__label">{periodLabel(period)}</span>
-        <IconButton icon={faChevronRight} label="ถัดไป" disabled={isCurrent(period) || future} onClick={() => setPeriod((p) => shiftPeriod(p, 1))} />
-      </div>
-
-      <Ledger totals={sum} />
-
-      {txs && list.length === 0 ? (
-        <EmptyState mood="sleeping" title="ช่วงนี้ไม่มีรายการ" />
-      ) : (
-        <>
-          <div className="section-head">
-            <h2>ใช้จ่ายรายวัน</h2>
-            <span className="section-head__note num">เฉลี่ยวันละ {baht(sum.expense / elapsedDays)}</span>
+      {/* one column on phones; from 1100px the overview sits left and the detail right (responsive.css) */}
+      <div className="two-col">
+        <div className="two-col__main">
+          <h1 className="page-title">สรุป</h1>
+          <Segmented<PeriodKind>
+            value={period.kind}
+            onChange={setKind}
+            options={[
+              { value: 'week', label: 'สัปดาห์' },
+              { value: 'month', label: 'เดือน' },
+            ]}
+          />
+          <div className="period">
+            <IconButton icon={faChevronLeft} label="ก่อนหน้า" onClick={() => setPeriod((p) => shiftPeriod(p, -1))} />
+            <span className="period__label">{periodLabel(period)}</span>
+            <IconButton icon={faChevronRight} label="ถัดไป" disabled={isCurrent(period) || future} onClick={() => setPeriod((p) => shiftPeriod(p, 1))} />
           </div>
-          <DailyBars data={bars} selected={day} onSelect={toggleDay} />
-          {day === null ? (
-            <p className="day-pick__hint">แตะแท่งเพื่อดูรายการของวันนั้น</p>
-          ) : (
-            <div className="day-pick" role="region" aria-label={`รายการวันที่ ${formatDay(days[day])}`}>
-              <div className="day-pick__head">
-                <span className="day-pick__title">{formatDay(days[day])}</span>
-                <Money value={perDay[day]} size="sm" flow="out" />
-                <IconButton icon={faXmark} label="ปิด" onClick={() => setPick(null)} />
-              </div>
-              {dayTxs.length ? (
-                <Receipt txs={dayTxs} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} onMove={moveTx} />
-              ) : (
-                <p className="day-pick__empty">วันนี้ไม่มีรายการ</p>
-              )}
-            </div>
-          )}
 
-          {budgetList.length > 0 ? (
-            <div className="note">
-              <KhaoTang mood={worst ? 'worried' : 'happy'} size={56} />
-              <div>
-                <div className="note__title">
-                  {worst ? `${categoryOf(worst.categoryId).name}${worst.status === 'over' ? 'เกินงบแล้ว' : 'ใช้เร็วไปหน่อย'}` : 'ทุกหมวดอยู่ในงบ'}
-                </div>
-                {worst && (
-                  <div className="note__body num">
-                    งบ {Math.round(worst.ratio * 100)}% · เดือน {Math.round(progress * 100)}%
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            // without income in the period there is nothing meaningful to compare against
-            sum.income > 0 && (
-              <div className="note">
-                <KhaoTang mood={sum.balance < 0 ? 'worried' : 'happy'} size={56} />
-                <div>
-                  <div className="note__title">{sum.balance < 0 ? 'จ่ายเกินรายรับแล้ว' : 'ยังมีเหลือ'}</div>
-                  <div className="note__body num">ใช้ไป {Math.round((sum.expense / sum.income) * 100)}% ของรายรับ</div>
-                </div>
-              </div>
-            )
-          )}
+          <Ledger totals={sum} />
 
-          {slices.length > 0 && (
+          {txs && list.length === 0 ? (
+            <EmptyState mood="sleeping" title="ช่วงนี้ไม่มีรายการ" />
+          ) : (
             <>
               <div className="section-head">
-                <h2>ตามหมวดหมู่</h2>
+                <h2>ใช้จ่ายรายวัน</h2>
+                <span className="section-head__note num">เฉลี่ยวันละ {baht(sum.expense / elapsedDays)}</span>
               </div>
-              <Paper>
-                <div className="by-cat">
-                  <DonutChart data={slices} size={132} label="รายจ่าย" onSelect={(s) => setCategoryId(s.id)} />
-                  <div className="stack__legend" style={{ flexDirection: 'column', gap: 0 }}>
-                    {slices.slice(0, 4).map((d) => (
-                      <button key={d.id} type="button" className="stack__item" onClick={() => setCategoryId(d.id)}>
-                        <span className="stack__dot" style={{ background: `var(--cat-${d.color})` }} />
-                        {d.name}
-                        <span className="stack__pct num">{Math.round((d.value / (sum.expense || 1)) * 100)}%</span>
-                      </button>
-                    ))}
+              <DailyBars data={bars} selected={day} onSelect={toggleDay} />
+              {day === null ? (
+                <p className="day-pick__hint">แตะแท่งเพื่อดูรายการของวันนั้น</p>
+              ) : (
+                <div className="day-pick" role="region" aria-label={`รายการวันที่ ${formatDay(days[day])}`}>
+                  <div className="day-pick__head">
+                    <span className="day-pick__title">{formatDay(days[day])}</span>
+                    <Money value={perDay[day]} size="sm" flow="out" />
+                    <IconButton icon={faXmark} label="ปิด" onClick={() => setPick(null)} />
+                  </div>
+                  {dayTxs.length ? (
+                    <Receipt txs={dayTxs} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} onMove={moveTx} />
+                  ) : (
+                    <p className="day-pick__empty">วันนี้ไม่มีรายการ</p>
+                  )}
+                </div>
+              )}
+
+              {budgetList.length > 0 ? (
+                <div className="note">
+                  <KhaoTang mood={worst ? 'worried' : 'happy'} size={56} />
+                  <div>
+                    <div className="note__title">
+                      {worst ? `${categoryOf(worst.categoryId).name}${worst.status === 'over' ? 'เกินงบแล้ว' : 'ใช้เร็วไปหน่อย'}` : 'ทุกหมวดอยู่ในงบ'}
+                    </div>
+                    {worst && (
+                      <div className="note__body num">
+                        งบ {Math.round(worst.ratio * 100)}% · เดือน {Math.round(progress * 100)}%
+                      </div>
+                    )}
                   </div>
                 </div>
-                <CategoryBars
-                  rows={byCat.map((r) => ({ category: categoryOf(r.categoryId), value: r.value, budget: monthView ? budgets.find((b) => b.categoryId === r.categoryId)?.monthlyLimit : undefined }))}
-                  periodProgress={monthView ? progress : undefined}
-                  onSelect={(c) => setCategoryId(c.id)}
-                />
-              </Paper>
+              ) : (
+                // without income in the period there is nothing meaningful to compare against
+                sum.income > 0 && (
+                  <div className="note">
+                    <KhaoTang mood={sum.balance < 0 ? 'worried' : 'happy'} size={56} />
+                    <div>
+                      <div className="note__title">{sum.balance < 0 ? 'จ่ายเกินรายรับแล้ว' : 'ยังมีเหลือ'}</div>
+                      <div className="note__body num">ใช้ไป {Math.round((sum.expense / sum.income) * 100)}% ของรายรับ</div>
+                    </div>
+                  </div>
+                )
+              )}
             </>
           )}
+        </div>
 
-          <div className="section-head">
-            <h2>รายการ</h2>
-            <span className="section-head__note num">{list.length} รายการ</span>
+        {list.length > 0 && (
+          <div className="two-col__side">
+            {slices.length > 0 && (
+              <>
+                <div className="section-head">
+                  <h2>ตามหมวดหมู่</h2>
+                </div>
+                <Paper>
+                  <div className="by-cat">
+                    <DonutChart data={slices} size={132} label="รายจ่าย" onSelect={(s) => setCategoryId(s.id)} />
+                    <div className="stack__legend" style={{ flexDirection: 'column', gap: 0 }}>
+                      {slices.slice(0, 4).map((d) => (
+                        <button key={d.id} type="button" className="stack__item" onClick={() => setCategoryId(d.id)}>
+                          <span className="stack__dot" style={{ background: `var(--cat-${d.color})` }} />
+                          {d.name}
+                          <span className="stack__pct num">{Math.round((d.value / (sum.expense || 1)) * 100)}%</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <CategoryBars
+                    rows={byCat.map((r) => ({ category: categoryOf(r.categoryId), value: r.value, budget: monthView ? budgets.find((b) => b.categoryId === r.categoryId)?.monthlyLimit : undefined }))}
+                    periodProgress={monthView ? progress : undefined}
+                    onSelect={(c) => setCategoryId(c.id)}
+                  />
+                </Paper>
+              </>
+            )}
+
+            <div className="section-head">
+              <h2>รายการ</h2>
+              <span className="section-head__note num">{list.length} รายการ</span>
+            </div>
+            <Receipt txs={list} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} onMove={moveTx} />
           </div>
-          <Receipt txs={list} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} onMove={moveTx} />
-        </>
-      )}
+        )}
+      </div>
 
       <CategoryTxSheet categoryId={categoryId} txs={list} onClose={() => setCategoryId(null)} />
     </>

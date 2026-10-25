@@ -4,6 +4,14 @@
   box-sizing: border-box;
 }
 
+/* where the navigation sits: a bottom tab bar on phones, a rail on the left from 720px (responsive.css) */
+:root {
+  --rail-w: 0px;
+  /* the page's side margin; full-bleed parts pull out by the same amount */
+  --gutter: var(--s-4);
+  --nav-bottom: calc(var(--tabbar-h) + var(--safe-bottom));
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;

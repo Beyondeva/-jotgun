@@ -127,120 +127,127 @@ export function HomePage() {
 
   return (
     <HeroCatProvider value={cat}>
-      {/* flick the header sideways to step through months (the month sheet is the other way) */}
-      <div className={`home-head ${decor ? 'home-head--decor' : ''}`} {...swipe}>
-        {decor ? (
-          // decorated: the same header, drawn over the theme's scene
-          <div className="decor-hero">
-            <decor.Scene />
-            {topbar}
-            <section className="hero">
-              {current && <div className="hero__hello">{greeting()}</div>}
-              <div className="hero__label">{spentLabel}</div>
-              <Money value={sum.expense} size="hero" countUp="home-hero" />
-            </section>
-          </div>
-        ) : (
-          topbar
-        )}
+      {/* one column on phones; from 1100px the overview sits left and the detail right (responsive.css) */}
+      <div className="two-col">
+        <div className="two-col__main">
+          {/* flick the header sideways to step through months (the month sheet is the other way) */}
+          <div className={`home-head ${decor ? 'home-head--decor' : ''}`} {...swipe}>
+            {decor ? (
+              // decorated: the same header, drawn over the theme's scene
+              <div className="decor-hero">
+                <decor.Scene />
+                {topbar}
+                <section className="hero">
+                  {current && <div className="hero__hello">{greeting()}</div>}
+                  <div className="hero__label">{spentLabel}</div>
+                  <Money value={sum.expense} size="hero" countUp="home-hero" />
+                </section>
+              </div>
+            ) : (
+              topbar
+            )}
 
-        {demo && (
-          <div className="demo-bar" role="status">
-            <span>
-              <b>ข้อมูลตัวอย่าง</b> · จดจริงครั้งแรกจะล้างให้เอง
-            </span>
-            <Button variant="quiet" size="sm" onClick={() => void clearDemo()}>
-              ล้างออก
-            </Button>
-          </div>
-        )}
+            {demo && (
+              <div className="demo-bar" role="status">
+                <span>
+                  <b>ข้อมูลตัวอย่าง</b> · จดจริงครั้งแรกจะล้างให้เอง
+                </span>
+                <Button variant="quiet" size="sm" onClick={() => void clearDemo()}>
+                  ล้างออก
+                </Button>
+              </div>
+            )}
 
-        {/* under a scene, the pace and alert sit on the page below it, away from the art */}
-        <section className={`hero ${decor ? 'hero--decor' : ''}`}>
-          {!decor && (
-            <>
-              <HeroCat />
-              {current && <div className="hero__hello">{greeting()}</div>}
-              <div className="hero__label">{spentLabel}</div>
-              <Money value={sum.expense} size="hero" countUp="home-hero" />
-            </>
-          )}
-          {current && budgetTotal > 0 ? (
-            <p className="hero__pace">
-              {budgetLeft >= 0 ? (
+            {/* under a scene, the pace and alert sit on the page below it, away from the art */}
+            <section className={`hero ${decor ? 'hero--decor' : ''}`}>
+              {!decor && (
                 <>
-                  งบเหลือ <b className="num">{baht(budgetLeft)}</b> จาก {baht(budgetTotal)} · วันละ <b className="num">{baht(Math.floor(budgetLeft / days / 100) * 100)}</b>
-                </>
-              ) : (
-                <>
-                  <b className="num is-over">เกินงบ {baht(-budgetLeft)}</b> จาก {baht(budgetTotal)}
+                  <HeroCat />
+                  {current && <div className="hero__hello">{greeting()}</div>}
+                  <div className="hero__label">{spentLabel}</div>
+                  <Money value={sum.expense} size="hero" countUp="home-hero" />
                 </>
               )}
-            </p>
-          ) : (
-            current &&
-            perDay > 0 && (
-              <p className="hero__pace">
-                ใช้ได้อีกวันละ <b className="num">{baht(Math.floor(perDay / 100) * 100)}</b> · {days} วัน
-              </p>
-            )
-          )}
-          {pace && <PaceChart pace={pace} />}
-          {worst && (
-            <button className={`hero__alert ${worst.status === 'over' ? 'is-over' : ''}`} onClick={() => navigate('/summary?p=month')}>
-              <Icon icon={faCircleExclamation} size={12} />
-              {categoryOf(worst.categoryId).name} {worst.status === 'over' ? 'เกินงบแล้ว' : `ใช้ไป ${Math.round(worst.ratio * 100)}% ของงบ`}
-            </button>
-          )}
-        </section>
-      </div>
+              {current && budgetTotal > 0 ? (
+                <p className="hero__pace">
+                  {budgetLeft >= 0 ? (
+                    <>
+                      งบเหลือ <b className="num">{baht(budgetLeft)}</b> จาก {baht(budgetTotal)} · วันละ <b className="num">{baht(Math.floor(budgetLeft / days / 100) * 100)}</b>
+                    </>
+                  ) : (
+                    <>
+                      <b className="num is-over">เกินงบ {baht(-budgetLeft)}</b> จาก {baht(budgetTotal)}
+                    </>
+                  )}
+                </p>
+              ) : (
+                current &&
+                perDay > 0 && (
+                  <p className="hero__pace">
+                    ใช้ได้อีกวันละ <b className="num">{baht(Math.floor(perDay / 100) * 100)}</b> · {days} วัน
+                  </p>
+                )
+              )}
+              {pace && <PaceChart pace={pace} />}
+              {worst && (
+                <button className={`hero__alert ${worst.status === 'over' ? 'is-over' : ''}`} onClick={() => navigate('/summary?p=month')}>
+                  <Icon icon={faCircleExclamation} size={12} />
+                  {categoryOf(worst.categoryId).name} {worst.status === 'over' ? 'เกินงบแล้ว' : `ใช้ไป ${Math.round(worst.ratio * 100)}% ของงบ`}
+                </button>
+              )}
+            </section>
+          </div>
 
-      <Ledger totals={sum} />
+          <Ledger totals={sum} />
 
-      {!!pending?.length && <ReviewSlips slips={pending} />}
+          {!!pending?.length && <ReviewSlips slips={pending} />}
 
-      {txs && txs.length === 0 ? (
-        <EmptyState
-          mood="sleeping"
-          mascot={false}
-          title={current ? 'เดือนนี้ยังไม่ได้จด' : 'เดือนนี้ไม่มีรายการ'}
-          action={
-            current && (
-              <div className="empty__actions">
-                <Button variant="ink" onClick={() => openManual()}>
-                  จดรายการแรก
-                </Button>
-                {txCount === 0 && (
-                  <Button variant="quiet" onClick={() => void loadDemo()}>
-                    ดูตัวอย่าง
-                  </Button>
-                )}
-              </div>
-            )
-          }
-        />
-      ) : (
-        <>
-          {states.length > 0 && (
+          {!!txs?.length && states.length > 0 && (
             <BudgetRings states={states} categoryOf={categoryOf} onSelect={setCategoryId} onMore={() => navigate('/summary?p=month')} />
           )}
+        </div>
 
-          {slices.length > 0 && (
+        <div className="two-col__side">
+          {txs && txs.length === 0 ? (
+            <EmptyState
+              mood="sleeping"
+              mascot={false}
+              title={current ? 'เดือนนี้ยังไม่ได้จด' : 'เดือนนี้ไม่มีรายการ'}
+              action={
+                current && (
+                  <div className="empty__actions">
+                    <Button variant="ink" onClick={() => openManual()}>
+                      จดรายการแรก
+                    </Button>
+                    {txCount === 0 && (
+                      <Button variant="quiet" onClick={() => void loadDemo()}>
+                        ดูตัวอย่าง
+                      </Button>
+                    )}
+                  </div>
+                )
+              }
+            />
+          ) : (
             <>
+              {slices.length > 0 && (
+                <>
+                  <div className="section-head">
+                    <h2>ไปไหนบ้าง</h2>
+                  </div>
+                  <StackedBar data={slices} onSelect={(s) => setCategoryId(s.id)} onMore={() => navigate('/summary?p=month')} />
+                </>
+              )}
+
               <div className="section-head">
-                <h2>ไปไหนบ้าง</h2>
+                <h2>รายการล่าสุด</h2>
+                <IconButton icon={faArrowRight} label="ดูทั้งหมด" onClick={() => navigate('/summary?p=month')} />
               </div>
-              <StackedBar data={slices} onSelect={(s) => setCategoryId(s.id)} onMore={() => navigate('/summary?p=month')} />
+              {txs && <Receipt txs={txs.slice(0, RECENT)} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} onMove={moveTx} />}
             </>
           )}
-
-          <div className="section-head">
-            <h2>รายการล่าสุด</h2>
-            <IconButton icon={faArrowRight} label="ดูทั้งหมด" onClick={() => navigate('/summary?p=month')} />
-          </div>
-          {txs && <Receipt txs={txs.slice(0, RECENT)} categoryOf={categoryOf} onEdit={openManual} onDelete={removeTx} onMove={moveTx} />}
-        </>
-      )}
+        </div>
+      </div>
 
       <MonthSheet open={monthsOpen} value={period} onClose={() => setMonthsOpen(false)} onPick={setPeriod} />
       <CategoryTxSheet categoryId={categoryId} txs={txs ?? []} onClose={() => setCategoryId(null)} />

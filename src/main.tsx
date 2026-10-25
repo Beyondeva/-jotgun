@@ -10,6 +10,7 @@ import './design/base.css';
 import './design/components.css';
 import './app/app.css';
 import './features/inbox/inbox.css';
+import './app/responsive.css'; // last: screen-size overrides
 
 // FA styles are imported above; don't let it inject a <style> at runtime too
 config.autoAddCss = false;
