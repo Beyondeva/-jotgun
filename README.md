@@ -34,6 +34,6 @@ npm run build
 ## Assets
 
 ```bash
-npm run icons      # ไอคอนแอปจาก public/logo.svg
+npm run icons      # ไอคอนแอปจาก src/assets/logo/app-icon.svg
 npm run splash     # หน้าจอเปิดแอป iOS จาก public/splash-mark.svg
 ```

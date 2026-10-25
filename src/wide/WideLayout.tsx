@@ -3,6 +3,7 @@ import { Suspense, useEffect, useRef, useState, type RefObject } from 'react';
 import { useLocation, useNavigate, useOutlet, useSearchParams } from 'react-router';
 import { AddSheet } from '../app/AddSheet';
 import { RouteErrorBoundary } from '../app/RouteErrorBoundary';
+import { AppLogo } from '../design/components/AppLogo';
 import { PageLoader } from '../design/components/PageLoader';
 import type { TabKey } from '../design/components/TabBar';
 import { useDecor } from '../design/decor';
@@ -102,7 +103,9 @@ function Shell() {
       )}
 
       <nav className="w-side" aria-label="เมนูหลัก">
-        <div className="w-brand">จดกัน</div>
+        <div className="w-brand">
+          <AppLogo />
+        </div>
         {NAV.slice(0, -1).map(navItem)}
         <span className="w-side__gap" />
         {navItem(NAV[NAV.length - 1])}

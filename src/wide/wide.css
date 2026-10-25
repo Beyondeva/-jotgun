@@ -30,7 +30,8 @@
     background: var(--paper-2);
     border-right: 1px solid var(--rule);
   }
-  .w-brand { padding: 0 var(--s-3) var(--s-4); font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+  .w-brand { padding: 0 var(--s-3) var(--s-4); }
+  .w-brand img { display: block; }
   .w-nav {
     display: flex;
     align-items: center;

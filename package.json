@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "typecheck": "tsc",
-    "icons": "pwa-assets-generator",
+    "icons": "node scripts/icons.mjs",
     "splash": "pwa-assets-generator --config pwa-splash.config.ts --manifest false"
   },
   "dependencies": {
