@@ -24,7 +24,6 @@ import { useCatTalk } from '../features/home/useCatTalk';
 import { useOverview } from '../features/home/useOverview';
 import { CategoryTxSheet } from '../features/summary/CategoryTxSheet';
 import { HeroCatProvider } from '../mascot/heroCat';
-import { KhaoTang } from '../mascot/KhaoTang';
 import { useBahtText } from '../lib/privacy';
 import { useCachedLiveQuery } from '../lib/useCachedLiveQuery';
 import { periodNoun, useWidePeriod } from './period';
@@ -65,8 +64,6 @@ export default function WideOverview() {
       ? `${under ? 'ต่ำกว่าแผน' : 'เร็วกว่าแผน'} ${baht(Math.abs(o.pace.diff))}`
       : `${under ? 'น้อยกว่า' : 'มากกว่า'}${noun}ก่อน ${baht(Math.abs(o.pace.diff))}`
     : null;
-  // over the budget, or ahead of the plan's pace: worried; otherwise (no plan too) happy
-  const worried = (o.current && o.budgetTotal > 0 && o.budgetLeft < 0) || !under;
   const used = o.budgetTotal > 0 ? Math.round(((o.budgetTotal - o.budgetLeft) / o.budgetTotal) * 100) : null;
   const budgetLine =
     o.current && o.budgetTotal > 0 ? (
@@ -120,7 +117,7 @@ export default function WideOverview() {
         </div>
       )}
 
-      {/* row 1: the figures. Plain: the big one with ข้าวตัง beside it. Under a scene the big one
+      {/* row 1: the figures. Plain: the big one first. Under a scene the big one
           is on the sky (and the cat in the scene), so four equal ones with เทียบแผน */}
       <section className={`w-kpis w-row ${decor ? 'w-kpis--scene' : ''}`} aria-label="ตัวเลขหลัก">
         {!decor && (
@@ -130,7 +127,6 @@ export default function WideOverview() {
               <Money value={o.sum.expense} size="hero" countUp="wide-hero" className="w-kpi__hero" />
               {budgetLine}
             </div>
-            <KhaoTang mood={worried ? 'worried' : 'happy'} size={88} loading="lazy" className="w-kpi__cat" />
           </div>
         )}
         <div className="w-card w-kpi">
