@@ -56,8 +56,45 @@
 .decor-scene__floor { position: absolute; z-index: -1; left: 0; width: 100%; display: block; pointer-events: none; }
 .decor-scene__sky { top: 0; height: 100%; }
 .decor-scene__floor { bottom: 0; height: 170px; }
-/* the live cat over its still in the floor art (positioned by SceneLiveOverlay) */
-.decor-scene__live { position: absolute; z-index: -1; left: 0; top: 0; transform-origin: 0 0; }
+/* the tappable (and live) cat over its still in the floor art, positioned by SceneLive */
+.decor-scene__cat { position: absolute; z-index: -1; left: 0; top: 0; padding: 0; transform-origin: 0 0; -webkit-tap-highlight-color: transparent; }
+.decor-scene__bubble { z-index: 2; }
+
+/* plain themes: the cat sits top right of the hero; the big figure paints over it if they meet */
+.hero { position: relative; }
+.hero__cat { position: absolute; top: calc(var(--s-1) * -1); right: calc(var(--s-2) * -1); }
+.hero__cat-btn { display: block; padding: 0; -webkit-tap-highlight-color: transparent; }
+.hero .money--hero { position: relative; z-index: 1; }
+
+/* ข้าวตัง's speech bubble: a paper tag with a tail pointing at the cat */
+.kt-bubble {
+  position: absolute;
+  z-index: 2;
+  width: max-content;
+  max-width: 200px;
+  padding: 6px 10px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 10px;
+  background: var(--sheet);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  pointer-events: none;
+}
+.kt-bubble--left::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 12px;
+  width: 8px;
+  height: 8px;
+  border-top: 1px solid var(--rule-strong);
+  border-right: 1px solid var(--rule-strong);
+  background: var(--sheet);
+  transform: rotate(45deg);
+}
+.hero__cat .kt-bubble--left { right: calc(100% - 6px); top: 20px; }
 
 /* the scene carried on behind the content: fixed, untouchable, stops at the tab bar */
 .decor-pattern {
@@ -237,7 +274,12 @@
 
 /* ---------- Home: pace chart ---------- */
 .pace { margin: var(--s-4) 0 0; }
-.pace__plot { position: relative; height: 72px; margin-top: var(--s-3); }
+/* horizontal drags scrub the chart; vertical ones still scroll the page */
+.pace__plot { position: relative; height: 72px; margin-top: var(--s-3); touch-action: pan-y; cursor: crosshair; -webkit-user-select: none; user-select: none; }
+.pace__plot:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 2px; }
+.pace__guide { position: absolute; top: -6px; bottom: 0; width: 0; border-left: 1px dashed var(--ink-3); pointer-events: none; }
+.pace__dot.is-plan { border-color: var(--ink-3); border-style: dashed; }
+.pace__tag.is-day { color: var(--ink); font-weight: 500; }
 .pace__plot svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .pace__base,
 .pace__plan,

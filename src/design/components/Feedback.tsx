@@ -19,12 +19,14 @@ interface EmptyProps {
   title: string;
   body?: string;
   action?: React.ReactNode;
+  /** false where ข้าวตัง is already on screen (home's header) */
+  mascot?: boolean;
 }
 
-export function EmptyState({ mood, title, body, action }: EmptyProps) {
+export function EmptyState({ mood, title, body, action, mascot = true }: EmptyProps) {
   return (
     <div className="empty">
-      <KhaoTang mood={mood} size={140} live />
+      {mascot && <KhaoTang mood={mood} size={140} live />}
       <div className="empty__text">
         <h3 className="empty__title">{title}</h3>
         {body && <p className="empty__body">{body}</p>}

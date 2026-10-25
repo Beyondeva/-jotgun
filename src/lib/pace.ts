@@ -9,6 +9,8 @@ import { daysIn, shiftPeriod, type Period } from './period';
  * there is no budget.
  */
 export interface Pace {
+  /** local midnight of each day in the month */
+  dates: number[];
   /** days in the month */
   days: number;
   /** days drawn: up to today in the current month, all of a past month, none of a future one */
@@ -49,5 +51,5 @@ export function paceOf(txs: Transaction[], period: Period, opts: { budget?: numb
   } else {
     return null;
   }
-  return { days: days.length, elapsed, actual, plan, planKind, diff: actual[elapsed - 1] - plan[elapsed - 1] };
+  return { dates: days, days: days.length, elapsed, actual, plan, planKind, diff: actual[elapsed - 1] - plan[elapsed - 1] };
 }

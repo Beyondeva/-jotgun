@@ -26,7 +26,10 @@ import { Ledger } from '../summary/Ledger';
 import { Receipt } from '../transactions/Receipt';
 import { useTransactions } from '../transactions/useTransactions';
 import { usePendingSlips } from '../inbox/usePendingSlips';
+import { HeroCatProvider } from '../../mascot/heroCat';
 import { BudgetRings } from './BudgetRings';
+import { HeroCat } from './HeroCat';
+import { useCatTalk } from './useCatTalk';
 import { PaceChart } from './PaceChart';
 import { ReviewSlips } from './ReviewSlips';
 
@@ -81,6 +84,22 @@ export function HomePage() {
   const perDay = sum.balance > 0 && days > 0 ? Math.floor(sum.balance / days) : 0;
   const worst = current ? worstBudget(states) : undefined;
 
+  const worstCat = worst && categoryOf(worst.categoryId);
+  const cat = useCatTalk(
+    {
+      current,
+      now: Date.now(),
+      txs: txs ?? [],
+      pace,
+      worst: worst && worstCat ? { name: worstCat.name, status: worst.status === 'over' ? 'over' : 'ahead', ratio: worst.ratio, spent: worst.spent, limit: worst.limit } : undefined,
+      top: byCat[0] && { name: categoryOf(byCat[0].categoryId).name, value: byCat[0].value },
+      perDay: budgetTotal > 0 ? (budgetLeft > 0 && days > 0 ? Math.floor(budgetLeft / days) : 0) : perDay,
+      pending: pending?.length ?? 0,
+    },
+    period.from,
+    txs,
+  );
+
   // first read from IndexedDB (or a month switch): show the cat instead of ฿0
   // (a decorated theme's art is still downloading: wait rather than jump from plain to scene)
   if (txs === undefined || decor === 'loading') return <PageLoader />;
@@ -99,7 +118,7 @@ export function HomePage() {
   const spentLabel = current ? 'ใช้ไปเดือนนี้' : 'ใช้ไปทั้งเดือน';
 
   return (
-    <>
+    <HeroCatProvider value={cat}>
       {decor ? (
         // decorated: the same header, drawn over the theme's scene
         <div className="decor-hero">
@@ -130,6 +149,7 @@ export function HomePage() {
       <section className={`hero ${decor ? 'hero--decor' : ''}`}>
         {!decor && (
           <>
+            <HeroCat />
             {current && <div className="hero__hello">{greeting()}</div>}
             <div className="hero__label">{spentLabel}</div>
             <Money value={sum.expense} size="hero" countUp="home-hero" />
@@ -171,6 +191,7 @@ export function HomePage() {
       {txs && txs.length === 0 ? (
         <EmptyState
           mood="sleeping"
+          mascot={false}
           title={current ? 'เดือนนี้ยังไม่ได้จด' : 'เดือนนี้ไม่มีรายการ'}
           action={
             current && (
@@ -212,7 +233,7 @@ export function HomePage() {
 
       <MonthSheet open={monthsOpen} value={period} onClose={() => setMonthsOpen(false)} onPick={setPeriod} />
       <CategoryTxSheet categoryId={categoryId} txs={txs ?? []} onClose={() => setCategoryId(null)} />
-    </>
+    </HeroCatProvider>
   );
 }
 
