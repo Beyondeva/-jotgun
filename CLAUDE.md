@@ -27,6 +27,8 @@ Vite 8, React 19, TS 7, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB) + dexie-r
   - ≥1024px (iPad landscape, computers): `src/wide/` (lazy). `WideLayout` has a 220px sidebar (`--rail-w`), a top bar (‹ › · period · สัปดาห์/เดือน/ปี · search · "จดรายการ", or a floating + under `pointer: coarse`) and content up to 1280px. Shortcuts: "/" search, "N" add.
   - Wide-only pages: `WideOverview` (KPI row, pace | categories, recent table) and `WideTransactions` (`/transactions`: table, filters, bulk recategorise with undo). Other pages render in a centred 720px column.
   - All wide styles are in `src/wide/wide.css` under `@media (min-width:1024px)`.
+  - Plain themes: the overview's hero card has the ข้าวตัง still (happy, or worried when over budget or pace).
+  - Decorated themes: the overview portals its Scene into WideLayout's `.w-scene` band (`scene.tsx`), full width behind the top bar. The art keeps its size anchored right and draws past its left edge (`WIDE_LEFT`, `scatter`, `waves` in `decor/index.ts`; phones crop to the viewBox). The cards become รายรับ · รายจ่าย · คงเหลือ · เทียบแผน, and the sidebar uses the theme's drawn tab icons.
 - `src/db/`: Dexie schema (`types.ts`); slips (ingest/confirm/discard), budgets, settings
 - `src/slip/`: OCR and QR reading plus a per-bank parser. Fixtures are in `__tests__`
 - `src/features/`: home, inbox (รอจด slip cards), manual entry, summary, search, settings, categories, transactions; design-preview (DEV only)
@@ -60,6 +62,7 @@ Vite 8, React 19, TS 7, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB) + dexie-r
   - The Scene sits behind the plain header text and its ground must fade to `var(--paper)`.
   - The Pattern is tone-on-tone (`--scene-mark*`): fixed, `pointer-events: none`, and stops at the tab bar.
   - Decorate only the header and tab bar. Drawn tab icons keep their labels.
+  - Scene art left of the viewBox only shows on wide screens: keep it to sky, ground and small marks, never behind the big figure.
 - Reference art lives in `docs/theme-refs/`.
 
 ## iOS Safari pitfalls (caused real flicker)

@@ -4,19 +4,23 @@ import { useLocation, useNavigate, useOutlet, useSearchParams } from 'react-rout
 import { AddSheet } from '../app/AddSheet';
 import { RouteErrorBoundary } from '../app/RouteErrorBoundary';
 import { PageLoader } from '../design/components/PageLoader';
+import type { TabKey } from '../design/components/TabBar';
 import { useDecor } from '../design/decor';
 import { Icon, type IconDefinition } from '../design/Icon';
 import { usePendingCount } from '../features/inbox/usePendingSlips';
 import { periodLabel, type PeriodKind } from '../lib/period';
 import { COARSE, useMediaQuery } from '../lib/useMediaQuery';
 import { useWidePeriod, WidePeriodProvider } from './period';
+import { SceneSlot } from './scene';
 import './wide.css';
 
-const NAV: { path: string; label: string; icon: IconDefinition }[] = [
-  { path: '/', label: 'ภาพรวม', icon: faHouse },
+/** `tab`: the phone tab whose drawn icon a decorated theme lends this item */
+const NAV: { path: string; label: string; icon: IconDefinition; tab?: TabKey }[] = [
+  { path: '/', label: 'ภาพรวม', icon: faHouse, tab: 'home' },
   { path: '/transactions', label: 'รายการ', icon: faListUl },
-  { path: '/inbox', label: 'รอจด', icon: faInbox },
-  { path: '/summary', label: 'สรุป', icon: faChartColumn },
+  { path: '/inbox', label: 'รอจด', icon: faInbox, tab: 'inbox' },
+  { path: '/summary', label: 'สรุป', icon: faChartColumn, tab: 'summary' },
+  { path: '/settings', label: 'ตั้งค่า', icon: faGear, tab: 'settings' },
 ];
 /** pages built for the wide layout; the others keep their phone column, centred */
 const FULL = ['/', '/transactions'];
@@ -68,6 +72,26 @@ function Shell() {
   }, [path]);
 
   const full = FULL.includes(path);
+  const drawn = decor && decor !== 'loading' ? decor.tabIcons : undefined;
+  // a decorated theme's overview sits under its scene, drawn full width behind the top bar
+  const scene = !!decor && decor !== 'loading' && path === '/';
+  const [slot, setSlot] = useState<HTMLDivElement | null>(null);
+
+  const navItem = (n: (typeof NAV)[number]) => {
+    const on = isOn(n.path);
+    const Drawn = n.tab && drawn?.[n.tab];
+    return (
+      <button key={n.path} type="button" className={`w-nav ${on ? 'is-on' : ''}`} aria-current={on ? 'page' : undefined} onClick={() => navigate(n.path)}>
+        <span className="w-nav__icon">{Drawn ? <Drawn active={on} /> : <Icon icon={n.icon} size={17} />}</span>
+        <span>{n.label}</span>
+        {n.path === '/inbox' && pending > 0 && (
+          <span className="w-count num" aria-label={`ค้าง ${pending} ใบ`}>
+            {pending > 99 ? '99+' : pending}
+          </span>
+        )}
+      </button>
+    );
+  };
 
   return (
     <div className="w-app">
@@ -79,30 +103,20 @@ function Shell() {
 
       <nav className="w-side" aria-label="เมนูหลัก">
         <div className="w-brand">จดกัน</div>
-        {NAV.map((n) => (
-          <button key={n.path} type="button" className={`w-nav ${isOn(n.path) ? 'is-on' : ''}`} aria-current={isOn(n.path) ? 'page' : undefined} onClick={() => navigate(n.path)}>
-            <Icon icon={n.icon} size={17} />
-            <span>{n.label}</span>
-            {n.path === '/inbox' && pending > 0 && (
-              <span className="w-count num" aria-label={`ค้าง ${pending} ใบ`}>
-                {pending > 99 ? '99+' : pending}
-              </span>
-            )}
-          </button>
-        ))}
+        {NAV.slice(0, -1).map(navItem)}
         <span className="w-side__gap" />
-        <button type="button" className={`w-nav ${isOn('/settings') ? 'is-on' : ''}`} aria-current={isOn('/settings') ? 'page' : undefined} onClick={() => navigate('/settings')}>
-          <Icon icon={faGear} size={17} />
-          <span>ตั้งค่า</span>
-        </button>
+        {navItem(NAV[NAV.length - 1])}
       </nav>
 
-      <div className="w-main">
+      <div className={`w-main ${scene ? 'w-main--scene' : ''}`}>
+        {scene && <div className="w-scene" ref={setSlot} />}
         <div className="w-content">
           <TopBar searchRef={search} showPeriod={full} onAdd={coarse ? undefined : () => setAddOpen(true)} />
           <div className={full ? 'w-page' : 'w-page w-page--narrow'}>
             <RouteErrorBoundary key={path}>
-              <Suspense fallback={<PageLoader />}>{outlet}</Suspense>
+              <SceneSlot.Provider value={scene ? slot : null}>
+                <Suspense fallback={<PageLoader />}>{outlet}</Suspense>
+              </SceneSlot.Provider>
             </RouteErrorBoundary>
           </div>
         </div>

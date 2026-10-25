@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import cat from '../../../mascot/renders/khaotang-monsoon.webp';
 import glb from '../../../mascot/renders/scene-monsoon.glb?url';
 import { SceneLive } from '../../../mascot/SceneLive';
-import type { Decor } from '..';
+import { scatter, WIDE_LEFT, type Decor } from '..';
 
 /**
  * ข้าวตังหน้าฝน — rainy season. Reference: docs/theme-refs/khaotang-rain-reference.html
@@ -11,6 +11,9 @@ import type { Decor } from '..';
  */
 
 const RAIN = '#7fa3b3';
+// wide screens only: the sky, rain and road carried on to the left (see WIDE_LEFT)
+const FAR_RAIN = scatter(90, WIDE_LEFT, 220, 40, 190, 5);
+const FAR_PUDDLES = scatter(10, WIDE_LEFT, -200, 138, 160, 9);
 
 function Scene() {
   const still = useRef<SVGImageElement>(null);
@@ -23,7 +26,7 @@ function Scene() {
             <stop offset="0.3" stopColor="var(--scene-sky)" />
           </linearGradient>
         </defs>
-        <rect width="560" height="300" fill="url(#monsoon-sky)" />
+        <rect x={WIDE_LEFT} width={560 - WIDE_LEFT} height="300" fill="url(#monsoon-sky)" />
         <g fill="#2a3a42">
           <ellipse cx="490" cy="34" rx="46" ry="18" />
           <ellipse cx="540" cy="44" rx="34" ry="16" />
@@ -39,6 +42,9 @@ function Scene() {
             [380, 140], [426, 150], [350, 92], [320, 150], [270, 170], [360, 176], [500, 160], [230, 120],
           ].map(([x, y]) => (
             <path key={`${x}-${y}`} d={`M${x} ${y} l-6 14`} />
+          ))}
+          {FAR_RAIN.map(([x, y], i) => (
+            <path key={`far${i}`} d={`M${x} ${y} l-6 14`} />
           ))}
         </g>
       </svg>
@@ -56,7 +62,10 @@ function Scene() {
           <path d="M-40 84 l-6 14" />
           <path d="M60 90 l-6 14" />
         </g>
-        <path d="M-170 116 Q -60 106 40 112 T 220 110 T 390 108 V 170 H -170 Z" fill="url(#monsoon-road)" />
+        <path d={`M${WIDE_LEFT} 116 H -170 Q -60 106 40 112 T 220 110 T 390 108 V 170 H ${WIDE_LEFT} Z`} fill="url(#monsoon-road)" />
+        {FAR_PUDDLES.map(([x, y], i) => (
+          <ellipse key={i} cx={x} cy={y} rx={22 + (i % 3) * 8} ry="4" fill="#2d4652" opacity=".7" />
+        ))}
         <ellipse cx="300" cy="158" rx="54" ry="8" fill="#2d4652" />
         <g fill="none" stroke="#5d8191" strokeWidth="1.2" opacity=".8">
           <ellipse cx="270" cy="158" rx="9" ry="2.5" />

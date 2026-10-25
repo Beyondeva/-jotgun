@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import cat from '../../../mascot/renders/khaotang-beach.webp';
 import glb from '../../../mascot/renders/scene-beach.glb?url';
 import { SceneLive } from '../../../mascot/SceneLive';
-import type { Decor } from '..';
+import { scatter, waves, WIDE_LEFT, type Decor } from '..';
 
 /**
  * ข้าวตังเที่ยวทะเลยามค่ำ — night beach. Reference: docs/theme-refs/khaotang-beach-reference.html
@@ -12,6 +12,9 @@ import type { Decor } from '..';
  */
 
 const LINE = 'var(--mascot-ink)';
+// wide screens only: the sky and sea carried on to the left (see WIDE_LEFT)
+const FAR_STARS = scatter(70, WIDE_LEFT, 0, 8, 150, 7);
+const FAR_GRAINS = scatter(40, WIDE_LEFT, -170, 120, 160, 11);
 
 function Scene() {
   const still = useRef<SVGImageElement>(null);
@@ -25,7 +28,7 @@ function Scene() {
             <stop offset="0.35" stopColor="var(--scene-sky)" />
           </linearGradient>
         </defs>
-        <rect width="560" height="300" fill="url(#beach-sky)" />
+        <rect x={WIDE_LEFT} width={560 - WIDE_LEFT} height="300" fill="url(#beach-sky)" />
         <circle cx="468" cy="56" r="18" fill="#f6df6b" />
         <circle cx="476" cy="50" r="15" fill="var(--scene-sky-top)" />
         <g fill="#fffcf6">
@@ -37,6 +40,9 @@ function Scene() {
           <circle cx="250" cy="40" r="1.2" />
           <circle cx="120" cy="22" r="1" />
           <circle cx="60" cy="70" r="1.3" />
+          {FAR_STARS.map(([x, y], i) => (
+            <circle key={i} cx={x} cy={y} r={i % 3 ? 1 : 1.3} />
+          ))}
         </g>
       </svg>
 
@@ -49,17 +55,20 @@ function Scene() {
             <stop offset="1" stopColor="var(--paper)" />
           </linearGradient>
         </defs>
-        <path d="M-200 80 Q -173 72 -146 80 T -92 80 T -38 80 T 16 80 T 70 80 T 124 80 T 178 80 T 232 80 T 286 80 T 340 80 T 394 80 V 170 H -200 Z" fill="#1d3b5c" />
-        <path d="M-180 94 Q -148 86 -116 94 T -52 94 T 12 94 T 76 94 T 140 94 T 204 94 T 268 94 T 332 94 T 396 94 V 170 H -180 Z" fill="#245074" />
+        <path d={waves(-200 - 108 * 28, 394, 80, 54, 8, 170)} fill="#1d3b5c" />
+        <path d={waves(-180 - 128 * 24, 396, 94, 64, 8, 170)} fill="#245074" />
         <g stroke="#7fb3d9" strokeWidth="1.5" fill="none" opacity=".7" strokeLinecap="round">
           <path d="M150 90 Q 162 86 174 90" />
           <path d="M-60 98 Q -48 94 -36 98" />
         </g>
-        <path d="M-170 118 Q -60 104 40 114 T 220 112 T 390 110 V 170 H -170 Z" fill="url(#beach-sand)" />
+        <path d={`M${WIDE_LEFT} 118 H -170 Q -60 104 40 114 T 220 112 T 390 110 V 170 H ${WIDE_LEFT} Z`} fill="url(#beach-sand)" />
         <g fill="#a07c52" opacity=".5">
           <circle cx="-90" cy="124" r="1" />
           <circle cx="60" cy="122" r="1" />
           <circle cx="340" cy="120" r="1" />
+          {FAR_GRAINS.map(([x, y], i) => (
+            <circle key={i} cx={x} cy={y} r="1" />
+          ))}
         </g>
 
         {/* palm */}

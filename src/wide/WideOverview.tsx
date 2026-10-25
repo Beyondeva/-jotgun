@@ -1,5 +1,6 @@
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router';
 import { useShell } from '../app/shell';
 import { Button } from '../design/components/Button';
@@ -19,12 +20,15 @@ import { daysIn, isCurrent, type Period } from '../lib/period';
 import { clearDemo, loadDemo, useDemoActive } from '../db/demo';
 import { useCategoryOf } from '../features/categories/store';
 import { PaceChart } from '../features/home/PaceChart';
+import { useCatTalk } from '../features/home/useCatTalk';
 import { useOverview } from '../features/home/useOverview';
 import { CategoryTxSheet } from '../features/summary/CategoryTxSheet';
+import { HeroCatProvider } from '../mascot/heroCat';
 import { KhaoTang } from '../mascot/KhaoTang';
 import { useBahtText } from '../lib/privacy';
 import { useCachedLiveQuery } from '../lib/useCachedLiveQuery';
 import { periodNoun, useWidePeriod } from './period';
+import { useSceneSlot } from './scene';
 import { TxTable } from './TxTable';
 
 const RECENT = 12;
@@ -43,10 +47,13 @@ export default function WideOverview() {
   const o = useOverview(period);
   const demo = useDemoActive();
   const decor = useDecor();
+  const slot = useSceneSlot();
+  const cat = useCatTalk(o.catFacts, period.from, o.txs);
   const txCount = useCachedLiveQuery('tx:count', () => db.transactions.count(), []);
   const [categoryId, setCategoryId] = useState<string | null>(null);
 
-  if (o.txs === undefined) return <PageLoader />;
+  // (a decorated theme's art still downloading: wait rather than jump from plain to scene)
+  if (o.txs === undefined || decor === 'loading') return <PageLoader />;
 
   const noun = periodNoun(period.kind);
   const spentLabel = o.current ? `ใช้ไป${noun}นี้` : `ใช้ไปทั้ง${noun}`;
@@ -61,12 +68,47 @@ export default function WideOverview() {
   // over the budget, or ahead of the plan's pace: worried; otherwise (no plan too) happy
   const worried = (o.current && o.budgetTotal > 0 && o.budgetLeft < 0) || !under;
   const used = o.budgetTotal > 0 ? Math.round(((o.budgetTotal - o.budgetLeft) / o.budgetTotal) * 100) : null;
+  const budgetLine =
+    o.current && o.budgetTotal > 0 ? (
+      <p className="w-kpi__sub">
+        {o.budgetLeft >= 0 ? (
+          <>
+            <span className="w-nowrap">
+              งบเหลือ <b className="num">{baht(o.budgetLeft)}</b>
+            </span>{' '}
+            <span className="w-nowrap">จาก {baht(o.budgetTotal)}</span>{' '}
+            · <span className="w-nowrap">
+              วันละ <b className="num">{baht(Math.floor(o.budgetLeft / Math.max(1, o.days) / 100) * 100)}</b>
+            </span>
+          </>
+        ) : (
+          <b className="num is-over">เกินงบ {baht(-o.budgetLeft)} จาก {baht(o.budgetTotal)}</b>
+        )}
+      </p>
+    ) : (
+      o.current &&
+      o.perDay > 0 && (
+        <p className="w-kpi__sub">
+          ใช้ได้อีกวันละ <b className="num">{baht(Math.floor(o.perDay / 100) * 100)}</b> · {o.days} วัน
+        </p>
+      )
+    );
   const top = o.slices.slice(0, TOP_CATEGORIES);
   const bars = spendingBars(o.txs, period);
   const topMax = top[0]?.value || 1;
 
   return (
     <>
+      {/* a decorated theme: its scene in the band behind the top bar (WideLayout), the big figure on the open sky */}
+      {decor && slot && createPortal(<HeroCatProvider value={cat}><decor.Scene /></HeroCatProvider>, slot)}
+      {decor && (
+        <section className="w-scene-hero w-row" aria-label={spentLabel}>
+          <p className="w-kpi__label">{spentLabel}</p>
+          <Money value={o.sum.expense} size="hero" countUp="wide-hero" />
+          {budgetLine}
+        </section>
+      )}
+
       {demo && (
         <div className="demo-bar w-row" role="status">
           <span>
@@ -78,41 +120,19 @@ export default function WideOverview() {
         </div>
       )}
 
-      {/* row 1: the four figures */}
-      <section className="w-kpis w-row" aria-label="ตัวเลขหลัก">
-        <div className="w-card w-kpi w-kpi--hero">
-          <div className="w-kpi__body">
-            <p className="w-kpi__label">{spentLabel}</p>
-            <Money value={o.sum.expense} size="hero" countUp="wide-hero" className="w-kpi__hero" />
-            {o.current && o.budgetTotal > 0 ? (
-              <p className="w-kpi__sub">
-                {o.budgetLeft >= 0 ? (
-                  <>
-                    <span className="w-nowrap">
-                      งบเหลือ <b className="num">{baht(o.budgetLeft)}</b>
-                    </span>{' '}
-                    <span className="w-nowrap">จาก {baht(o.budgetTotal)}</span>{' '}
-                    · <span className="w-nowrap">
-                      วันละ <b className="num">{baht(Math.floor(o.budgetLeft / Math.max(1, o.days) / 100) * 100)}</b>
-                    </span>
-                  </>
-                ) : (
-                  <b className="num is-over">เกินงบ {baht(-o.budgetLeft)} จาก {baht(o.budgetTotal)}</b>
-                )}
-              </p>
-            ) : (
-              o.current &&
-              o.perDay > 0 && (
-                <p className="w-kpi__sub">
-                  ใช้ได้อีกวันละ <b className="num">{baht(Math.floor(o.perDay / 100) * 100)}</b> · {o.days} วัน
-                </p>
-              )
-            )}
+      {/* row 1: the figures. Plain: the big one with ข้าวตัง beside it. Under a scene the big one
+          is on the sky (and the cat in the scene), so four equal ones with เทียบแผน */}
+      <section className={`w-kpis w-row ${decor ? 'w-kpis--scene' : ''}`} aria-label="ตัวเลขหลัก">
+        {!decor && (
+          <div className="w-card w-kpi w-kpi--hero">
+            <div className="w-kpi__body">
+              <p className="w-kpi__label">{spentLabel}</p>
+              <Money value={o.sum.expense} size="hero" countUp="wide-hero" className="w-kpi__hero" />
+              {budgetLine}
+            </div>
+            <KhaoTang mood={worried ? 'worried' : 'happy'} size={88} loading="lazy" className="w-kpi__cat" />
           </div>
-          {/* plain themes: ข้าวตัง beside the figure, in place of the ring (the line above says the same);
-              a decorated theme has its cat in the scene */}
-          {decor ? used !== null && <BudgetDial percent={used} /> : <KhaoTang mood={worried ? 'worried' : 'happy'} size={88} loading="lazy" className="w-kpi__cat" />}
-        </div>
+        )}
         <div className="w-card w-kpi">
           <p className="w-kpi__label">รายรับ</p>
           <Money value={o.sum.income} size="lg" flow="in" />
@@ -129,8 +149,19 @@ export default function WideOverview() {
         <div className="w-card w-kpi">
           <p className="w-kpi__label">คงเหลือ</p>
           <Money value={o.sum.balance} size="lg" tone={o.sum.balance < 0 ? 'over' : 'default'} />
-          {paceText && <p className={`w-kpi__sub ${under ? 'is-under' : 'is-over'}`}>{paceText}</p>}
+          {paceText && !decor && <p className={`w-kpi__sub ${under ? 'is-under' : 'is-over'}`}>{paceText}</p>}
         </div>
+        {decor && (
+          <div className="w-card w-kpi">
+            <p className="w-kpi__label">เทียบแผน</p>
+            {paceText ? (
+              <p className={`w-kpi__plan num ${under ? 'is-under' : 'is-over'}`}>{paceText}</p>
+            ) : (
+              <p className="w-kpi__plan is-none">ยังไม่มีแผนให้เทียบ</p>
+            )}
+            {used !== null && <p className="w-kpi__sub">ใช้งบไป {used}%</p>}
+          </div>
+        )}
       </section>
 
       {o.txs.length === 0 ? (
@@ -234,20 +265,4 @@ function spendingBars(txs: Transaction[], period: Period) {
     value: perDay[i],
     highlight: isSameDay(d, now),
   }));
-}
-
-/** Share of the budget used, as a ring beside the big figure. */
-function BudgetDial({ percent }: { percent: number }) {
-  const r = 28;
-  const c = 2 * Math.PI * r;
-  const over = percent > 100;
-  return (
-    <svg className="w-dial" viewBox="0 0 70 70" width={70} height={70} role="img" aria-label={`ใช้งบไป ${percent}%`}>
-      <circle cx="35" cy="35" r={r} className="w-dial__track" />
-      <circle cx="35" cy="35" r={r} className={`w-dial__fill ${over ? 'is-over' : ''}`} strokeDasharray={`${(Math.min(100, percent) / 100) * c} ${c}`} transform="rotate(-90 35 35)" />
-      <text x="35" y="40" textAnchor="middle" className="w-dial__text">
-        {percent}%
-      </text>
-    </svg>
-  );
 }

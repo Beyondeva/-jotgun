@@ -2,7 +2,7 @@ import { useRef, type CSSProperties } from 'react';
 import cat from '../../../mascot/renders/khaotang-stars.webp';
 import glb from '../../../mascot/renders/scene-stars.glb?url';
 import { SceneLive } from '../../../mascot/SceneLive';
-import type { Decor } from '..';
+import { scatter, WIDE_LEFT, type Decor } from '..';
 
 /**
  * ข้าวตังนอนดูดาว — lying on the roof ridge under a starry sky.
@@ -24,6 +24,11 @@ const STARS: [number, number, number][] = [
   [390, 58, 0.9], [300, 30, 1.1], [250, 12, 0.9], [200, 44, 1], [150, 18, 1], [90, 36, 0.9], [40, 14, 1.1], [20, 60, 0.9],
 ];
 
+// wide screens only: the sky carried on to the left (see WIDE_LEFT)
+const FAR_STARS = scatter(110, WIDE_LEFT, 0, 6, 190, 3);
+// the sparkles go low, in the gap between the big figure and the ground, never behind text
+const FAR_SPARKLES = scatter(8, WIDE_LEFT, -60, 166, 196, 13);
+
 function Scene() {
   const still = useRef<SVGImageElement>(null);
   return (
@@ -44,11 +49,17 @@ function Scene() {
           {STARS.map(([x, y, r], i) => (
             <circle key={`${x}-${y}`} cx={x} cy={y} r={r} className={i % 4 === 0 ? 'decor-twinkle' : undefined} style={i % 4 === 0 ? twinkle(i * 0.37) : undefined} />
           ))}
+          {FAR_STARS.map(([x, y], i) => (
+            <circle key={`far${i}`} cx={x} cy={y} r={i % 4 ? 0.9 : 1.3} className={i % 9 === 0 ? 'decor-twinkle' : undefined} style={i % 9 === 0 ? twinkle(i * 0.21) : undefined} />
+          ))}
         </g>
         <g fill={GOLD}>
           <path d={sparkle(502, 58, 8)} className="decor-twinkle" style={twinkle(0.4)} />
           <path d={sparkle(540, 122, 4.8)} className="decor-twinkle" style={twinkle(1.6)} />
           <path d={sparkle(332, 96, 4)} className="decor-twinkle" style={twinkle(2.4)} />
+          {FAR_SPARKLES.map(([x, y], i) => (
+            <path key={i} d={sparkle(x, y, 3.5 + (i % 3))} className="decor-twinkle" style={twinkle(i * 0.7)} />
+          ))}
         </g>
         <path d="M430 22 L 476 40" stroke="url(#stars-meteor)" strokeWidth="2" strokeLinecap="round" />
         <circle cx="476" cy="40" r="1.8" fill={GOLD} />

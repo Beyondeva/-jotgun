@@ -43,6 +43,10 @@ const contrast = (a: string, b: string) => {
   return (x + 0.05) / (y + 0.05);
 };
 
+/** color-mix(in srgb, a p%, b) for opaque hex colours */
+const mix = (a: string, b: string, p: number) =>
+  '#' + rgb(a).map((x, i) => Math.round(x * p + rgb(b)[i] * (1 - p)).toString(16).padStart(2, '0')).join('');
+
 const TEXT = ['--ink', '--ink-2', '--ink-3', '--accent', '--over', '--income'];
 const SURFACES = ['--paper', '--paper-2', '--sheet'];
 const CATS = Object.keys(root).filter((k) => k.startsWith('--cat-'));
@@ -83,11 +87,22 @@ describe.each(THEMES.map((t) => t.id))('theme %s', (id) => {
     it.each(TEXT.flatMap((t) => ['--scene-mark', '--scene-mark-2'].map((s) => [t, s])))('%s over pattern %s ≥ 4.5', (t, s) => {
       expect(c(t, s)).toBeGreaterThanOrEqual(4.5);
     });
+    // wide screens (src/wide/wide.css): the top bar's search and period controls sit on the
+    // scene at 85% --sheet, with the header's lifted inks
+    it.each(['--ink', '--scene-ink-2'].flatMap((t) => sky.map((s) => [t, s])))('wide: %s on 85%% sheet over %s ≥ 4.5', (t, s) => {
+      expect(contrast(resolve(v, t), mix(resolve(v, '--sheet'), resolve(v, s), 0.85))).toBeGreaterThanOrEqual(4.5);
+    });
     it('tab bar labels ≥ 4.5', () => {
       expect(c('--bar-ink', '--bar')).toBeGreaterThanOrEqual(4.5);
       if ('--bar-ink-2' in v) expect(c('--bar-ink-2', '--bar')).toBeGreaterThanOrEqual(4.5);
     });
   }
+
+  // wide screens: the selected sidebar item and period, a faint accent capsule (--w-pill)
+  it('wide: ink on the accent pill ≥ 4.5', () => {
+    const pill = mix(resolve(v, '--accent'), resolve(v, '--paper-2'), 0.16);
+    expect(contrast(resolve(v, '--ink'), pill)).toBeGreaterThanOrEqual(4.5);
+  });
 
   it.each(CATS)('%s icon on sheet ≥ 3', (k) => {
     expect(c(k, '--sheet')).toBeGreaterThanOrEqual(3);

@@ -43,6 +43,7 @@
     font-weight: 500;
     text-align: left;
   }
+  .w-nav__icon { display: grid; place-items: center; width: 30px; flex: none; }
   .w-nav:hover { color: var(--ink); }
   .w-nav.is-on { background: var(--w-pill); color: var(--ink); font-weight: 600; }
   .w-nav:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
@@ -140,18 +141,16 @@
   .w-nowrap { white-space: nowrap; }
   .w-kpi__sub .is-over,
   .w-kpi__sub.is-over { color: var(--over); }
-  .w-kpi__sub.is-under { color: var(--income); }
-  .w-dial { flex: none; }
+  .w-kpi__sub.is-under,
+  .w-kpi__plan.is-under { color: var(--income); }
+  .w-kpi__plan { font-size: clamp(16px, 9cqi, 21px); font-weight: 600; line-height: 1.35; }
+  .w-kpi__plan.is-over { color: var(--over); }
+  .w-kpi__plan.is-none { color: var(--ink-2); font-size: 14px; font-weight: 500; }
   .w-kpi__cat { margin: calc(-1 * var(--s-2)) calc(-1 * var(--s-2)) calc(-1 * var(--s-2)) 0; }
-  /* a narrow hero card keeps the figure: the ring goes, the cat gets smaller */
+  /* a narrow hero card keeps the figure: the cat gets smaller */
   @container kpi (max-width: 280px) {
-    .w-dial { display: none; }
     .w-kpi__cat { width: 64px !important; height: 64px !important; margin-right: calc(-1 * var(--s-3)); }
   }
-  .w-dial__track { fill: none; stroke: var(--rule); stroke-width: 7; }
-  .w-dial__fill { fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; }
-  .w-dial__fill.is-over { stroke: var(--over); }
-  .w-dial__text { fill: var(--ink); font-family: var(--font-figure); font-size: 15px; font-weight: 600; }
 
   /* row 2: pace chart | categories */
   .w-split { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--s-3); }
@@ -230,4 +229,41 @@
   }
   .w-bulk > span { margin-right: auto; }
   .w-more { display: flex; justify-content: center; padding-top: var(--s-3); }
+
+  /* ---------- decorated theme: the scene band (overview only) ----------
+     Full width of the main area behind the top bar and the big figure; the art keeps its
+     own size anchored right and the sky and ground carry on to the left (decor/index.ts
+     WIDE_LEFT). Its ground fades into --paper; the figure stays above the ground's top
+     like on phones (--scene-floor), and the cards start where the band ends. */
+  .w-main--scene {
+    --scene-floor: 108px;
+    --w-hero-h: 112px;
+    --w-scene-h: calc(var(--safe-top) + var(--s-5) + 48px + var(--s-4) + var(--w-hero-h) + var(--scene-floor));
+  }
+  .w-scene {
+    position: absolute;
+    z-index: 0;
+    inset: 0 0 auto 0;
+    height: var(--w-scene-h);
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--scene-sky-top);
+  }
+  /* the sky art starts under the top bar, so the moon and clouds aren't behind its buttons */
+  .w-scene svg.decor-scene__sky { top: 40px; left: auto; right: 0; width: 560px; height: 300px; overflow: visible; }
+  .w-scene .decor-scene__floor { left: auto; right: 0; width: 560px; overflow: visible; }
+  /* content above the band, but the cat (in the band) still takes taps through the gaps */
+  .w-main--scene .w-content { position: relative; z-index: 1; pointer-events: none; }
+  .w-main--scene .w-content > *,
+  .w-main--scene .w-page > * { pointer-events: auto; }
+  .w-main--scene .w-page { pointer-events: none; }
+  .w-main--scene .w-page > .w-scene-hero { pointer-events: none; }
+  /* text on the sky: the quieter inks lifted like the phone header; controls on ~85% sheet */
+  .w-main--scene .w-bar,
+  .w-scene-hero { --ink-2: var(--scene-ink-2); --ink-3: var(--scene-ink-2); }
+  .w-main--scene .w-seg,
+  .w-main--scene .w-search { background: color-mix(in srgb, var(--sheet) 85%, transparent); }
+  .w-scene-hero { display: flex; flex-direction: column; gap: 2px; height: var(--w-hero-h); margin-bottom: calc(var(--scene-floor) - var(--s-4)); }
+  .w-scene-hero .money--hero { font-size: 46px; }
+  .w-kpis--scene { grid-template-columns: 1fr 1fr 1fr 1.4fr; }
 }
