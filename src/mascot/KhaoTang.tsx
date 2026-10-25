@@ -34,9 +34,11 @@ interface Props {
   className?: string;
   /** Animate in 3D when allowed. Keep to one or two on a screen: each is a WebGL canvas. */
   live?: boolean;
+  /** 'lazy' for a still below the fold or not needed for first paint */
+  loading?: 'eager' | 'lazy';
 }
 
-export function KhaoTang({ mood = 'happy', size = 120, className, live = false }: Props) {
+export function KhaoTang({ mood = 'happy', size = 120, className, live = false, loading }: Props) {
   const allowed = useMascot3D();
   const [ready, setReady] = useState(false);
   const showLive = live && allowed;
@@ -53,6 +55,7 @@ export function KhaoTang({ mood = 'happy', size = 120, className, live = false }
         src={STILLS[mood]}
         width={size}
         height={size}
+        loading={loading}
         alt=""
         draggable={false}
       />

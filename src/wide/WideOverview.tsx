@@ -8,6 +8,7 @@ import { DailyBars } from '../design/components/Charts';
 import { EmptyState } from '../design/components/Feedback';
 import { Money } from '../design/components/Money';
 import { PageLoader } from '../design/components/PageLoader';
+import { useDecor } from '../design/decor';
 import { Icon } from '../design/Icon';
 import { catColor } from '../design/palette';
 import { db } from '../db/db';
@@ -20,6 +21,7 @@ import { useCategoryOf } from '../features/categories/store';
 import { PaceChart } from '../features/home/PaceChart';
 import { useOverview } from '../features/home/useOverview';
 import { CategoryTxSheet } from '../features/summary/CategoryTxSheet';
+import { KhaoTang } from '../mascot/KhaoTang';
 import { useBahtText } from '../lib/privacy';
 import { useCachedLiveQuery } from '../lib/useCachedLiveQuery';
 import { periodNoun, useWidePeriod } from './period';
@@ -40,6 +42,7 @@ export default function WideOverview() {
   const { period } = useWidePeriod();
   const o = useOverview(period);
   const demo = useDemoActive();
+  const decor = useDecor();
   const txCount = useCachedLiveQuery('tx:count', () => db.transactions.count(), []);
   const [categoryId, setCategoryId] = useState<string | null>(null);
 
@@ -55,6 +58,8 @@ export default function WideOverview() {
       ? `${under ? 'ต่ำกว่าแผน' : 'เร็วกว่าแผน'} ${baht(Math.abs(o.pace.diff))}`
       : `${under ? 'น้อยกว่า' : 'มากกว่า'}${noun}ก่อน ${baht(Math.abs(o.pace.diff))}`
     : null;
+  // over the budget, or ahead of the plan's pace: worried; otherwise (no plan too) happy
+  const worried = (o.current && o.budgetTotal > 0 && o.budgetLeft < 0) || !under;
   const used = o.budgetTotal > 0 ? Math.round(((o.budgetTotal - o.budgetLeft) / o.budgetTotal) * 100) : null;
   const top = o.slices.slice(0, TOP_CATEGORIES);
   const bars = spendingBars(o.txs, period);
@@ -83,7 +88,13 @@ export default function WideOverview() {
               <p className="w-kpi__sub">
                 {o.budgetLeft >= 0 ? (
                   <>
-                    งบเหลือ <b className="num">{baht(o.budgetLeft)}</b> จาก {baht(o.budgetTotal)} · วันละ <b className="num">{baht(Math.floor(o.budgetLeft / Math.max(1, o.days) / 100) * 100)}</b>
+                    <span className="w-nowrap">
+                      งบเหลือ <b className="num">{baht(o.budgetLeft)}</b>
+                    </span>{' '}
+                    <span className="w-nowrap">จาก {baht(o.budgetTotal)}</span>{' '}
+                    · <span className="w-nowrap">
+                      วันละ <b className="num">{baht(Math.floor(o.budgetLeft / Math.max(1, o.days) / 100) * 100)}</b>
+                    </span>
                   </>
                 ) : (
                   <b className="num is-over">เกินงบ {baht(-o.budgetLeft)} จาก {baht(o.budgetTotal)}</b>
@@ -98,7 +109,9 @@ export default function WideOverview() {
               )
             )}
           </div>
-          {used !== null && <BudgetDial percent={used} />}
+          {/* plain themes: ข้าวตัง beside the figure, in place of the ring (the line above says the same);
+              a decorated theme has its cat in the scene */}
+          {decor ? used !== null && <BudgetDial percent={used} /> : <KhaoTang mood={worried ? 'worried' : 'happy'} size={88} loading="lazy" className="w-kpi__cat" />}
         </div>
         <div className="w-card w-kpi">
           <p className="w-kpi__label">รายรับ</p>
