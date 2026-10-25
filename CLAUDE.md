@@ -14,6 +14,8 @@ Live at https://jotgun.vercel.app · repo github.com/Beyondeva/-jotgun · branch
 ## Every change
 1. `npx tsc -b`, then `npx vitest run`, then `npm run build`. All must pass.
 2. Check the change in Chrome at http://localhost:5173 (`npm run dev`; the phone uses LAN 192.168.x.x:5173). Add test data via `await import('/src/db/db.ts')` in the console, then delete it and `localStorage.removeItem('jotgun:theme')`.
+   - Check widths with same-origin iframes at fixed sizes. Chrome here is zoomed to 110%, so test the 1024 breakpoint with a 1025px frame.
+   - This PC has Windows animations off, so Chrome reports `prefers-reduced-motion: reduce` and scenes stay still. To check motion, delete the reduced-motion `@media` rules from the frame's `document.styleSheets`.
 3. Commit with the trailer `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. Don't commit `tsconfig.tsbuildinfo`.
 4. `git push origin main`, then poll until https://jotgun.vercel.app serves the new `assets/index-*.js` hash.
 
