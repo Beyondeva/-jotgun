@@ -37,7 +37,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,webp,glb,ico,woff2}'],
         runtimeCaching: [
           {
             // tesseract.js worker, wasm core and language data (the language data is also cached by tesseract itself)

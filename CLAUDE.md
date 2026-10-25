@@ -18,7 +18,7 @@ Live at https://jotgun.vercel.app · repo github.com/Beyondeva/-jotgun · branch
 4. `git push origin main`, then poll until https://jotgun.vercel.app serves the new `assets/index-*.js` hash.
 
 ## Stack
-Vite 8, React 19, TS 7, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB) + dexie-react-hooks, react-router 8 (HashRouter), framer-motion, Font Awesome Solid (the only icon set), recharts, tesseract.js (tha+eng), jsQR. Tests: Vitest with fake-indexeddb (node env, `src/**/*.test.ts`).
+Vite 8, React 19, TS 7, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB) + dexie-react-hooks, react-router 8 (HashRouter), framer-motion, Font Awesome Solid (the only icon set), recharts, tesseract.js (tha+eng), jsQR, three.js (mascot only). Tests: Vitest with fake-indexeddb (node env, `src/**/*.test.ts`).
 
 ## Map
 - `src/app/`: AppLayout (tab bar, add sheet, decor pattern layer), shell context, `app.css` (page and home styles)
@@ -26,7 +26,11 @@ Vite 8, React 19, TS 7, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB) + dexie-r
 - `src/slip/`: OCR and QR reading plus a per-bank parser. Fixtures are in `__tests__`
 - `src/features/`: home, inbox (รอจด slip cards), manual entry, summary, search, settings, categories, transactions; design-preview (DEV only)
 - `src/design/`: `tokens.css` (all colours), `components.css`, `components/` (Money, Sheet, TabBar…), `themes.ts`, `decor/`
-- `src/mascot/KhaoTang.tsx`: the mascot (moods: happy, worried, sleeping, reading, celebrate). Always white with dark lines (`--mascot-*`)
+- `src/mascot/`: ข้าวตัง, a 3D chubby kitten in toasted-rice gold with browned ear tips, tail tip and forehead marks, and an indigo pencil behind the ear. Its moods are happy, worried, sleeping, reading and celebrate.
+  - `KhaoTang.tsx` shows a WebP still. With `live`, it swaps in the three.js model (`live.ts`, lazy-loaded) once that has drawn a frame.
+  - Settings has a 3D switch. It follows reduce-motion until the user touches it.
+  - Keep `live` to one or two per screen, because each one is a WebGL canvas.
+- `tools/blender/khaotang.py`: the source of the mascot. It models the cat, renders the stills, renders the decorated-theme poses and exports `khaotang.glb`. Run it with Blender 5 from `C:\Program Files\Blender Foundation\Blender 5.0` (see the docstring), then run `npx @gltf-transform/cli meshopt` on the GLB. Mood props and poses travel in the GLB as node extras.
 - Amounts are stored in satang (integer).
 
 ## Design rules (receipt / ledger look)

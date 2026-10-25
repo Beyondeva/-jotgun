@@ -14,6 +14,7 @@ import { CategoryList } from '../categories/CategoryList';
 import { useCategories } from '../categories/store';
 import { BudgetsSheet } from './BudgetsSheet';
 import { DataSheet } from './DataSheet';
+import { MascotSettings } from './MascotSettings';
 import { OwnerNamesSheet } from './OwnerNamesSheet';
 import { PayeeMemorySheet } from './PayeeMemorySheet';
 import { ThemePicker } from './ThemePicker';
@@ -43,6 +44,7 @@ export function SettingsPage() {
       <h1 className="page-title">ตั้งค่า</h1>
 
       <ThemePicker />
+      <MascotSettings />
 
       <div className="list-cap">บัญชี</div>
       <Paper className="list">

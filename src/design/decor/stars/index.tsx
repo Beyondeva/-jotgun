@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import cat from '../../../mascot/renders/khaotang-stars.webp';
 import type { Decor } from '..';
 
 /**
@@ -7,65 +8,7 @@ import type { Decor } from '..';
  * The sky is a CSS wash ending exactly on var(--paper); the roof fades into it too.
  */
 
-const INK = 'var(--mascot-ink)';
-const PAPER = 'var(--mascot-paper)';
-const TABBY = 'var(--mascot-tabby)';
-const SCARF = 'var(--mascot-accent)';
 const GOLD = '#ffd166';
-
-const line = { fill: 'none', stroke: INK, strokeWidth: 4.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
-
-/**
- * ข้าวตัง lying on its tummy, looking up: a long loaf body, the head at the front,
- * the tail curled high. Head, ears, tabby cap and scarf follow src/mascot/KhaoTang.tsx
- * (its 200-unit grid); body and tail are drawn the same way, ink line over a paper fill.
- */
-function LyingKhaoTang() {
-  const body = 'M118 128 C 150 106 292 102 320 128 C 340 146 334 184 302 188 L 122 188 C 104 178 102 142 118 128 Z';
-  const head = 'M52 96 C52 62 74 46 100 46 C126 46 148 62 148 96 C148 124 128 140 100 140 C72 140 52 124 52 96 Z';
-  const tail = 'M316 150 C 352 140 358 92 346 62 C 340 46 326 40 316 50';
-  return (
-    <g>
-      {/* tail: thick ink under a paper stroke, as in KhaoTang, with tabby bands */}
-      <path d={tail} {...line} strokeWidth={16} />
-      <path d={tail} {...line} stroke={PAPER} strokeWidth={8} />
-      <path d="M342 118 L 356 112 M348 92 L 362 90 M342 64 L 354 58" stroke={TABBY} strokeWidth={5} strokeLinecap="round" />
-
-      <path d={body} fill={PAPER} />
-      <path d="M186 126 Q 226 110 262 120" stroke={TABBY} strokeWidth={9} strokeLinecap="round" fill="none" />
-      <path d={body} {...line} />
-      {/* paws: one under the chin, one under the tummy */}
-      <ellipse cx={92} cy={188} rx={19} ry={9} {...line} fill={PAPER} strokeWidth={4} />
-      <ellipse cx={214} cy={190} rx={19} ry={9} {...line} fill={PAPER} strokeWidth={4} />
-
-      {/* scarf round the neck: drawn before the head so the chin covers its top edge,
-          only as wide as the neck, and outlined so it sits on the cat instead of floating */}
-      <path d="M72 124 Q 104 144 140 120 L 146 136 Q 106 162 68 140 Z" fill={SCARF} {...{ stroke: INK, strokeWidth: 3.5, strokeLinejoin: 'round' as const }} />
-
-      {/* head */}
-      <g fill={PAPER}>
-        <path d="M60 74 L57 30 L90 50 Z" />
-        <path d="M140 74 L143 30 L110 50 Z" />
-        <path d={head} />
-      </g>
-      <path d="M70 58 C82 48 118 48 130 58 C122 70 78 70 70 58 Z" fill={TABBY} opacity={0.9} />
-      <path d="M62 68 L60 38 L82 52 Z" fill={TABBY} opacity={0.55} />
-      <path d="M138 68 L140 38 L118 52 Z" fill={TABBY} opacity={0.55} />
-      <ellipse cx={70} cy={112} rx={9} ry={6} fill={SCARF} opacity={0.35} />
-      <ellipse cx={130} cy={112} rx={9} ry={6} fill={SCARF} opacity={0.35} />
-      <path d="M62 72 L57 30 L88 50" {...line} />
-      <path d="M138 72 L143 30 L112 50" {...line} />
-      <path d={head} {...line} />
-
-      {/* eyes turned up, with a highlight */}
-      <circle cx={80} cy={88} r={7} fill={INK} />
-      <circle cx={120} cy={88} r={7} fill={INK} />
-      <circle cx={82.5} cy={85.5} r={2.4} fill={PAPER} />
-      <circle cx={122.5} cy={85.5} r={2.4} fill={PAPER} />
-      <path d="M96 106 L104 106 L100 111 Z" fill={INK} stroke={INK} strokeWidth={2} strokeLinejoin="round" />
-    </g>
-  );
-}
 
 /** A four-point sparkle centred on (x, y). */
 const sparkle = (x: number, y: number, r: number) =>
@@ -133,9 +76,8 @@ function Scene() {
         <path d="M284 106 L 400 88" stroke="#4b3d73" strokeWidth="5" strokeLinecap="round" />
         <rect x="226" y="120" width="180" height="50" fill="url(#stars-roof-fade)" />
 
-        <g transform="translate(240 48) rotate(-8) scale(0.38)">
-          <LyingKhaoTang />
-        </g>
+        {/* ข้าวตัง lying on the ridge, gazing up (rendered by tools/blender/khaotang.py) */}
+        <image href={cat} x="212" y="-10" width="218" height="150" transform="rotate(-8 321 65)" />
       </svg>
     </>
   );

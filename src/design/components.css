@@ -367,8 +367,59 @@
   box-decoration-break: clone;
 }
 
-/* riso colour layer on the mascot: plain translucent fills, no mix-blend-mode
-   (blend modes make iOS repaint everything around them when a layer appears above) */
+/* ---------- ข้าวตัง ---------- */
+/* a still (or the live canvas once it has drawn), with 2D extras on top; sizes follow --kt */
+.khaotang { position: relative; display: inline-block; flex: none; }
+.khaotang__still,
+.khaotang__live { position: absolute; inset: 0; width: 100%; height: 100%; }
+.khaotang__still {
+  transform-origin: 50% 88%;
+  animation: kt-breathe 2.8s ease-in-out infinite;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+/* swap, never fade: the live canvas takes over in one frame */
+.khaotang__still.is-hidden { visibility: hidden; animation: none; }
+.khaotang__live { touch-action: manipulation; }
+@keyframes kt-breathe { 50% { transform: scaleY(1.015); } }
+
+.khaotang__fx { position: absolute; inset: 0; pointer-events: none; }
+.khaotang__z {
+  position: absolute;
+  font-family: var(--font-figure);
+  font-weight: 600;
+  color: var(--ink-2);
+  opacity: 0;
+  animation: kt-z 2.6s ease-out infinite;
+}
+.khaotang__z--0 { top: 24%; right: 18%; font-size: calc(var(--kt) * 0.09); }
+.khaotang__z--1 { top: 14%; right: 10%; font-size: calc(var(--kt) * 0.11); animation-delay: 0.6s; }
+.khaotang__z--2 { top: 3%; right: 2%; font-size: calc(var(--kt) * 0.13); animation-delay: 1.2s; }
+@keyframes kt-z {
+  0% { opacity: 0; transform: translateY(4px); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-8px); }
+}
+.khaotang__spark {
+  position: absolute;
+  width: calc(var(--kt) * 0.09);
+  height: calc(var(--kt) * 0.09);
+  color: var(--mascot-tabby);
+  animation: kt-twinkle 1.1s ease-in-out infinite;
+}
+.khaotang__spark--0 { top: 14%; left: 10%; }
+.khaotang__spark--1 { top: 4%; left: 30%; animation-delay: 0.3s; }
+.khaotang__spark--2 { top: 8%; right: 12%; animation-delay: 0.55s; }
+.khaotang__spark--3 { top: 30%; right: 4%; animation-delay: 0.8s; }
+@keyframes kt-twinkle { 50% { opacity: 0.25; transform: scale(0.6); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .khaotang__still,
+  .khaotang__z,
+  .khaotang__spark { animation: none; }
+  .khaotang__z { opacity: 0.8; }
+}
 
 /* ---------- Charts ---------- */
 .stack { display: flex; flex-direction: column; gap: var(--s-3); }

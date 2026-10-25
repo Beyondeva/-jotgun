@@ -1,11 +1,11 @@
-import { KhaoTang } from '../../../mascot/KhaoTang';
+import cat from '../../../mascot/renders/khaotang-beach.webp';
 import type { Decor } from '..';
 
 /**
  * ข้าวตังเที่ยวทะเลยามค่ำ — night beach. Reference: docs/theme-refs/khaotang-beach-reference.html
  * The art keeps its own colours (it's a picture); the sky behind the header text,
  * the sand's last stop and the content motifs come from theme tokens so the
- * contrast test can check them. The cat is the real mascot, holding an ice cream.
+ * contrast test can check them. The cat is the real mascot, holding an ice cream, lit for night.
  */
 
 const LINE = 'var(--mascot-ink)';
@@ -75,15 +75,8 @@ function Scene() {
         </g>
         <path transform="translate(176 148)" fill="#e8693f" d="M0 -7 L 2 -2.3 L 7 -2 L 3.1 1.6 L 4.3 6.6 L 0 3.9 L -4.3 6.6 L -3.1 1.6 L -7 -2 L -2 -2.3 Z" />
 
-        {/* ข้าวตัง on the sand, ice cream in paw */}
-        <g transform="translate(262 74) scale(0.46)">
-          <KhaoTang mood="happy" size={200} />
-        </g>
-        <g transform="translate(282 132) rotate(-18) scale(0.85)">
-          <path d="M0 8 L 7 30 L 14 8 Z" fill="#d9a35b" stroke={LINE} strokeWidth="1.8" strokeLinejoin="round" />
-          <path d="M3 14 L 11 14 M4.5 20 L 9.5 20" stroke={LINE} strokeWidth="1.2" strokeLinecap="round" />
-          <circle cx="7" cy="4" r="7.5" fill="#f4a6c0" stroke={LINE} strokeWidth="1.8" />
-        </g>
+        {/* ข้าวตัง on the sand, ice cream in paw (rendered by tools/blender/khaotang.py) */}
+        <image href={cat} x="252" y="60" width="112" height="112" />
       </svg>
     </>
   );

@@ -24,7 +24,7 @@ interface EmptyProps {
 export function EmptyState({ mood, title, body, action }: EmptyProps) {
   return (
     <div className="empty">
-      <KhaoTang mood={mood} size={120} />
+      <KhaoTang mood={mood} size={140} live />
       <div className="empty__text">
         <h3 className="empty__title">{title}</h3>
         {body && <p className="empty__body">{body}</p>}

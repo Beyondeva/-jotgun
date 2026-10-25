@@ -1,4 +1,4 @@
-import { KhaoTang } from '../../../mascot/KhaoTang';
+import cat from '../../../mascot/renders/khaotang-monsoon.webp';
 import type { Decor } from '..';
 
 /**
@@ -7,11 +7,7 @@ import type { Decor } from '..';
  * yellow umbrella in yellow boots.
  */
 
-const LINE = 'var(--mascot-ink)';
 const RAIN = '#7fa3b3';
-
-// canopy scallops, right to left along the bottom edge (cat coordinates)
-const SCALLOPS = [104, 72, 40, 8, -24, -56].map((x) => `Q ${x + 16} 15 ${x} 27`).join(' ');
 
 function Scene() {
   return (
@@ -65,25 +61,8 @@ function Scene() {
         </g>
         <ellipse cx="130" cy="146" rx="26" ry="4" fill="#2d4652" opacity=".7" />
 
-        {/* ข้าวตัง under a yellow umbrella, in yellow boots */}
-        <g transform="translate(262 88) scale(0.4)">
-          <KhaoTang mood="happy" size={200} />
-          <g fill="#ffb347" stroke={LINE} strokeWidth="3.5" strokeLinejoin="round">
-            <path d="M70 176 H94 V192 H62 A8 8 0 0 1 70 176 Z" />
-            <path d="M106 176 H130 A8 8 0 0 1 138 192 H106 Z" />
-          </g>
-          <path d="M40 27 V 172 q 0 12 -12 12" stroke="#4a3626" strokeWidth="6" fill="none" strokeLinecap="round" />
-          <ellipse cx="46" cy="152" rx="9" ry="7" fill="var(--mascot-paper)" stroke={LINE} strokeWidth="3.5" />
-          <path
-            d={`M-56 27 Q -44 -63 40 -65 Q 124 -63 136 27 ${SCALLOPS} Z`}
-            fill="#ffb347"
-            stroke={LINE}
-            strokeWidth="4"
-            strokeLinejoin="round"
-          />
-          <path d="M40 -65 Q 12 -20 8 27 M40 -65 Q 68 -20 72 27" stroke="#e8902a" strokeWidth="4" fill="none" />
-          <path d="M40 -65 v -12" stroke={LINE} strokeWidth="4" strokeLinecap="round" />
-        </g>
+        {/* ข้าวตัง under a yellow umbrella, in yellow boots (rendered by tools/blender/khaotang.py) */}
+        <image href={cat} x="234" y="39" width="116" height="136" />
       </svg>
     </>
   );
