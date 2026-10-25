@@ -8,6 +8,7 @@ import { useDecor } from '../design/decor';
 import { Icon } from '../design/Icon';
 import { useReader } from '../features/inbox/reader';
 import { usePendingCount } from '../features/inbox/usePendingSlips';
+import { RouteErrorBoundary } from './RouteErrorBoundary';
 import { useShell } from './shell';
 
 const TAB_PATH: Record<TabKey, string> = { home: '/', inbox: '/inbox', summary: '/summary', settings: '/settings' };
@@ -41,7 +42,9 @@ export function AppLayout() {
       )}
       <main className="page">
         {/* lazy pages (summary, search) load here; the tab bar stays put */}
-        <Suspense fallback={<PageLoader />}>{outlet}</Suspense>
+        <RouteErrorBoundary key={location.pathname}>
+          <Suspense fallback={<PageLoader />}>{outlet}</Suspense>
+        </RouteErrorBoundary>
       </main>
 
       <TabBar active={tabOf(location.pathname)} onChange={(t) => navigate(TAB_PATH[t])} onAdd={() => setAddOpen(true)} inboxCount={pending} />

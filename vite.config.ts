@@ -37,6 +37,11 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // a new deploy takes over at once and drops the old precache; pages still running the old
+        // build recover through the chunk-reload in src/lib/staleBuild.ts
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,svg,png,webp,glb,ico,woff2}'],
         // each decorated theme's 3D cat is only for people using that theme: cached on first use
         globIgnores: ['**/scene-*.glb'],

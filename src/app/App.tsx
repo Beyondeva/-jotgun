@@ -7,6 +7,7 @@ import { InboxPage } from '../features/inbox/InboxPage';
 import { ReaderProvider } from '../features/inbox/reader';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { AppLayout } from './AppLayout';
+import { RouteErrorBoundary } from './RouteErrorBoundary';
 import { ShellProvider } from './shell';
 
 // pages with heavy dependencies (charts) or rarely used ones load on first visit
@@ -21,20 +22,22 @@ export function App() {
       <HashRouter>
         <ReaderProvider>
           <ShellProvider>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route element={<AppLayout />}>
-                  <Route index element={<HomePage />} />
-                  <Route path="inbox" element={<InboxPage />} />
-                  <Route path="summary" element={<SummaryPage />} />
-                  <Route path="search" element={<SearchPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-                </Route>
-                <Route path="/design-preview" element={<DesignPreview />} />
-                <Route path="/design-preview/app" element={<MockApp />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </Suspense>
+            <RouteErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route element={<AppLayout />}>
+                    <Route index element={<HomePage />} />
+                    <Route path="inbox" element={<InboxPage />} />
+                    <Route path="summary" element={<SummaryPage />} />
+                    <Route path="search" element={<SearchPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
+                  </Route>
+                  <Route path="/design-preview" element={<DesignPreview />} />
+                  <Route path="/design-preview/app" element={<MockApp />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </Suspense>
+            </RouteErrorBoundary>
           </ShellProvider>
         </ReaderProvider>
       </HashRouter>
