@@ -6,7 +6,8 @@ const H = 72;
 
 /**
  * This month's running total in ink against the plan as a pencilled dashed line,
- * with a flag at today saying how far under or over plan it is.
+ * with a flag at today saying how far under or over plan it is. Against a budget,
+ * the ink line is only the budgeted categories (the caller filters them).
  */
 export function PaceChart({ pace }: { pace: Pace }) {
   const baht = useBahtText();
@@ -38,7 +39,7 @@ export function PaceChart({ pace }: { pace: Pace }) {
       </div>
       <figcaption className="pace__legend">
         <span className="pace__key" aria-hidden />
-        เดือนนี้
+        {budget ? 'หมวดที่มีงบ' : 'เดือนนี้'}
         <span className="pace__key pace__key--plan" aria-hidden />
         {budget ? 'ตามงบ' : 'เดือนก่อน'}
       </figcaption>

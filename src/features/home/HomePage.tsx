@@ -11,6 +11,9 @@ import { Sheet } from '../../design/components/Sheet';
 import { useDecor } from '../../design/decor';
 import { Icon } from '../../design/Icon';
 import { useBudgets } from '../../db/budgets';
+import { db } from '../../db/db';
+import { clearDemo, loadDemo, useDemoActive } from '../../db/demo';
+import { useCachedLiveQuery } from '../../lib/useCachedLiveQuery';
 import { expenseByCategory, totals } from '../../lib/aggregate';
 import { paceOf } from '../../lib/pace';
 import { budgetStates, worstBudget } from '../../lib/budget';
@@ -23,6 +26,7 @@ import { Ledger } from '../summary/Ledger';
 import { Receipt } from '../transactions/Receipt';
 import { useTransactions } from '../transactions/useTransactions';
 import { usePendingSlips } from '../inbox/usePendingSlips';
+import { BudgetRings } from './BudgetRings';
 import { PaceChart } from './PaceChart';
 import { ReviewSlips } from './ReviewSlips';
 
@@ -43,6 +47,8 @@ export function HomePage() {
   const decor = useDecor();
   const baht = useBahtText();
   const hidden = useAmountsHidden();
+  const demo = useDemoActive();
+  const txCount = useCachedLiveQuery('tx:count', () => db.transactions.count(), []);
 
   const sum = useMemo(() => totals(txs ?? []), [txs]);
   const byCat = useMemo(() => expenseByCategory(txs ?? []), [txs]);
@@ -55,14 +61,25 @@ export function HomePage() {
     [byCat, categoryOf],
   );
 
-  const budgetTotal = budgets.reduce((s, b) => s + b.monthlyLimit, 0);
-  const pace = useMemo(() => (txs?.length ? paceOf(txs, period, { budget: budgetTotal, previous: prevTxs }) : null), [txs, prevTxs, period, budgetTotal]);
+  // budgets are per category: compare them only with spending in those categories
+  const states = budgetStates(byCat, budgets, periodProgress(period));
+  const budgetTotal = states.reduce((s, b) => s + b.limit, 0);
+  const budgetLeft = budgetTotal - states.reduce((s, b) => s + b.spent, 0);
+  const pace = useMemo(() => {
+    if (!txs?.length) return null;
+    if (!budgetTotal) return paceOf(txs, period, { previous: prevTxs });
+    const budgeted = new Set(budgets.filter((b) => b.monthlyLimit > 0).map((b) => b.categoryId));
+    return paceOf(
+      txs.filter((t) => budgeted.has(t.categoryId)),
+      period,
+      { budget: budgetTotal },
+    );
+  }, [txs, prevTxs, period, budgets, budgetTotal]);
 
   const current = isCurrent(period);
   const days = daysLeft(period);
   const perDay = sum.balance > 0 && days > 0 ? Math.floor(sum.balance / days) : 0;
-  const budgetLeft = budgetTotal - sum.expense;
-  const worst = current ? worstBudget(budgetStates(byCat, budgets, periodProgress(period))) : undefined;
+  const worst = current ? worstBudget(states) : undefined;
 
   // first read from IndexedDB (or a month switch): show the cat instead of ฿0
   // (a decorated theme's art is still downloading: wait rather than jump from plain to scene)
@@ -98,6 +115,17 @@ export function HomePage() {
         topbar
       )}
 
+      {demo && (
+        <div className="demo-bar" role="status">
+          <span>
+            <b>ข้อมูลตัวอย่าง</b> · จดจริงครั้งแรกจะล้างให้เอง
+          </span>
+          <Button variant="quiet" size="sm" onClick={() => void clearDemo()}>
+            ล้างออก
+          </Button>
+        </div>
+      )}
+
       {/* under a scene, the pace and alert sit on the page below it, away from the art */}
       <section className={`hero ${decor ? 'hero--decor' : ''}`}>
         {!decor && (
@@ -111,11 +139,11 @@ export function HomePage() {
           <p className="hero__pace">
             {budgetLeft >= 0 ? (
               <>
-                เหลือ <b className="num">{baht(budgetLeft)}</b> จากงบ {baht(budgetTotal)} · วันละ <b className="num">{baht(Math.floor(budgetLeft / days / 100) * 100)}</b>
+                งบเหลือ <b className="num">{baht(budgetLeft)}</b> จาก {baht(budgetTotal)} · วันละ <b className="num">{baht(Math.floor(budgetLeft / days / 100) * 100)}</b>
               </>
             ) : (
               <>
-                <b className="num is-over">เกินงบ {baht(-budgetLeft)}</b> จากงบ {baht(budgetTotal)}
+                <b className="num is-over">เกินงบ {baht(-budgetLeft)}</b> จาก {baht(budgetTotal)}
               </>
             )}
           </p>
@@ -146,14 +174,25 @@ export function HomePage() {
           title={current ? 'เดือนนี้ยังไม่ได้จด' : 'เดือนนี้ไม่มีรายการ'}
           action={
             current && (
-              <Button variant="ink" onClick={() => openManual()}>
-                จดรายการแรก
-              </Button>
+              <div className="empty__actions">
+                <Button variant="ink" onClick={() => openManual()}>
+                  จดรายการแรก
+                </Button>
+                {txCount === 0 && (
+                  <Button variant="quiet" onClick={() => void loadDemo()}>
+                    ดูตัวอย่าง
+                  </Button>
+                )}
+              </div>
             )
           }
         />
       ) : (
         <>
+          {states.length > 0 && (
+            <BudgetRings states={states} categoryOf={categoryOf} onSelect={setCategoryId} onMore={() => navigate('/summary?p=month')} />
+          )}
+
           {slices.length > 0 && (
             <>
               <div className="section-head">

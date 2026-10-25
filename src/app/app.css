@@ -280,3 +280,41 @@
 .review__check { display: inline-flex; align-items: center; gap: 4px; color: var(--mark-ink); background: var(--mark); padding: 0 6px; border-radius: 3px; font-weight: 600; }
 .review__more { min-height: 44px; border-top: 1px dashed var(--rule-strong); font-size: 13px; color: var(--ink-2); }
 .review__foot { padding: var(--s-3) var(--s-4) var(--s-4); border-top: 1px solid var(--rule); }
+
+/* ---------- Home: budget rings ---------- */
+.rings {
+  display: flex;
+  gap: var(--s-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 calc(var(--s-4) * -1);
+  padding: 2px var(--s-4);
+}
+.rings::-webkit-scrollbar { display: none; }
+.ring { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: none; width: 84px; padding: var(--s-1) 0; border-radius: 8px; }
+.ring__dial { position: relative; display: grid; place-items: center; width: 64px; height: 64px; margin-bottom: var(--s-1); }
+.ring__dial > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ring__track,
+.ring__fill { fill: none; stroke-width: 4; }
+.ring__track { stroke: var(--rule); }
+.ring__fill { stroke-linecap: round; }
+.ring__left { font-size: 12.5px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.ring__left.is-over { color: var(--over); }
+.ring__left.is-ahead { color: var(--mark-ink); background: var(--mark); padding: 0 4px; border-radius: 3px; }
+.ring__name { font-size: 11.5px; color: var(--ink-2); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- Home: sample data ---------- */
+.demo-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  border: 1px dashed var(--rule-strong);
+  border-radius: var(--r-control);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.demo-bar b { color: var(--ink); }
+.empty__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-2); }

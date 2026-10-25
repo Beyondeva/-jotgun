@@ -2,6 +2,7 @@ import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { validateBackup } from '../../lib/backup';
 import { buildBackup, restoreBackup } from '../backup';
+import { buildDemo, clearDemo, DEMO_PREFIX, loadDemo } from '../demo';
 import { setBudget } from '../budgets';
 import { db } from '../db';
 import { deleteCategory, saveCategory, saveTransaction } from '../repo';
@@ -67,6 +68,37 @@ describe('slip flow', () => {
     expect(await confirmAll()).toBe(1);
     expect(await db.transactions.count()).toBe(1);
     expect((await db.slips.get(empty.id))?.status).toBe('pending');
+  });
+});
+
+describe('demo data', () => {
+  const now = new Date(2026, 9, 25, 15).getTime();
+
+  it('covers last month and this month up to now, with salary', () => {
+    const txs = buildDemo(now);
+    expect(txs.every((t) => t.id.startsWith(DEMO_PREFIX) && t.occurredAt <= now)).toBe(true);
+    expect(Math.min(...txs.map((t) => t.occurredAt))).toBeGreaterThanOrEqual(new Date(2026, 8, 1).getTime());
+    expect(txs.filter((t) => t.type === 'income')).toHaveLength(2); // Sep 25 and Oct 25
+    expect(buildDemo(now)).toEqual(txs); // stable
+  });
+
+  it('clears only its own rows and the budgets it added', async () => {
+    await setBudget('food', 999900);
+    await saveTransaction({ type: 'expense', amount: 100, fee: 0, categoryId: 'food', occurredAt: now, method: 'cash', source: 'manual' });
+    await loadDemo(now);
+    expect((await db.budgets.get('food'))?.monthlyLimit).toBe(999900);
+    expect(await db.budgets.get('cafe')).toBeDefined();
+
+    await clearDemo();
+    expect(await db.transactions.count()).toBe(1);
+    expect((await db.budgets.toArray()).map((b) => b.categoryId)).toEqual(['food']);
+  });
+
+  it('goes away when a real slip comes in', async () => {
+    await loadDemo(now);
+    await ingestSlip({ image: img(), thumb: img(), parsed: { amount: 4700, receiver: 'BTS สยาม', occurredAt: at(23) } });
+    expect(await db.transactions.count()).toBe(0);
+    expect(await db.budgets.count()).toBe(0);
   });
 });
 

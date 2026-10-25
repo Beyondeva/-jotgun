@@ -2,6 +2,7 @@ import { suggestCategory } from '../lib/categorize';
 import { newId } from '../lib/id';
 import { isOwnerName, payeeKey } from '../lib/names';
 import { db } from './db';
+import { clearDemo } from './demo';
 import { saveTransaction } from './repo';
 import { getOwnerNames } from './settings';
 import { CONFIDENCE_MIN, type Slip, type SlipFields, type TxType } from './types';
@@ -49,6 +50,7 @@ async function findDuplicate(key: string | undefined, ref: string | undefined, s
 
 /** Put a read slip into the "รอจด" queue with a guessed type and category. */
 export async function ingestSlip(input: IncomingSlip): Promise<Slip> {
+  await clearDemo(); // a real slip means real use: the sample data goes
   const { type, categoryId } = await decide(input.parsed);
   const dedupeKey = dedupeKeyOf(input.parsed, input.qrPayload);
   const id = newId();

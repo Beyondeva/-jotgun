@@ -5,6 +5,7 @@ import { CategoryIcon } from '../../design/components/CategoryIcon';
 import { Segmented } from '../../design/components/Segmented';
 import { Sheet } from '../../design/components/Sheet';
 import { Icon, type IconDefinition } from '../../design/Icon';
+import { clearDemo, DEMO_PREFIX } from '../../db/demo';
 import { saveTransaction } from '../../db/repo';
 import type { PayMethod, Transaction, TxType } from '../../db/types';
 import { amountToSatang, displayAmount, pressKey, satangToAmountText, type AmountKey } from '../../lib/amountInput';
@@ -72,6 +73,8 @@ function ManualForm({ tx, onDelete, onDone }: FormProps) {
 
   const save = async () => {
     if (!canSave || !categoryId) return;
+    // the first real entry clears the sample data (editing a sample row keeps it)
+    if (!tx?.id.startsWith(DEMO_PREFIX)) await clearDemo();
     await saveTransaction({
       id: tx?.id,
       type,
