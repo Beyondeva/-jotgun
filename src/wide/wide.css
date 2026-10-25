@@ -185,7 +185,9 @@
   .w-table tbody tr:not(.w-table__day) { cursor: pointer; }
   .w-table tbody tr:not(.w-table__day):hover td { background: var(--press); }
   .w-table tr.is-selected td { background: var(--w-pill); }
-  .w-table__day td { height: auto; padding: var(--s-4) var(--s-3) var(--s-1); border-bottom: 0; color: var(--ink-2); font-size: 12.5px; font-weight: 600; cursor: default; }
+  /* each day opens with a heading: full ink on its own rule, like a receipt section */
+  .w-table__day td { height: auto; padding: var(--s-5) var(--s-3) var(--s-2); border-bottom: 1px solid var(--rule-strong); color: var(--ink); font-size: 14.5px; font-weight: 700; cursor: default; }
+  .w-table__day:first-child td { padding-top: var(--s-2); }
   .w-table__check { width: 40px; }
   .w-table__check input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
   .w-table__cat { width: 170px; }
@@ -249,8 +251,8 @@
     isolation: isolate;
     background: var(--scene-sky-top);
   }
-  /* the sky art starts under the top bar, so the moon and clouds aren't behind its buttons */
-  .w-scene svg.decor-scene__sky { top: 40px; left: auto; right: 0; width: 560px; height: 300px; overflow: visible; }
+  /* the sky art fills the band from the very top */
+  .w-scene svg.decor-scene__sky { left: auto; right: 0; width: auto; height: 100%; aspect-ratio: 560 / 300; overflow: visible; }
   .w-scene .decor-scene__floor { left: auto; right: 0; width: 560px; overflow: visible; }
   /* content above the band, but the cat (in the band) still takes taps through the gaps */
   .w-main--scene .w-content { position: relative; z-index: 1; pointer-events: none; }
