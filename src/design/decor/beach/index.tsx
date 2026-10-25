@@ -55,11 +55,14 @@ function Scene() {
             <stop offset="1" stopColor="var(--paper)" />
           </linearGradient>
         </defs>
-        <path d={waves(-200 - 108 * 28, 394, 80, 54, 8, 170)} fill="#1d3b5c" />
-        <path d={waves(-180 - 128 * 24, 396, 94, 64, 8, 170)} fill="#245074" />
-        <g stroke="#7fb3d9" strokeWidth="1.5" fill="none" opacity=".7" strokeLinecap="round">
-          <path d="M150 90 Q 162 86 174 90" />
-          <path d="M-60 98 Q -48 94 -36 98" />
+        {/* the sea rocks side to side (it runs past both edges, so no gap shows) */}
+        <path className="fx fx-sway" d={waves(-200 - 108 * 28, 502, 80, 54, 8, 170)} fill="#1d3b5c" />
+        <path className="fx fx-sway fx-sway--back" d={waves(-180 - 128 * 24, 524, 94, 64, 8, 170)} fill="#245074" />
+        <g className="fx fx-glint">
+          <g stroke="#7fb3d9" strokeWidth="1.5" fill="none" opacity=".7" strokeLinecap="round">
+            <path d="M150 90 Q 162 86 174 90" />
+            <path d="M-60 98 Q -48 94 -36 98" />
+          </g>
         </g>
         <path d={`M${WIDE_LEFT} 118 H -170 Q -60 104 40 114 T 220 112 T 390 110 V 170 H ${WIDE_LEFT} Z`} fill="url(#beach-sand)" />
         <g fill="#a07c52" opacity=".5">
@@ -73,7 +76,7 @@ function Scene() {
 
         {/* palm */}
         <path d="M368 150 C 362 124 362 104 370 84" stroke="#4a3626" strokeWidth="7" fill="none" strokeLinecap="round" />
-        <g fill="#1f4a35">
+        <g className="fx fx-palm" fill="#1f4a35">
           <path d="M370 84 C 350 74 332 82 324 96 C 340 86 355 86 370 86 Z" />
           <path d="M370 84 C 388 72 400 78 400 86 C 390 82 382 84 370 87 Z" />
           <path d="M370 84 C 362 66 348 60 336 64 C 352 68 362 76 368 86 Z" />

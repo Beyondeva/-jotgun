@@ -112,6 +112,48 @@
 .decor-twinkle { animation: decor-twinkle 3.6s ease-in-out infinite alternate; }
 @keyframes decor-twinkle { from { opacity: 1; } to { opacity: 0.25; } }
 @media (prefers-reduced-motion: reduce) { .decor-twinkle { animation: none; } }
+
+/* scene motion (decor/*): transform and opacity only, on small SVG parts of the header art.
+   Paused while a sheet is up (nothing moves behind it; see the iOS notes in CLAUDE.md) and
+   off for reduced motion, where every part rests where it's drawn. */
+.fx { transform-box: fill-box; }
+body:has(.sheet-root) .fx,
+body:has(.sheet-root) .decor-twinkle { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .fx { animation: none !important; } }
+
+.fx-sway { animation: fx-sway 7s ease-in-out infinite alternate; }
+.fx-sway--back { animation-duration: 9s; animation-direction: alternate-reverse; }
+@keyframes fx-sway { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
+.fx-glint { animation: fx-fade 2.6s ease-in-out infinite alternate; }
+@keyframes fx-fade { from { opacity: 1; } to { opacity: 0.25; } }
+/* fronds pivot on the trunk top (46px in, 24px down their box) */
+.fx-palm { transform-origin: 46px 24px; animation: fx-palm 4.5s ease-in-out infinite alternate; }
+@keyframes fx-palm { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+
+.fx-drift { animation: fx-drift 20s ease-in-out infinite alternate; }
+.fx-drift--near { animation-duration: 13s; animation-direction: alternate-reverse; }
+@keyframes fx-drift { from { transform: translateX(-10px); } to { transform: translateX(10px); } }
+/* along the drop's own slant (6 across for 14 down) */
+.fx-rain { animation: fx-rain 1.3s linear infinite; }
+@keyframes fx-rain {
+  from { transform: translate(17px, -40px); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  to { transform: translate(-17px, 40px); opacity: 0; }
+}
+.fx-ripple { transform-origin: center; animation: fx-ripple 2.8s ease-out infinite; }
+@keyframes fx-ripple { from { transform: scale(0.3); opacity: 0.9; } to { transform: scale(1.6); opacity: 0; } }
+
+/* only ever fainter than drawn: the header text is tested against the brighter state */
+.fx-shimmer { animation: fx-shimmer 6s ease-in-out infinite alternate; }
+@keyframes fx-shimmer { from { opacity: 1; } to { opacity: 0.55; } }
+.fx-meteor { animation: fx-meteor 9s ease-out infinite; animation-delay: 2s; }
+@keyframes fx-meteor {
+  0%, 84% { transform: translate(-70px, -27px); opacity: 0; }
+  86% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { transform: translate(30px, 12px); opacity: 0; }
+}
 .hero--decor { padding: var(--s-3) 0 var(--s-4); }
 .hero--decor:empty { display: none; }
 /* under a scene the ledger's top rule reads as a scratch on the sand: drop it */

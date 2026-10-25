@@ -43,8 +43,10 @@ function Scene() {
           </linearGradient>
         </defs>
         {/* the milky way: --scene-cloud is what it adds up to where both bands overlap */}
-        <path d="M390 0 C 450 60 490 70 560 60 V 0 Z" fill="#3a3b7a" opacity=".35" />
-        <path d="M440 0 C 480 40 520 44 560 40 V 0 Z" fill="#4a4b8f" opacity=".25" />
+        <g className="fx fx-shimmer">
+          <path d="M390 0 C 450 60 490 70 560 60 V 0 Z" fill="#3a3b7a" opacity=".35" />
+          <path d="M440 0 C 480 40 520 44 560 40 V 0 Z" fill="#4a4b8f" opacity=".25" />
+        </g>
         <g fill="#fffcf6">
           {STARS.map(([x, y, r], i) => (
             <circle key={`${x}-${y}`} cx={x} cy={y} r={r} className={i % 4 === 0 ? 'decor-twinkle' : undefined} style={i % 4 === 0 ? twinkle(i * 0.37) : undefined} />
@@ -61,8 +63,11 @@ function Scene() {
             <path key={i} d={sparkle(x, y, 3.5 + (i % 3))} className="decor-twinkle" style={twinkle(i * 0.7)} />
           ))}
         </g>
-        <path d="M430 22 L 476 40" stroke="url(#stars-meteor)" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="476" cy="40" r="1.8" fill={GOLD} />
+        {/* a shooting star now and then (still, where it is, for reduced motion) */}
+        <g className="fx fx-meteor">
+          <path d="M430 22 L 476 40" stroke="url(#stars-meteor)" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="476" cy="40" r="1.8" fill={GOLD} />
+        </g>
       </svg>
 
       {/* the roof on the right, fading into the page; header text never reaches below y 62 */}

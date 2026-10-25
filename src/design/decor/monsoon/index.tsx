@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, type CSSProperties } from 'react';
 import cat from '../../../mascot/renders/khaotang-monsoon.webp';
 import glb from '../../../mascot/renders/scene-monsoon.glb?url';
 import { SceneLive } from '../../../mascot/SceneLive';
@@ -11,6 +11,8 @@ import { scatter, WIDE_LEFT, type Decor } from '..';
  */
 
 const RAIN = '#7fa3b3';
+/** each raindrop falls on its own clock (seeded by its position, so it never changes) */
+const drop = (seed: number): CSSProperties => ({ animationDuration: `${1.1 + (seed % 5) * 0.12}s`, animationDelay: `${-((seed * 37) % 100) / 60}s` });
 // wide screens only: the sky, rain and road carried on to the left (see WIDE_LEFT)
 const FAR_RAIN = scatter(90, WIDE_LEFT, 220, 40, 190, 5);
 const FAR_PUDDLES = scatter(10, WIDE_LEFT, -200, 138, 160, 9);
@@ -27,12 +29,12 @@ function Scene() {
           </linearGradient>
         </defs>
         <rect x={WIDE_LEFT} width={560 - WIDE_LEFT} height="300" fill="url(#monsoon-sky)" />
-        <g fill="#2a3a42">
+        <g className="fx fx-drift" fill="#2a3a42">
           <ellipse cx="490" cy="34" rx="46" ry="18" />
           <ellipse cx="540" cy="44" rx="34" ry="16" />
           <ellipse cx="440" cy="44" rx="30" ry="13" />
         </g>
-        <g fill="var(--scene-cloud)">
+        <g className="fx fx-drift fx-drift--near" fill="var(--scene-cloud)">
           <ellipse cx="502" cy="46" rx="40" ry="14" />
           <ellipse cx="400" cy="22" rx="26" ry="10" />
         </g>
@@ -41,10 +43,10 @@ function Scene() {
             [390, 60], [430, 70], [466, 66], [512, 72], [546, 66], [410, 104], [450, 112], [540, 110],
             [380, 140], [426, 150], [350, 92], [320, 150], [270, 170], [360, 176], [500, 160], [230, 120],
           ].map(([x, y]) => (
-            <path key={`${x}-${y}`} d={`M${x} ${y} l-6 14`} />
+            <path key={`${x}-${y}`} className="fx fx-rain" style={drop(x + y)} d={`M${x} ${y} l-6 14`} />
           ))}
           {FAR_RAIN.map(([x, y], i) => (
-            <path key={`far${i}`} d={`M${x} ${y} l-6 14`} />
+            <path key={`far${i}`} className="fx fx-rain" style={drop(x + y)} d={`M${x} ${y} l-6 14`} />
           ))}
         </g>
       </svg>
@@ -57,10 +59,10 @@ function Scene() {
           </linearGradient>
         </defs>
         <g stroke={RAIN} strokeWidth="1.4" strokeLinecap="round" opacity=".35">
-          <path d="M120 70 l-6 14" />
-          <path d="M200 80 l-6 14" />
-          <path d="M-40 84 l-6 14" />
-          <path d="M60 90 l-6 14" />
+          <path className="fx fx-rain" style={drop(190)} d="M120 70 l-6 14" />
+          <path className="fx fx-rain" style={drop(280)} d="M200 80 l-6 14" />
+          <path className="fx fx-rain" style={drop(44)} d="M-40 84 l-6 14" />
+          <path className="fx fx-rain" style={drop(150)} d="M60 90 l-6 14" />
         </g>
         <path d={`M${WIDE_LEFT} 116 H -170 Q -60 106 40 112 T 220 110 T 390 108 V 170 H ${WIDE_LEFT} Z`} fill="url(#monsoon-road)" />
         {FAR_PUDDLES.map(([x, y], i) => (
@@ -68,9 +70,10 @@ function Scene() {
         ))}
         <ellipse cx="300" cy="158" rx="54" ry="8" fill="#2d4652" />
         <g fill="none" stroke="#5d8191" strokeWidth="1.2" opacity=".8">
-          <ellipse cx="270" cy="158" rx="9" ry="2.5" />
-          <ellipse cx="270" cy="158" rx="16" ry="4.5" opacity=".5" />
-          <ellipse cx="330" cy="160" rx="7" ry="2" />
+          {/* drops landing in the puddle */}
+          <ellipse className="fx fx-ripple" cx="270" cy="158" rx="9" ry="2.5" />
+          <ellipse className="fx fx-ripple" style={{ animationDelay: '-1.4s' }} cx="270" cy="158" rx="16" ry="4.5" />
+          <ellipse className="fx fx-ripple" style={{ animationDelay: '-0.7s' }} cx="330" cy="160" rx="7" ry="2" />
         </g>
         <ellipse cx="130" cy="146" rx="26" ry="4" fill="#2d4652" opacity=".7" />
 

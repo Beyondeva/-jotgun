@@ -62,6 +62,7 @@ Vite 8, React 19, TS 7, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB) + dexie-r
   - The Scene sits behind the plain header text and its ground must fade to `var(--paper)`.
   - The Pattern is tone-on-tone (`--scene-mark*`): fixed, `pointer-events: none`, and stops at the tab bar.
   - Decorate only the header and tab bar. Drawn tab icons keep their labels.
+  - Scene motion: `fx fx-*` classes in `app.css` (transform and opacity only). It pauses while a sheet is open and is off under reduced motion, where each part rests as drawn. Anything behind header text may only get fainter than drawn.
   - Scene art left of the viewBox only shows on wide screens: keep it to sky, ground and small marks, never behind the big figure.
 - Reference art lives in `docs/theme-refs/`.
 
